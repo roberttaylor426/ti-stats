@@ -575,4 +575,4 @@ const hexColor = (pc: PlayerColor): string => {
     }
 };
 
-export { Galaxy };
+export { Galaxy, hexColor };
