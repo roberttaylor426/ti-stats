@@ -407,11 +407,11 @@ const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
     );
 `;
 
-type SpecialTileProps = {
+type MalliceTileProps = {
     controllingPlayerColor: PlayerColor | undefined;
 };
 
-const MalliceTile: React.FC<SpecialTileProps> = ({
+const MalliceTile: React.FC<MalliceTileProps> = ({
     controllingPlayerColor,
 }) => (
     <ExtraTile
@@ -423,15 +423,17 @@ const MalliceTile: React.FC<SpecialTileProps> = ({
     />
 );
 
-const GhostsOfCreussHomeTile: React.FC<SpecialTileProps> = ({
+type GhostsOfCresussHomeTileProps = {
+    controllingPlayerColor: PlayerColor;
+};
+
+const GhostsOfCreussHomeTile: React.FC<GhostsOfCresussHomeTileProps> = ({
     controllingPlayerColor,
 }) => (
     <ExtraTile
         src={tile51}
         alt={`Ghosts of Creuss homeworld tile`}
-        $highlightColor={
-            controllingPlayerColor && hexColor(controllingPlayerColor)
-        }
+        $highlightColor={hexColor(controllingPlayerColor)}
     />
 );
 
