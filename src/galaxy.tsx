@@ -184,7 +184,7 @@ const tiles = [
 const controlledTiles: (PlayerColor[] | undefined)[] = [
     ['Red', 'Blue'],
     undefined,
-    undefined,
+    ['Yellow'],
     ['Yellow'],
 ];
 
@@ -387,7 +387,7 @@ const HexHighlight: React.FC<HexHighlightProps> = ({
 );
 
 const highlightPercentage = 5;
-const standardHexTransparency = 'aa';
+const standardHexTransparency = 'ff';
 
 type HexHighlightSegmentProps = {
     $rotation: number;
