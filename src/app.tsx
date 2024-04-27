@@ -1,18 +1,36 @@
 import React from 'react';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import { Galaxy } from './galaxy';
 
 const App: React.FC = () => (
     <>
         <GlobalStyle />
-        <Galaxy />
+        <FullScreenPage>
+            <Galaxy />
+        </FullScreenPage>
     </>
 );
 
 const GlobalStyle = createGlobalStyle`
     * {
         margin: 0;
+    }
+`;
+
+const FullScreenPage = styled.div`
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+
+    * {
+        max-width: 100vw;
+        max-height: 100vh;
+    }
+
+    > * {
+        flex: 1 1 0;
     }
 `;
 

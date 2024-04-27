@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import _, { identity } from 'underscore';
+import _, {identity} from 'underscore';
 
 import tile1 from './assets/tiles/ST_1.png';
 import tile2 from './assets/tiles/ST_2.png';
@@ -84,7 +84,8 @@ import tile79 from './assets/tiles/ST_79.png';
 import tile80 from './assets/tiles/ST_80.png';
 import tile81 from './assets/tiles/ST_81.png';
 import tile82 from './assets/tiles/ST_82.png';
-import { PlayerColor } from './domain';
+import tile82Back from './assets/tiles/ST_82_Back.png';
+import {PlayerColor} from './domain';
 
 /*
  Display Mallice tile
@@ -200,7 +201,7 @@ const tileIndex = (columnIndex: number, rowIndex: number) =>
 
 const Galaxy: React.FC = () => (
     <StyledGalaxy>
-        <GalaxySection>
+        <GalaxyContainer>
             <StandardGalaxy>
                 <TileColumnRow>
                     {range(columnCount).map((columnIndex) => (
@@ -228,13 +229,11 @@ const Galaxy: React.FC = () => (
                     ))}
                 </TileColumnRow>
             </StandardGalaxy>
-        </GalaxySection>
-        <GalaxySection>
-            <ExtraTiles>
-                {/*<MalliceTile />*/}
-                {/*<GhostsOfCreussHomeTile />*/}
-            </ExtraTiles>
-        </GalaxySection>
+        </GalaxyContainer>
+        <ExtraTiles>
+            <MalliceTile controllerPlayerColor={'Red'} />
+            <GhostsOfCreussHomeTile controllerPlayerColor={'Green'} />
+        </ExtraTiles>
     </StyledGalaxy>
 );
 
@@ -242,57 +241,23 @@ const hexagonWidthToHeightRatio = 1.1547005;
 
 const StyledGalaxy = styled.div`
     display: flex;
-    max-width: 100vw;
-    max-height: 100vh;
+
+    > * {
+        flex: 1 1 0;
+    }
 
     @media (orientation: portrait) {
         flex-direction: column;
-
-        > * {
-            flex: 1 1 0;
-        }
-
-        > :first-child {
-            background: green;
-        }
-
-        > :nth-child(2) {
-            background: red;
-        }
-    }
-
-    @media (orientation: landscape) {
-        > * {
-            flex-grow: 1;
-        }
-
-        > :first-child {
-            background: green;
-        }
-
-        > :nth-child(2) {
-            background: red;
-        }
     }
 `;
 
-const GalaxySection = styled.section`
+const GalaxyContainer = styled.section`
     display: flex;
     justify-content: center;
-
-    @media (orientation: portrait) {
-        flex-direction: column;
-    }
-
-    @media (orientation: landscape) {
-        flex-direction: row;
-    }
 `;
 
 const StandardGalaxy = styled.div`
     display: flex;
-    max-width: 100vw;
-    max-height: 100vh;
     aspect-ratio: 1 / ${hexagonWidthToHeightRatio};
 `;
 
@@ -310,17 +275,28 @@ const Tile = styled.img`
 `;
 
 type ExtraTileProps = {
-    $color: string | undefined;
+    $highlightColor: string | undefined;
 };
 
 const ExtraTile = styled.img<ExtraTileProps>`
     min-width: 0;
     min-height: 0;
     object-fit: contain;
-
-    background: ${(props) =>
-        props.$color ? `${props.$color}${standardHexTransparency}` : 'none'};
     padding: 1rem;
+
+    @media (orientation: portrait) {
+        border: ${(props) =>
+            props.$highlightColor
+                ? `1vw solid ${props.$highlightColor}${standardHexTransparency}`
+                : 'none'};
+    }
+
+    @media (orientation: landscape) {
+        border: ${(props) =>
+            props.$highlightColor
+                ? `1vh solid ${props.$highlightColor}${standardHexTransparency}`
+                : 'none'};
+    }
 `;
 
 type TileColumnProps = {
@@ -341,9 +317,12 @@ const TileColumn = styled.div<TileColumnProps>`
 
 const ExtraTiles = styled.div`
     display: flex;
-    overflow: hidden;
+    gap: 2%;
+    align-items: center;
 
-    justify-content: space-around;
+    > * {
+        flex: 1 1 0;
+    }
 
     @media (orientation: portrait) {
         flex-direction: row;
@@ -351,10 +330,6 @@ const ExtraTiles = styled.div`
 
     @media (orientation: landscape) {
         flex-direction: column;
-
-        > * {
-            flex: 1 1 0;
-        }
     }
 `;
 
@@ -394,7 +369,9 @@ const HighlightableExtraTile: React.FC<HighlightableExtraTileProps> = ({
     <ExtraTile
         src={tiles[tileIndex]}
         alt={`System tile ${tileIndex}`}
-        $color={controllingPlayerColor && hexColor(controllingPlayerColor)}
+        $highlightColor={
+            controllingPlayerColor && hexColor(controllingPlayerColor)
+        }
     />
 );
 
@@ -448,12 +425,24 @@ const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
     );
 `;
 
-const MalliceTile: React.FC = () => (
-    <HighlightableExtraTile tileIndex={81} controllingPlayerColor={'Red'} />
+type SpecialTileProps = {
+    controllerPlayerColor: PlayerColor | undefined;
+};
+
+const MalliceTile: React.FC<SpecialTileProps> = ({ controllerPlayerColor }) => (
+    <HighlightableExtraTile
+        tileIndex={controllerPlayerColor ?  : 81}
+        controllingPlayerColor={controllerPlayerColor}
+    />
 );
 
-const GhostsOfCreussHomeTile: React.FC = () => (
-    <HighlightableExtraTile tileIndex={50} controllingPlayerColor={'Green'} />
+const GhostsOfCreussHomeTile: React.FC<SpecialTileProps> = ({
+    controllerPlayerColor,
+}) => (
+    <HighlightableExtraTile
+        tileIndex={50}
+        controllingPlayerColor={controllerPlayerColor}
+    />
 );
 
 const hexColor = (pc: PlayerColor): string => {
