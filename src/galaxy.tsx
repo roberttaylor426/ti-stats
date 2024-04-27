@@ -85,7 +85,7 @@ import tile80 from './assets/tiles/ST_80.png';
 import tile81 from './assets/tiles/ST_81.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
-import { PlayerColor } from './domain';
+import { Faction, PlayerColor } from './domain';
 
 /*
  Tiles according map tile selection
@@ -203,6 +203,50 @@ const tileIndex = (columnIndex: number, rowIndex: number) =>
     range(columnIndex).reduce((acc, n) => acc + tilesPerColumn(n), 0) +
     rowIndex;
 
+type ResourcesAndInfluence = {
+    resources: number;
+    influence: number;
+};
+
+type FactionResourcesAndInfluence = {
+    faction: Faction;
+    playerColor: PlayerColor;
+    resourcesAndInfluence: ResourcesAndInfluence;
+};
+
+const factionScores: FactionResourcesAndInfluence[] = [
+    {
+        faction: 'Sardakk N’orr',
+        playerColor: 'Red',
+        resourcesAndInfluence: { resources: 9, influence: 10 },
+    },
+    {
+        faction: 'The Arborec',
+        playerColor: 'Green',
+        resourcesAndInfluence: { resources: 9, influence: 10 },
+    },
+    {
+        faction: 'The Ghosts of Creuss',
+        playerColor: 'Blue',
+        resourcesAndInfluence: { resources: 9, influence: 10 },
+    },
+    {
+        faction: 'The Argent Flight',
+        playerColor: 'Orange',
+        resourcesAndInfluence: { resources: 9, influence: 10 },
+    },
+    {
+        faction: 'The Empyrean',
+        playerColor: 'Purple',
+        resourcesAndInfluence: { resources: 9, influence: 10 },
+    },
+    {
+        faction: 'The Clan of Saar',
+        playerColor: 'Black',
+        resourcesAndInfluence: { resources: 9, influence: 10 },
+    },
+];
+
 const Galaxy: React.FC = () => (
     <StyledGalaxy>
         <GalaxyContainer>
@@ -238,8 +282,77 @@ const Galaxy: React.FC = () => (
             <MalliceTile controllingPlayerColor={undefined} />
             <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
         </ExtraTiles>
+        <Scoreboard>
+            <ResourcesInfluenceScoreboardRow
+                title={''}
+                color={'white'}
+                resources={'Resources'}
+                influence={'Influence'}
+            />
+            {_.sortBy(factionScores, (fsi) => fsi.faction).map((fsi) => (
+                <ResourcesInfluenceScoreboardRow
+                    key={fsi.faction}
+                    title={fsi.faction}
+                    color={hexColor(fsi.playerColor)}
+                    resources={`${fsi.resourcesAndInfluence.resources}`}
+                    influence={`${fsi.resourcesAndInfluence.influence}`}
+                />
+            ))}
+        </Scoreboard>
     </StyledGalaxy>
 );
+
+const Scoreboard = styled.section`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 2rem;
+    margin-top: 8rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
+`;
+
+type ResourcesInfluenceScoreboardRowProps = {
+    title: string;
+    color: string;
+    resources: string;
+    influence: string;
+};
+
+const ResourcesInfluenceScoreboardRow: React.FC<
+    ResourcesInfluenceScoreboardRowProps
+> = ({ title, color, resources, influence }) => (
+    <StyledResourcesInfluenceScoreboardRow>
+        <Title $color={color}>{title}</Title>
+        <Resources>{resources}</Resources>
+        <Influence>{influence}</Influence>
+    </StyledResourcesInfluenceScoreboardRow>
+);
+
+const StyledResourcesInfluenceScoreboardRow = styled.div`
+    display: flex;
+`;
+
+type TitleProps = {
+    $color: string;
+};
+
+const Title = styled.span<TitleProps>`
+    color: ${(props) => props.$color};
+    width: 60%;
+`;
+
+const Resources = styled.span`
+    color: yellow;
+    width: 20%;
+    text-align: end;
+`;
+
+const Influence = styled.span`
+    color: deepskyblue;
+    width: 20%;
+    text-align: end;
+`;
 
 const hexagonWidthToHeightRatio = 1.1547005;
 
@@ -316,6 +429,7 @@ const TileColumn = styled.div<TileColumnProps>`
 
 const ExtraTiles = styled.div`
     display: flex;
+    margin-top: -4rem;
     justify-content: space-around;
     align-items: center;
 

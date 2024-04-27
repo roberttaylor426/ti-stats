@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { Galaxy } from './galaxy';
 
 const App: React.FC = () => (
@@ -13,8 +14,18 @@ const App: React.FC = () => (
 );
 
 const GlobalStyle = createGlobalStyle`
+    @font-face {
+        font-family: 'Handel Gothic';
+        src: url(${HandelGothic}) format('woff');
+        font-weight: 300;
+    }
+
     * {
         margin: 0;
+    }
+
+    body {
+        font-family: 'Handel Gothic', 'sans-serif';
     }
 `;
 
