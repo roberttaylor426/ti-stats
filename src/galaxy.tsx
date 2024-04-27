@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import _, {identity} from 'underscore';
+import _, { identity } from 'underscore';
 
 import tile1 from './assets/tiles/ST_1.png';
 import tile2 from './assets/tiles/ST_2.png';
@@ -85,7 +85,7 @@ import tile80 from './assets/tiles/ST_80.png';
 import tile81 from './assets/tiles/ST_81.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
-import {PlayerColor} from './domain';
+import { PlayerColor } from './domain';
 
 /*
  Display Mallice tile
@@ -231,8 +231,8 @@ const Galaxy: React.FC = () => (
             </StandardGalaxy>
         </GalaxyContainer>
         <ExtraTiles>
-            <MalliceTile controllerPlayerColor={'Red'} />
-            <GhostsOfCreussHomeTile controllerPlayerColor={'Green'} />
+            <MalliceTile controllingPlayerColor={'Red'} />
+            <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
         </ExtraTiles>
     </StyledGalaxy>
 );
@@ -357,24 +357,6 @@ const StyledHighlightableTile = styled.div`
     }
 `;
 
-type HighlightableExtraTileProps = {
-    tileIndex: number;
-    controllingPlayerColor: PlayerColor | undefined;
-};
-
-const HighlightableExtraTile: React.FC<HighlightableExtraTileProps> = ({
-    tileIndex,
-    controllingPlayerColor,
-}) => (
-    <ExtraTile
-        src={tiles[tileIndex]}
-        alt={`System tile ${tileIndex}`}
-        $highlightColor={
-            controllingPlayerColor && hexColor(controllingPlayerColor)
-        }
-    />
-);
-
 const sinFromDegrees = (degrees: number) => Math.sin((degrees * Math.PI) / 180);
 
 const tanFromDegrees = (degrees: number) => Math.tan((degrees * Math.PI) / 180);
@@ -426,22 +408,30 @@ const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
 `;
 
 type SpecialTileProps = {
-    controllerPlayerColor: PlayerColor | undefined;
+    controllingPlayerColor: PlayerColor | undefined;
 };
 
-const MalliceTile: React.FC<SpecialTileProps> = ({ controllerPlayerColor }) => (
-    <HighlightableExtraTile
-        tileIndex={controllerPlayerColor ?  : 81}
-        controllingPlayerColor={controllerPlayerColor}
+const MalliceTile: React.FC<SpecialTileProps> = ({
+    controllingPlayerColor,
+}) => (
+    <ExtraTile
+        src={controllingPlayerColor ? tile82Back : tile82}
+        alt={`Wormhole nexus tile`}
+        $highlightColor={
+            controllingPlayerColor && hexColor(controllingPlayerColor)
+        }
     />
 );
 
 const GhostsOfCreussHomeTile: React.FC<SpecialTileProps> = ({
-    controllerPlayerColor,
+    controllingPlayerColor,
 }) => (
-    <HighlightableExtraTile
-        tileIndex={50}
-        controllingPlayerColor={controllerPlayerColor}
+    <ExtraTile
+        src={tile51}
+        alt={`Ghosts of Creuss homeworld tile`}
+        $highlightColor={
+            controllingPlayerColor && hexColor(controllingPlayerColor)
+        }
     />
 );
 
@@ -454,7 +444,7 @@ const hexColor = (pc: PlayerColor): string => {
         case 'Blue':
             return '#0a3ddd';
         case 'Green':
-            return '#096035';
+            return '#099f35';
         case 'Yellow':
             return '#fde414';
         case 'Orange':
