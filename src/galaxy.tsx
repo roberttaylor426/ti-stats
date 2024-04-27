@@ -88,8 +88,6 @@ import tile82Back from './assets/tiles/ST_82_Back.png';
 import { PlayerColor } from './domain';
 
 /*
- Display Mallice tile
- Optionally display Creuss tile
  Tiles according map tile selection
  Players taking control of planets
  */
@@ -182,10 +180,16 @@ const tiles = [
 ];
 
 const controlledTiles: (PlayerColor[] | undefined)[] = [
-    ['Red', 'Blue'],
-    undefined,
+    ['Red', 'Blue', 'Black'],
+    ['Red'],
     ['Yellow'],
     ['Yellow'],
+    ['Black'],
+    ['Blue'],
+    ['Orange'],
+    ['Purple'],
+    ['Pink'],
+    ['Green'],
 ];
 
 const columnCount = 7;
@@ -231,7 +235,7 @@ const Galaxy: React.FC = () => (
             </StandardGalaxy>
         </GalaxyContainer>
         <ExtraTiles>
-            <MalliceTile controllingPlayerColor={'Red'} />
+            <MalliceTile controllingPlayerColor={undefined} />
             <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
         </ExtraTiles>
     </StyledGalaxy>
@@ -241,10 +245,6 @@ const hexagonWidthToHeightRatio = 1.1547005;
 
 const StyledGalaxy = styled.div`
     display: flex;
-
-    > * {
-        flex: 1 1 0;
-    }
 
     @media (orientation: portrait) {
         flex-direction: column;
@@ -282,19 +282,18 @@ const ExtraTile = styled.img<ExtraTileProps>`
     min-width: 0;
     min-height: 0;
     object-fit: contain;
-    padding: 1rem;
 
     @media (orientation: portrait) {
         border: ${(props) =>
             props.$highlightColor
-                ? `1vw solid ${props.$highlightColor}${standardHexTransparency}`
+                ? `0.75vw solid ${props.$highlightColor}${standardHexTransparency}`
                 : 'none'};
     }
 
     @media (orientation: landscape) {
         border: ${(props) =>
             props.$highlightColor
-                ? `1vh solid ${props.$highlightColor}${standardHexTransparency}`
+                ? `0.75vh solid ${props.$highlightColor}${standardHexTransparency}`
                 : 'none'};
     }
 `;
@@ -317,19 +316,23 @@ const TileColumn = styled.div<TileColumnProps>`
 
 const ExtraTiles = styled.div`
     display: flex;
-    gap: 2%;
+    justify-content: space-around;
     align-items: center;
-
-    > * {
-        flex: 1 1 0;
-    }
 
     @media (orientation: portrait) {
         flex-direction: row;
+
+        > * {
+            width: 25%;
+        }
     }
 
     @media (orientation: landscape) {
         flex-direction: column;
+
+        > * {
+            height: 25%;
+        }
     }
 `;
 
@@ -444,7 +447,7 @@ const hexColor = (pc: PlayerColor): string => {
         case 'Red':
             return '#f81204';
         case 'Blue':
-            return '#0a3ddd';
+            return '#1751e8';
         case 'Green':
             return '#099f35';
         case 'Yellow':
@@ -452,7 +455,7 @@ const hexColor = (pc: PlayerColor): string => {
         case 'Orange':
             return '#f07f0b';
         case 'Pink':
-            return '#d42baf';
+            return '#f212c1';
         case 'Purple':
             return '#c57fef';
     }
