@@ -1,5 +1,6 @@
 import {
     CategoryScale,
+    Chart,
     Chart as ChartJS,
     Legend,
     LinearScale,
@@ -42,28 +43,78 @@ type Props = {
     }[];
 };
 
+Chart.defaults.color = 'white';
+
 const Stats: React.FC<Props> = ({
     playerScores,
     timeTakenPerPlayer,
     timeTakenPerRound,
 }) => (
     <StyledStats>
-        <Scoreboard>
-            <ScoreboardRow title={'Scores'} color={'white'} value={''} />
-            {_.sortBy(playerScores, (ps) => ps.score)
-                .reverse()
-                .map((ps) => (
-                    <ScoreboardRow
-                        key={ps.faction}
-                        title={ps.faction}
-                        color={hexColor(ps.playerColor)}
-                        value={`${ps.score}VP`}
-                    />
-                ))}
-        </Scoreboard>
-        <Line
-            data={{ datasets: [{ data: [2, 3, 4] }], labels: ['a', 'b', 'c'] }}
-        />
+        <VpScores>
+            <Scoreboard>
+                <ScoreboardRow title={'Scores'} color={'white'} value={''} />
+                {_.sortBy(playerScores, (ps) => ps.score)
+                    .reverse()
+                    .map((ps) => (
+                        <ScoreboardRow
+                            key={ps.faction}
+                            title={ps.faction}
+                            color={hexColor(ps.playerColor)}
+                            value={`${ps.score}VP`}
+                        />
+                    ))}
+            </Scoreboard>
+            <Line
+                data={{
+                    datasets: [
+                        {
+                            borderColor: hexColor('Green'),
+                            pointBackgroundColor: hexColor('Green'),
+                            data: [0, 2, 3, 5],
+                        },
+                        {
+                            borderColor: hexColor('Red'),
+                            pointBackgroundColor: hexColor('Red'),
+                            data: [0, 2, 2, 3],
+                        },
+                    ],
+                    labels: [
+                        '',
+                        'Round 1',
+                        'Round 2',
+                        'Round 3',
+                        'Round 4',
+                        'Round 5',
+                        'Round 6',
+                        'Round 7',
+                        'Round 8',
+                        'Round 9',
+                    ],
+                }}
+                options={{
+                    elements: {
+                        point: {
+                            radius: 10,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                font: { family: 'Handel Gothic', size: 16 },
+                            },
+                        },
+                        y: {
+                            ticks: {
+                                stepSize: 1,
+                                font: { family: 'Handel Gothic', size: 16 },
+                            },
+                        },
+                    },
+                    plugins: { legend: { display: false } },
+                }}
+            />
+        </VpScores>
         <Scoreboard>
             <ScoreboardRow
                 title={'Av. time taken per turn'}
@@ -114,6 +165,15 @@ const Stats: React.FC<Props> = ({
 const StyledStats = styled.div`
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    margin: 4rem;
+    gap: 4rem;
+`;
+
+const VpScores = styled.section`
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 `;
 
 const Scoreboard = styled.section`
@@ -121,9 +181,6 @@ const Scoreboard = styled.section`
     flex-direction: column;
     gap: 0.5rem;
     font-size: 2rem;
-    margin-top: 8rem;
-    margin-left: 4rem;
-    margin-right: 4rem;
 `;
 
 type ScoreboardRowProps = {
