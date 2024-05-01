@@ -13,8 +13,7 @@ import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { Faction, PlayerColor } from './domain';
-import { hexColor } from './galaxy';
+import { Faction, hexColor, PlayerColor } from './domain';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 

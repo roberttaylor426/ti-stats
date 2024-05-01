@@ -1,4 +1,5 @@
-import { Faction, PlayerColor, TileNumber } from './domain';
+import { Faction, PlayerColor } from './domain';
+import { TileNumber } from './tiles';
 
 type PlayerAssignedColorEvent = {
     type: 'PlayerAssignedColor';
