@@ -14,7 +14,11 @@ import styled from 'styled-components';
 import _ from 'underscore';
 
 import { Faction, hexColor, PlayerColor } from './domain';
-import { Event, isPlayerScoredVictoryPointEvent } from './events';
+import {
+    Event,
+    isPlayerScoredVictoryPointEvent,
+    isRoundStartedOrEndedEvent,
+} from './events';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
@@ -40,7 +44,6 @@ const Stats: React.FC<Props> = ({
     playerColors,
     factionsInGame,
     timeTakenPerPlayer,
-    timeTakenPerRound,
 }) => {
     const playerScores = factionsInGame.map((f) => ({
         faction: f,
@@ -78,6 +81,26 @@ const Stats: React.FC<Props> = ({
             ),
         ]
     );
+
+    const roundStartedAndEndedEvents = events.filter(
+        isRoundStartedOrEndedEvent
+    );
+
+    const timeTakenPerRound = roundStartedAndEndedEvents
+        .filter(
+            (e, index) =>
+                !(
+                    index === roundStartedAndEndedEvents.length - 1 &&
+                    e.type === 'RoundStarted'
+                )
+        )
+        .reduce((acc, n) => {
+            if (n.type === 'RoundStarted') {
+                return [...acc, n.time];
+            }
+
+            return [..._.initial(acc), n.time - (_.last(acc) as number)];
+        }, [] as number[]);
 
     return (
         <StyledStats>
@@ -176,15 +199,15 @@ const Stats: React.FC<Props> = ({
                     color={'white'}
                     value={''}
                 />
-                {_.sortBy(timeTakenPerRound, (ps) => ps.round).map((ps) => (
+                {timeTakenPerRound.map((ps, index) => (
                     <ScoreboardRow
-                        key={ps.round}
-                        title={`Round ${ps.round}`}
+                        key={index}
+                        title={`Round ${index + 1}`}
                         color={'white'}
                         value={`${formatDuration(
                             intervalToDuration({
                                 start: 0,
-                                end: ps.timeTakenInMillis,
+                                end: ps,
                             }),
                             { format: ['hours', 'minutes', 'seconds'] }
                         )}`}
