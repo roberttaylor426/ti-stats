@@ -79,15 +79,6 @@ const Stats: React.FC<Props> = ({
         ]
     );
 
-    //     factionsInGame.map((f) => ({
-    //     faction: f,
-    //     playerColor: playerColors[f],
-    //     score: events
-    //         .filter(isPlayerScoredVictoryPointEvent)
-    //         .filter((e) => e.faction === f)
-    //         .reduce((acc, n) => acc + n.delta, 0),
-    // }));
-
     return (
         <StyledStats>
             <VpScores>
@@ -108,45 +99,53 @@ const Stats: React.FC<Props> = ({
                             />
                         ))}
                 </Scoreboard>
-                <Line
-                    data={{
-                        datasets: factionsInGame.map((f) => ({
-                            borderColor: hexColor(playerColors[f]),
-                            pointBackgroundColor: hexColor(playerColors[f]),
-                            data: [
-                                0,
-                                ...playerScoresByRound.map((sbr) => sbr[f]),
+                {playerScoresByRound.length > 2 && (
+                    <Line
+                        data={{
+                            datasets: factionsInGame.map((f) => ({
+                                borderColor: hexColor(playerColors[f]),
+                                pointBackgroundColor: hexColor(playerColors[f]),
+                                data: [
+                                    0,
+                                    ...playerScoresByRound.map((sbr) => sbr[f]),
+                                ],
+                            })),
+                            labels: [
+                                '',
+                                ..._.tail(playerScoresByRound).map(
+                                    (_, index) => `Round ${index + 1}`
+                                ),
                             ],
-                        })),
-                        labels: [
-                            '',
-                            ...playerScoresByRound.map(
-                                (_, index) => `Round ${index + 1}`
-                            ),
-                        ],
-                    }}
-                    options={{
-                        elements: {
-                            point: {
-                                radius: 10,
-                            },
-                        },
-                        scales: {
-                            x: {
-                                ticks: {
-                                    font: { family: 'Handel Gothic', size: 16 },
+                        }}
+                        options={{
+                            elements: {
+                                point: {
+                                    radius: 10,
                                 },
                             },
-                            y: {
-                                ticks: {
-                                    stepSize: 1,
-                                    font: { family: 'Handel Gothic', size: 16 },
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            family: 'Handel Gothic',
+                                            size: 16,
+                                        },
+                                    },
+                                },
+                                y: {
+                                    ticks: {
+                                        stepSize: 1,
+                                        font: {
+                                            family: 'Handel Gothic',
+                                            size: 16,
+                                        },
+                                    },
                                 },
                             },
-                        },
-                        plugins: { legend: { display: false } },
-                    }}
-                />
+                            plugins: { legend: { display: false } },
+                        }}
+                    />
+                )}
             </VpScores>
             <Scoreboard>
                 <ScoreboardRow

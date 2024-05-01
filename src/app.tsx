@@ -65,29 +65,6 @@ const events: Event[] = [
         type: 'RoundEnded',
         time: new Date().getTime(),
     },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'The Mahact Gene-Sorcerers',
-        delta: 1,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime(),
-    },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'Sardakk N’orr',
-        delta: 1,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime(),
-    },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'The Mahact Gene-Sorcerers',
-        delta: -1,
-    },
 ];
 
 const playerColors = events
