@@ -10,7 +10,6 @@ import {
     Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
-    isPlayerAssignedColorEvent,
     PlanetControlledEvent,
 } from './events';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
@@ -26,161 +25,120 @@ import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 
 const range = (n: number) => [...Array(n).keys()];
 
-type FactionResourcesAndInfluence = {
-    faction: Faction;
-    playerColor: PlayerColor;
-    resourcesAndInfluence: ResourcesAndInfluence;
+type Props = {
+    events: Event[];
+    factionsInGame: Faction[];
+    playerColors: Record<Faction, PlayerColor>;
 };
 
-const events: Event[] = [
-    { type: 'PlayerAssignedColor', faction: 'Sardakk N’orr', color: 'Red' },
-    {
-        type: 'PlayerAssignedColor',
-        faction: 'The Mahact Gene-Sorcerers',
-        color: 'Yellow',
-    },
-    {
-        type: 'MapTileSelected',
-        systemTileNumber: 1,
-        position: 0,
-    },
-    {
-        type: 'MapTileSelected',
-        systemTileNumber: 10,
-        position: 1,
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Jord',
-        faction: 'Sardakk N’orr',
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Jord',
-        faction: 'The Mahact Gene-Sorcerers',
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Wren Terra',
-        faction: 'Sardakk N’orr',
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Arc Prime',
-        faction: 'The Mahact Gene-Sorcerers',
-    },
-];
+const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
+    const latestPlanetControlledEventsByPlanet = events
+        .filter(isPlanetControlledEvent)
+        .reverse()
+        .reduce(
+            (acc: PlanetControlledEvent[], n) =>
+                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
+            []
+        );
 
-const playerColors = events
-    .filter(isPlayerAssignedColorEvent)
-    .reduce(
-        (acc, n) => ({ ...acc, [n.faction]: n.color }),
-        {} as Record<Faction, PlayerColor>
-    );
+    const planetsControlledByFaction = (faction: Faction): PlanetName[] =>
+        latestPlanetControlledEventsByPlanet
+            .filter((e) => e.faction === faction)
+            .map((e) => e.planet);
 
-const factionsInGame = _.uniq(
-    events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
-);
+    const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =
+        factionsInGame.map((f) => ({
+            faction: f,
+            playerColor: playerColors[f],
+            resourcesAndInfluence: planetsControlledByFaction(f)
+                .map((p) => planets[p])
+                .reduce(
+                    (acc, n) => ({
+                        resources: acc.resources + n.resources,
+                        influence: acc.influence + n.influence,
+                    }),
+                    {
+                        resources: 0,
+                        influence: 0,
+                    }
+                ),
+        }));
 
-const latestPlanetControlledEventsByPlanet = events
-    .filter(isPlanetControlledEvent)
-    .reverse()
-    .reduce(
-        (acc: PlanetControlledEvent[], n) =>
-            acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
-        []
-    );
-
-const planetsControlledByFaction = (faction: Faction): PlanetName[] =>
-    latestPlanetControlledEventsByPlanet
-        .filter((e) => e.faction === faction)
-        .map((e) => e.planet);
-
-const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =
-    factionsInGame.map((f) => ({
-        faction: f,
-        playerColor: playerColors[f],
-        resourcesAndInfluence: planetsControlledByFaction(f)
-            .map((p) => planets[p])
-            .reduce(
-                (acc, n) => ({
-                    resources: acc.resources + n.resources,
-                    influence: acc.influence + n.influence,
-                }),
-                {
-                    resources: 0,
-                    influence: 0,
-                }
-            ),
-    }));
-
-const Galaxy: React.FC = () => (
-    <StyledGalaxy>
-        <GalaxyContainer>
-            <StandardGalaxy>
-                <TileColumnRow>
-                    {range(galaxyColumnCount).map((columnIndex) => (
-                        <TileColumn
-                            $columnIndex={columnIndex}
-                            key={columnIndex}
-                        >
-                            {range(tilesPerColumn(columnIndex)).map(
-                                (rowIndex) => {
-                                    const systemTileNumber = events
-                                        .filter(isMapTileSelectedEvent)
-                                        .find(
-                                            (e) =>
-                                                e.position ===
-                                                tileIndex(columnIndex, rowIndex)
-                                        )?.systemTileNumber;
-
-                                    return (
-                                        <HighlightableSystemTile
-                                            key={`tile ${tileIndex(columnIndex, rowIndex)}`}
-                                            systemTileNumber={systemTileNumber}
-                                            controllingPlayerColors={
-                                                systemTiles
-                                                    .find(
-                                                        (st) =>
-                                                            st.tileNumber ===
-                                                            systemTileNumber
+    return (
+        <StyledGalaxy>
+            <GalaxyContainer>
+                <StandardGalaxy>
+                    <TileColumnRow>
+                        {range(galaxyColumnCount).map((columnIndex) => (
+                            <TileColumn
+                                $columnIndex={columnIndex}
+                                key={columnIndex}
+                            >
+                                {range(tilesPerColumn(columnIndex)).map(
+                                    (rowIndex) => {
+                                        const systemTileNumber = events
+                                            .filter(isMapTileSelectedEvent)
+                                            .find(
+                                                (e) =>
+                                                    e.position ===
+                                                    tileIndex(
+                                                        columnIndex,
+                                                        rowIndex
                                                     )
-                                                    ?.planets.map((p) =>
-                                                        latestPlanetControlledEventsByPlanet.find(
-                                                            (e) =>
-                                                                e.planet === p
+                                            )?.systemTileNumber;
+
+                                        return (
+                                            <HighlightableSystemTile
+                                                key={`tile ${tileIndex(columnIndex, rowIndex)}`}
+                                                systemTileNumber={
+                                                    systemTileNumber
+                                                }
+                                                controllingPlayerColors={
+                                                    systemTiles
+                                                        .find(
+                                                            (st) =>
+                                                                st.tileNumber ===
+                                                                systemTileNumber
                                                         )
-                                                    )
-                                                    .filter(notUndefined)
-                                                    .map(
-                                                        (e) =>
-                                                            playerColors[
-                                                                e.faction
-                                                            ]
-                                                    ) || []
-                                            }
-                                        />
-                                    );
-                                }
-                            )}
-                        </TileColumn>
-                    ))}
-                </TileColumnRow>
-            </StandardGalaxy>
-        </GalaxyContainer>
-        <ExtraTiles>
-            <MalliceTile controllingPlayerColor={undefined} />
-            <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
-        </ExtraTiles>
-        <Scoreboard>
-            <ResourcesInfluenceScoreboardRow
-                title={''}
-                color={'white'}
-                resources={'Resources'}
-                influence={'Influence'}
-            />
-            {_.sortBy(factionResourcesAndInfluence, (fsi) => fsi.faction).map(
-                (fsi) => (
+                                                        ?.planets.map((p) =>
+                                                            latestPlanetControlledEventsByPlanet.find(
+                                                                (e) =>
+                                                                    e.planet ===
+                                                                    p
+                                                            )
+                                                        )
+                                                        .filter(notUndefined)
+                                                        .map(
+                                                            (e) =>
+                                                                playerColors[
+                                                                    e.faction
+                                                                ]
+                                                        ) || []
+                                                }
+                                            />
+                                        );
+                                    }
+                                )}
+                            </TileColumn>
+                        ))}
+                    </TileColumnRow>
+                </StandardGalaxy>
+            </GalaxyContainer>
+            <ExtraTiles>
+                <MalliceTile controllingPlayerColor={undefined} />
+                <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
+            </ExtraTiles>
+            <Scoreboard>
+                <ResourcesInfluenceScoreboardRow
+                    title={''}
+                    color={'white'}
+                    resources={'Resources'}
+                    influence={'Influence'}
+                />
+                {_.sortBy(
+                    factionResourcesAndInfluence,
+                    (fsi) => fsi.faction
+                ).map((fsi) => (
                     <ResourcesInfluenceScoreboardRow
                         key={fsi.faction}
                         title={fsi.faction}
@@ -188,11 +146,17 @@ const Galaxy: React.FC = () => (
                         resources={`${fsi.resourcesAndInfluence.resources}`}
                         influence={`${fsi.resourcesAndInfluence.influence}`}
                     />
-                )
-            )}
-        </Scoreboard>
-    </StyledGalaxy>
-);
+                ))}
+            </Scoreboard>
+        </StyledGalaxy>
+    );
+};
+
+type FactionResourcesAndInfluence = {
+    faction: Faction;
+    playerColor: PlayerColor;
+    resourcesAndInfluence: ResourcesAndInfluence;
+};
 
 const galaxyColumnCount = 7;
 

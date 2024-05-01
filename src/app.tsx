@@ -6,10 +6,68 @@ import {
     RouterProvider,
 } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
+import _ from 'underscore';
 
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
+import { Faction, PlayerColor } from './domain';
+import { Event, isPlayerAssignedColorEvent } from './events';
 import { Galaxy } from './galaxy';
 import { Stats } from './stats';
+
+const events: Event[] = [
+    { type: 'PlayerAssignedColor', faction: 'Sardakk N’orr', color: 'Red' },
+    {
+        type: 'PlayerAssignedColor',
+        faction: 'The Mahact Gene-Sorcerers',
+        color: 'Yellow',
+    },
+    {
+        type: 'MapTileSelected',
+        systemTileNumber: 1,
+        position: 0,
+    },
+    {
+        type: 'MapTileSelected',
+        systemTileNumber: 10,
+        position: 1,
+    },
+    {
+        type: 'PlanetControlled',
+        planet: 'Jord',
+        faction: 'Sardakk N’orr',
+    },
+    {
+        type: 'PlanetControlled',
+        planet: 'Jord',
+        faction: 'The Mahact Gene-Sorcerers',
+    },
+    {
+        type: 'PlanetControlled',
+        planet: 'Wren Terra',
+        faction: 'Sardakk N’orr',
+    },
+    {
+        type: 'PlanetControlled',
+        planet: 'Arc Prime',
+        faction: 'The Mahact Gene-Sorcerers',
+    },
+    {
+        type: 'PlayerScoredVictoryPoint',
+        faction: 'Sardakk N’orr',
+        delta: 1,
+    },
+];
+
+const playerColors = events
+    .filter(isPlayerAssignedColorEvent)
+    .reduce(
+        (acc, n) => ({ ...acc, [n.faction]: n.color }),
+        {} as Record<Faction, PlayerColor>
+    );
+
+const factionsInGame = _.uniq(
+    events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
+);
 
 const App: React.FC = () => (
     <>
@@ -21,45 +79,26 @@ const App: React.FC = () => (
                         <Route
                             key="galaxy"
                             path={'/galaxy'}
-                            element={<Galaxy />}
+                            element={
+                                <Galaxy
+                                    {...{
+                                        events,
+                                        playerColors,
+                                        factionsInGame,
+                                    }}
+                                />
+                            }
                         />,
                         <Route
                             key="stats"
                             path={'/stats'}
                             element={
                                 <Stats
-                                    playerScores={[
-                                        {
-                                            faction: 'Sardakk N’orr',
-                                            playerColor: 'Red',
-                                            score: 1,
-                                        },
-                                        {
-                                            faction: 'The Arborec',
-                                            playerColor: 'Green',
-                                            score: 3,
-                                        },
-                                        {
-                                            faction: 'The Ghosts of Creuss',
-                                            playerColor: 'Blue',
-                                            score: 5,
-                                        },
-                                        {
-                                            faction: 'The Argent Flight',
-                                            playerColor: 'Orange',
-                                            score: 3,
-                                        },
-                                        {
-                                            faction: 'The Empyrean',
-                                            playerColor: 'Purple',
-                                            score: 4,
-                                        },
-                                        {
-                                            faction: 'The Clan of Saar',
-                                            playerColor: 'Black',
-                                            score: 2,
-                                        },
-                                    ]}
+                                    {...{
+                                        events,
+                                        playerColors,
+                                        factionsInGame,
+                                    }}
                                     timeTakenPerPlayer={[
                                         {
                                             faction: 'Sardakk N’orr',

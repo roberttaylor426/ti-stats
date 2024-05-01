@@ -27,12 +27,12 @@ type ActionPhaseStartedEvent = {
 type PlayerFinishedTurnEvent = {
     type: 'PlayerFinishedTurn';
     time: number;
-    player: Faction;
+    faction: Faction;
 };
 
 type PlayerScoredVictoryPointEvent = {
     type: 'PlayerScoredVictoryPoint';
-    player: Faction;
+    faction: Faction;
     delta: 1 | -1;
 };
 
@@ -68,6 +68,10 @@ const isMapTileSelectedEvent = (e: Event): e is MapTileSelectedEvent =>
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
 
+const isPlayerScoredVictoryPointEvent = (
+    e: Event
+): e is PlayerScoredVictoryPointEvent => e.type === 'PlayerScoredVictoryPoint';
+
 type Event =
     | ActionPhaseStartedEvent
     | MapTileSelectedEvent
@@ -76,15 +80,16 @@ type Event =
     | PlanetEnhancedEvent
     | PlayerAssignedColorEvent
     | PlayerFinishedTurnEvent
+    | PlayerScoredVictoryPointEvent
     | RoundEndedEvent
-    | RoundStartedEvent
-    | PlayerScoredVictoryPointEvent;
+    | RoundStartedEvent;
 
 export {
     Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
     isPlayerAssignedColorEvent,
+    isPlayerScoredVictoryPointEvent,
     MapTileSelectedEvent,
     PlanetControlledEvent,
 };
