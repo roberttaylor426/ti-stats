@@ -17,6 +17,7 @@ import { Faction, hexColor, PlayerColor } from './domain';
 import {
     Event,
     isPlayerScoredVictoryPointEvent,
+    isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
 } from './events';
 
@@ -113,6 +114,8 @@ const Stats: React.FC<Props> = ({ events, playerColors, factionsInGame }) => {
             ) / timesTakenPerPlayerPerTurn.playerTurnTimes[f].length,
     }));
 
+    const roundEndedEvents = events.filter(isRoundEndedEvent);
+
     const roundStartedAndEndedEvents = events.filter(
         isRoundStartedOrEndedEvent
     );
@@ -201,79 +204,83 @@ const Stats: React.FC<Props> = ({ events, playerColors, factionsInGame }) => {
                     />
                 )}
             </VpScores>
-            <Scoreboard>
-                <ScoreboardRow
-                    title={'Average time taken per turn'}
-                    color={'white'}
-                    value={''}
-                />
-                {_.sortBy(
-                    averageTimesTakenPerPlayer,
-                    (ps) => ps.avTimeTakenInMillis
-                )
-                    .reverse()
-                    .map((ps) => (
+            {roundEndedEvents.length > 0 && (
+                <>
+                    <Scoreboard>
                         <ScoreboardRow
-                            key={ps.faction}
-                            title={ps.faction}
-                            color={hexColor(ps.playerColor)}
-                            value={`${formatDuration(
-                                intervalToDuration({
-                                    start: 0,
-                                    end: ps.avTimeTakenInMillis,
-                                }),
-                                { format: ['minutes', 'seconds'] }
-                            )}`}
+                            title={'Average time taken per turn'}
+                            color={'white'}
+                            value={''}
                         />
-                    ))}
-            </Scoreboard>
-            <Scoreboard>
-                <ScoreboardRow
-                    title={'Max time taken on a turn'}
-                    color={'white'}
-                    value={''}
-                />
-                {_.sortBy(
-                    averageTimesTakenPerPlayer,
-                    (ps) => ps.maxTimeTakenInMillis
-                )
-                    .reverse()
-                    .map((ps) => (
+                        {_.sortBy(
+                            averageTimesTakenPerPlayer,
+                            (ps) => ps.avTimeTakenInMillis
+                        )
+                            .reverse()
+                            .map((ps) => (
+                                <ScoreboardRow
+                                    key={ps.faction}
+                                    title={ps.faction}
+                                    color={hexColor(ps.playerColor)}
+                                    value={`${formatDuration(
+                                        intervalToDuration({
+                                            start: 0,
+                                            end: ps.avTimeTakenInMillis,
+                                        }),
+                                        { format: ['minutes', 'seconds'] }
+                                    )}`}
+                                />
+                            ))}
+                    </Scoreboard>
+                    <Scoreboard>
                         <ScoreboardRow
-                            key={ps.faction}
-                            title={ps.faction}
-                            color={hexColor(ps.playerColor)}
-                            value={`${formatDuration(
-                                intervalToDuration({
-                                    start: 0,
-                                    end: ps.maxTimeTakenInMillis,
-                                }),
-                                { format: ['minutes', 'seconds'] }
-                            )}`}
+                            title={'Max time taken on a turn'}
+                            color={'white'}
+                            value={''}
                         />
-                    ))}
-            </Scoreboard>
-            <Scoreboard>
-                <ScoreboardRow
-                    title={'Time taken per round'}
-                    color={'white'}
-                    value={''}
-                />
-                {timeTakenPerRound.map((ps, index) => (
-                    <ScoreboardRow
-                        key={index}
-                        title={`Round ${index + 1}`}
-                        color={'white'}
-                        value={`${formatDuration(
-                            intervalToDuration({
-                                start: 0,
-                                end: ps,
-                            }),
-                            { format: ['hours', 'minutes', 'seconds'] }
-                        )}`}
-                    />
-                ))}
-            </Scoreboard>
+                        {_.sortBy(
+                            averageTimesTakenPerPlayer,
+                            (ps) => ps.maxTimeTakenInMillis
+                        )
+                            .reverse()
+                            .map((ps) => (
+                                <ScoreboardRow
+                                    key={ps.faction}
+                                    title={ps.faction}
+                                    color={hexColor(ps.playerColor)}
+                                    value={`${formatDuration(
+                                        intervalToDuration({
+                                            start: 0,
+                                            end: ps.maxTimeTakenInMillis,
+                                        }),
+                                        { format: ['minutes', 'seconds'] }
+                                    )}`}
+                                />
+                            ))}
+                    </Scoreboard>
+                    <Scoreboard>
+                        <ScoreboardRow
+                            title={'Time taken per round'}
+                            color={'white'}
+                            value={''}
+                        />
+                        {timeTakenPerRound.map((ps, index) => (
+                            <ScoreboardRow
+                                key={index}
+                                title={`Round ${index + 1}`}
+                                color={'white'}
+                                value={`${formatDuration(
+                                    intervalToDuration({
+                                        start: 0,
+                                        end: ps,
+                                    }),
+                                    { format: ['hours', 'minutes', 'seconds'] }
+                                )}`}
+                            />
+                        ))}
+                    </Scoreboard>
+                </>
+            )}
         </StyledStats>
     );
 };
