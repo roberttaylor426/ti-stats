@@ -173,7 +173,7 @@ const Scoreboard = styled.section`
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    font-size: 2rem;
+    font-size: 2.25rem;
     margin-top: 8rem;
     margin-left: 4rem;
     margin-right: 4rem;

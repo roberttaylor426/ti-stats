@@ -303,7 +303,7 @@ const Scoreboard = styled.section`
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    font-size: 2rem;
+    font-size: 2.25rem;
 `;
 
 type ScoreboardRowProps = {
