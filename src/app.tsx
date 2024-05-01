@@ -56,6 +56,10 @@ const events: Event[] = [
         time: 0,
     },
     {
+        type: 'ActionPhaseStarted',
+        time: 0,
+    },
+    {
         type: 'PlanetControlled',
         planet: 'Jord',
         faction: 'Sardakk N’orr',
@@ -86,6 +90,21 @@ const events: Event[] = [
         delta: 1,
     },
     {
+        type: 'PlayerFinishedTurn',
+        faction: 'Sardakk N’orr',
+        time: new Date().getTime(),
+    },
+    {
+        type: 'PlayerFinishedTurn',
+        faction: 'The Mahact Gene-Sorcerers',
+        time: new Date().getTime() + 120_000,
+    },
+    {
+        type: 'PlayerFinishedTurn',
+        faction: 'Sardakk N’orr',
+        time: new Date().getTime() + 180_000,
+    },
+    {
         type: 'RoundEnded',
         time: new Date().getTime(),
     },
@@ -106,6 +125,38 @@ const events: Event[] = [
     {
         type: 'RoundEnded',
         time: new Date().getTime() + 120_000,
+    },
+    {
+        type: 'RoundStarted',
+        time: new Date().getTime() + 120_000,
+    },
+    {
+        type: 'RoundEnded',
+        time: new Date().getTime() + 220_000,
+    },
+    {
+        type: 'RoundStarted',
+        time: new Date().getTime() + 120_000,
+    },
+    {
+        type: 'RoundEnded',
+        time: new Date().getTime() + 220_000,
+    },
+    {
+        type: 'RoundStarted',
+        time: new Date().getTime() + 120_000,
+    },
+    {
+        type: 'RoundEnded',
+        time: new Date().getTime() + 220_000,
+    },
+    {
+        type: 'RoundStarted',
+        time: new Date().getTime() + 120_000,
+    },
+    {
+        type: 'RoundEnded',
+        time: new Date().getTime() + 220_000,
     },
     {
         type: 'RoundStarted',
@@ -158,48 +209,6 @@ const App: React.FC = () => (
                                         playerColors,
                                         factionsInGame,
                                     }}
-                                    timeTakenPerPlayer={[
-                                        {
-                                            faction: 'Sardakk N’orr',
-                                            playerColor: 'Red',
-                                            avTimeTakenInMillis: 1000000,
-                                        },
-                                        {
-                                            faction: 'The Arborec',
-                                            playerColor: 'Green',
-                                            avTimeTakenInMillis: 30000,
-                                        },
-                                        {
-                                            faction: 'The Ghosts of Creuss',
-                                            playerColor: 'Blue',
-                                            avTimeTakenInMillis: 500000,
-                                        },
-                                        {
-                                            faction: 'The Argent Flight',
-                                            playerColor: 'Orange',
-                                            avTimeTakenInMillis: 1000,
-                                        },
-                                        {
-                                            faction: 'The Empyrean',
-                                            playerColor: 'Purple',
-                                            avTimeTakenInMillis: 400000,
-                                        },
-                                        {
-                                            faction: 'The Clan of Saar',
-                                            playerColor: 'Black',
-                                            avTimeTakenInMillis: 200000,
-                                        },
-                                    ]}
-                                    timeTakenPerRound={[
-                                        {
-                                            round: 1,
-                                            timeTakenInMillis: 30000,
-                                        },
-                                        {
-                                            round: 2,
-                                            timeTakenInMillis: 30000001,
-                                        },
-                                    ]}
                                 />
                             }
                         />,

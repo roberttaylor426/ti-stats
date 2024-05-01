@@ -26,25 +26,11 @@ type Props = {
     events: Event[];
     factionsInGame: Faction[];
     playerColors: Record<Faction, PlayerColor>;
-    timeTakenPerPlayer: {
-        faction: Faction;
-        playerColor: PlayerColor;
-        avTimeTakenInMillis: number;
-    }[];
-    timeTakenPerRound: {
-        round: number;
-        timeTakenInMillis: number;
-    }[];
 };
 
 Chart.defaults.color = 'white';
 
-const Stats: React.FC<Props> = ({
-    events,
-    playerColors,
-    factionsInGame,
-    timeTakenPerPlayer,
-}) => {
+const Stats: React.FC<Props> = ({ events, playerColors, factionsInGame }) => {
     const playerScores = factionsInGame.map((f) => ({
         faction: f,
         playerColor: playerColors[f],
@@ -81,6 +67,51 @@ const Stats: React.FC<Props> = ({
             ),
         ]
     );
+
+    const timesTakenPerPlayerPerTurn = events.reduce(
+        (acc, n) => {
+            if (n.type === 'ActionPhaseStarted') {
+                return {
+                    ...acc,
+                    playerTurnStartedTime: n.time,
+                };
+            }
+            if (n.type === 'PlayerFinishedTurn') {
+                return {
+                    playerTurnTimes: {
+                        ...acc.playerTurnTimes,
+                        [n.faction]: [
+                            ...acc.playerTurnTimes[n.faction],
+                            n.time - acc.playerTurnStartedTime,
+                        ],
+                    },
+                    playerTurnStartedTime: n.time,
+                };
+            }
+
+            return acc;
+        },
+        {
+            playerTurnStartedTime: 0,
+            playerTurnTimes: factionsInGame.reduce(
+                (acc, n) => ({ ...acc, [n]: [] }),
+                {} as Record<Faction, number[]>
+            ),
+        }
+    );
+
+    const averageTimesTakenPerPlayer = factionsInGame.map((f) => ({
+        faction: f,
+        playerColor: playerColors[f],
+        maxTimeTakenInMillis: timesTakenPerPlayerPerTurn.playerTurnTimes[
+            f
+        ].reduce((acc, n) => Math.max(acc, n), 0),
+        avTimeTakenInMillis:
+            timesTakenPerPlayerPerTurn.playerTurnTimes[f].reduce(
+                (acc, n) => acc + n,
+                0
+            ) / timesTakenPerPlayerPerTurn.playerTurnTimes[f].length,
+    }));
 
     const roundStartedAndEndedEvents = events.filter(
         isRoundStartedOrEndedEvent
@@ -172,11 +203,14 @@ const Stats: React.FC<Props> = ({
             </VpScores>
             <Scoreboard>
                 <ScoreboardRow
-                    title={'Av. time taken per turn'}
+                    title={'Average time taken per turn'}
                     color={'white'}
                     value={''}
                 />
-                {_.sortBy(timeTakenPerPlayer, (ps) => ps.avTimeTakenInMillis)
+                {_.sortBy(
+                    averageTimesTakenPerPlayer,
+                    (ps) => ps.avTimeTakenInMillis
+                )
                     .reverse()
                     .map((ps) => (
                         <ScoreboardRow
@@ -187,6 +221,32 @@ const Stats: React.FC<Props> = ({
                                 intervalToDuration({
                                     start: 0,
                                     end: ps.avTimeTakenInMillis,
+                                }),
+                                { format: ['minutes', 'seconds'] }
+                            )}`}
+                        />
+                    ))}
+            </Scoreboard>
+            <Scoreboard>
+                <ScoreboardRow
+                    title={'Max time taken on a turn'}
+                    color={'white'}
+                    value={''}
+                />
+                {_.sortBy(
+                    averageTimesTakenPerPlayer,
+                    (ps) => ps.maxTimeTakenInMillis
+                )
+                    .reverse()
+                    .map((ps) => (
+                        <ScoreboardRow
+                            key={ps.faction}
+                            title={ps.faction}
+                            color={hexColor(ps.playerColor)}
+                            value={`${formatDuration(
+                                intervalToDuration({
+                                    start: 0,
+                                    end: ps.maxTimeTakenInMillis,
                                 }),
                                 { format: ['minutes', 'seconds'] }
                             )}`}
