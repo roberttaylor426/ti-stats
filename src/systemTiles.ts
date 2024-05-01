@@ -1,3 +1,4 @@
+import tile0 from './assets/tiles/ST_0.png';
 import tile1 from './assets/tiles/ST_1.png';
 import tile2 from './assets/tiles/ST_2.png';
 import tile3 from './assets/tiles/ST_3.png';
@@ -83,12 +84,12 @@ import tile82 from './assets/tiles/ST_82.png';
 import { PlanetName } from './planets';
 
 type SystemTile = {
-    tileNumber: TileNumber;
+    tileNumber: SystemTileNumber;
     image: string;
     planets: PlanetName[];
 };
 
-const tileImages = [
+const systemTileImages = [
     tile1,
     tile2,
     tile3,
@@ -173,7 +174,7 @@ const tileImages = [
     tile82,
 ];
 
-type TileNumber =
+type SystemTileNumber =
     | 1
     | 2
     | 3
@@ -670,4 +671,4 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
-export { systemTiles,tileImages, TileNumber };
+export { systemTileImages, SystemTileNumber, systemTiles, tile0 };

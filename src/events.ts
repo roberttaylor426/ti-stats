@@ -1,5 +1,5 @@
 import { Faction, PlayerColor } from './domain';
-import { TileNumber } from './tiles';
+import { SystemTileNumber } from './systemTiles';
 
 type PlayerAssignedColorEvent = {
     type: 'PlayerAssignedColor';
@@ -9,7 +9,7 @@ type PlayerAssignedColorEvent = {
 
 type MapTileSelectedEvent = {
     type: 'MapTileSelected';
-    tile: TileNumber;
+    systemTileNumber: SystemTileNumber;
     position: number;
 };
 
@@ -47,6 +47,9 @@ type RoundEndedEvent = {
     time: number;
 };
 
+const isMapTileSelected = (e: Event): e is MapTileSelectedEvent =>
+    e.type === 'MapTileSelected';
+
 type Event =
     | PlayerAssignedColorEvent
     | MapTileSelectedEvent
@@ -56,3 +59,5 @@ type Event =
     | PlanetEnhancedEvent
     | PlanetControlledEvent
     | RoundEndedEvent;
+
+export { Event, isMapTileSelected, MapTileSelectedEvent };

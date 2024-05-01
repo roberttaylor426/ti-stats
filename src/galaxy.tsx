@@ -6,10 +6,10 @@ import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
 import { Faction, hexColor, PlayerColor } from './domain';
-import { tileImages } from './tiles';
+import { Event, isMapTileSelected } from './events';
+import { systemTileImages, tile0 } from './systemTiles';
 
 /*
- Tiles according to map tile selection
  Extract common scoreboard component
  Players taking control of planets
  Background of titles
@@ -76,6 +76,19 @@ const factionScores: FactionResourcesAndInfluence[] = [
     },
 ];
 
+const events: Event[] = [
+    {
+        type: 'MapTileSelected',
+        systemTileNumber: 1,
+        position: 0,
+    },
+    {
+        type: 'MapTileSelected',
+        systemTileNumber: 10,
+        position: 1,
+    },
+];
+
 const Galaxy: React.FC = () => (
     <StyledGalaxy>
         <GalaxyContainer>
@@ -88,12 +101,20 @@ const Galaxy: React.FC = () => (
                         >
                             {range(tilesPerColumn(columnIndex)).map(
                                 (rowIndex) => (
-                                    <HighlightableTile
+                                    <HighlightableSystemTile
                                         key={`tile ${tileIndex(columnIndex, rowIndex)}`}
-                                        tileIndex={tileIndex(
-                                            columnIndex,
-                                            rowIndex
-                                        )}
+                                        systemTileNumber={
+                                            events
+                                                .filter(isMapTileSelected)
+                                                .find(
+                                                    (e) =>
+                                                        e.position ===
+                                                        tileIndex(
+                                                            columnIndex,
+                                                            rowIndex
+                                                        )
+                                                )?.systemTileNumber
+                                        }
                                         controllingPlayerColors={
                                             controlledTiles[
                                                 tileIndex(columnIndex, rowIndex)
@@ -291,16 +312,23 @@ const ExtraTiles = styled.div`
 `;
 
 type HighlightableTileProps = {
-    tileIndex: number;
+    systemTileNumber?: number;
     controllingPlayerColors: PlayerColor[];
 };
 
-const HighlightableTile: React.FC<HighlightableTileProps> = ({
-    tileIndex,
+const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
+    systemTileNumber,
     controllingPlayerColors,
 }) => (
     <StyledHighlightableTile>
-        <Tile src={tileImages[tileIndex]} alt={`System tile ${tileIndex}`} />
+        <Tile
+            src={
+                systemTileNumber
+                    ? systemTileImages[systemTileNumber - 1]
+                    : tile0
+            }
+            alt={`System tile ${systemTileNumber}`}
+        />
         <HexHighlight controllingPlayerColors={controllingPlayerColors} />
     </StyledHighlightableTile>
 );
