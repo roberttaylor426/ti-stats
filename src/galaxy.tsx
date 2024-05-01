@@ -12,22 +12,20 @@ import {
     isPlanetControlledEvent,
     isPlayerAssignedColorEvent,
 } from './events';
+import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 
 /*
  Extract common scoreboard component
  Players taking control of planets
  Background of scoreboard titles
+ Only count scores, show as controlled based on the most recent event for each planet
+ Don't score, don't show control if planet destroyed
  Only show Creuss tile optionally
  Only show stats graph if round 2 has finished
  */
 
 const range = (n: number) => [...Array(n).keys()];
-
-type ResourcesAndInfluence = {
-    resources: number;
-    influence: number;
-};
 
 type FactionResourcesAndInfluence = {
     faction: Faction;
@@ -35,44 +33,11 @@ type FactionResourcesAndInfluence = {
     resourcesAndInfluence: ResourcesAndInfluence;
 };
 
-const factionScores: FactionResourcesAndInfluence[] = [
-    {
-        faction: 'Sardakk N’orr',
-        playerColor: 'Red',
-        resourcesAndInfluence: { resources: 9, influence: 10 },
-    },
-    {
-        faction: 'The Arborec',
-        playerColor: 'Green',
-        resourcesAndInfluence: { resources: 9, influence: 10 },
-    },
-    {
-        faction: 'The Ghosts of Creuss',
-        playerColor: 'Blue',
-        resourcesAndInfluence: { resources: 9, influence: 10 },
-    },
-    {
-        faction: 'The Argent Flight',
-        playerColor: 'Orange',
-        resourcesAndInfluence: { resources: 9, influence: 10 },
-    },
-    {
-        faction: 'The Empyrean',
-        playerColor: 'Purple',
-        resourcesAndInfluence: { resources: 9, influence: 10 },
-    },
-    {
-        faction: 'The Clan of Saar',
-        playerColor: 'Black',
-        resourcesAndInfluence: { resources: 9, influence: 10 },
-    },
-];
-
 const events: Event[] = [
-    { type: 'PlayerAssignedColor', player: 'Sardakk N’orr', color: 'Red' },
+    { type: 'PlayerAssignedColor', faction: 'Sardakk N’orr', color: 'Red' },
     {
         type: 'PlayerAssignedColor',
-        player: 'The Mahact Gene-Sorcerers',
+        faction: 'The Mahact Gene-Sorcerers',
         color: 'Yellow',
     },
     {
@@ -88,26 +53,54 @@ const events: Event[] = [
     {
         type: 'PlanetControlled',
         planet: 'Jord',
-        player: 'Sardakk N’orr',
+        faction: 'Sardakk N’orr',
     },
     {
         type: 'PlanetControlled',
         planet: 'Wren Terra',
-        player: 'Sardakk N’orr',
+        faction: 'Sardakk N’orr',
     },
     {
         type: 'PlanetControlled',
         planet: 'Arc Prime',
-        player: 'The Mahact Gene-Sorcerers',
+        faction: 'The Mahact Gene-Sorcerers',
     },
 ];
 
 const playerColors = events
     .filter(isPlayerAssignedColorEvent)
     .reduce(
-        (acc, n) => ({ ...acc, [n.player]: n.color }),
+        (acc, n) => ({ ...acc, [n.faction]: n.color }),
         {} as Record<Faction, PlayerColor>
     );
+
+const factionsInGame = _.uniq(
+    events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
+);
+
+const planetsControlledByFaction = (faction: Faction): PlanetName[] =>
+    events
+        .filter(isPlanetControlledEvent)
+        .filter((e) => e.faction === faction)
+        .map((e) => e.planet);
+
+const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =
+    factionsInGame.map((f) => ({
+        faction: f,
+        playerColor: playerColors[f],
+        resourcesAndInfluence: planetsControlledByFaction(f)
+            .map((p) => planets[p])
+            .reduce(
+                (acc, n) => ({
+                    resources: acc.resources + n.resources,
+                    influence: acc.influence + n.influence,
+                }),
+                {
+                    resources: 0,
+                    influence: 0,
+                }
+            ),
+    }));
 
 const Galaxy: React.FC = () => (
     <StyledGalaxy>
@@ -155,7 +148,7 @@ const Galaxy: React.FC = () => (
                                                     .map(
                                                         (e) =>
                                                             playerColors[
-                                                                e.player
+                                                                e.faction
                                                             ]
                                                     ) || []
                                             }
@@ -179,15 +172,17 @@ const Galaxy: React.FC = () => (
                 resources={'Resources'}
                 influence={'Influence'}
             />
-            {_.sortBy(factionScores, (fsi) => fsi.faction).map((fsi) => (
-                <ResourcesInfluenceScoreboardRow
-                    key={fsi.faction}
-                    title={fsi.faction}
-                    color={hexColor(fsi.playerColor)}
-                    resources={`${fsi.resourcesAndInfluence.resources}`}
-                    influence={`${fsi.resourcesAndInfluence.influence}`}
-                />
-            ))}
+            {_.sortBy(factionResourcesAndInfluence, (fsi) => fsi.faction).map(
+                (fsi) => (
+                    <ResourcesInfluenceScoreboardRow
+                        key={fsi.faction}
+                        title={fsi.faction}
+                        color={hexColor(fsi.playerColor)}
+                        resources={`${fsi.resourcesAndInfluence.resources}`}
+                        influence={`${fsi.resourcesAndInfluence.influence}`}
+                    />
+                )
+            )}
         </Scoreboard>
     </StyledGalaxy>
 );

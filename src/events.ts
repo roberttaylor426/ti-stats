@@ -4,7 +4,7 @@ import { SystemTileNumber } from './systemTiles';
 
 type PlayerAssignedColorEvent = {
     type: 'PlayerAssignedColor';
-    player: Faction;
+    faction: Faction;
     color: PlayerColor;
 };
 
@@ -46,7 +46,7 @@ type PlanetEnhancedEvent = {
 type PlanetControlledEvent = {
     type: 'PlanetControlled';
     planet: PlanetName;
-    player: Faction;
+    faction: Faction;
 };
 
 type PlanetDestroyedEvent = {

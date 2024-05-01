@@ -104,507 +104,404 @@ type PlanetName =
     | 'Rigel I'
     | 'Mallice';
 
-const planets: Planet[] = [
-    {
-        name: 'Jord',
+type ResourcesAndInfluence = {
+    resources: number;
+    influence: number;
+};
+
+const planets: Record<PlanetName, ResourcesAndInfluence> = {
+    Jord: {
         resources: 4,
         influence: 2,
     },
-    {
-        name: 'Moll Primus',
+    'Moll Primus': {
         resources: 4,
         influence: 1,
     },
-    {
-        name: 'Darien',
+    Darien: {
         resources: 4,
         influence: 4,
     },
-    {
-        name: 'Muaat',
+    Muaat: {
         resources: 4,
         influence: 1,
     },
-    {
-        name: 'Nestphar',
+    Nestphar: {
         resources: 3,
         influence: 2,
     },
-    {
-        name: '[0.0.0]',
+    '[0.0.0]': {
         resources: 5,
         influence: 0,
     },
-    {
-        name: 'Winnu',
+    Winnu: {
         resources: 3,
         influence: 4,
     },
-    {
-        name: 'Mordai II',
+    'Mordai II': {
         resources: 4,
         influence: 0,
     },
-    {
-        name: 'Maaluuk',
+    Maaluuk: {
         resources: 0,
         influence: 2,
     },
-    {
-        name: 'Druaa',
+    Druaa: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: 'Arc Prime',
+    'Arc Prime': {
         resources: 4,
         influence: 0,
     },
-    {
-        name: 'Wren Terra',
+    'Wren Terra': {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Lisis II',
+    'Lisis II': {
         resources: 1,
         influence: 0,
     },
-    {
-        name: 'Ragh',
+    Ragh: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Jol',
+    Jol: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Nar',
+    Nar: {
         resources: 2,
         influence: 3,
     },
-    {
-        name: 'Quinarra',
+    Quinarra: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: "Tren'lak",
+    "Tren'lak": {
         resources: 1,
         influence: 0,
     },
-    {
-        name: 'Archon Ren',
+    'Archon Ren': {
         resources: 2,
         influence: 3,
     },
-    {
-        name: 'Archon Tau',
+    'Archon Tau': {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Retillion',
+    Retillion: {
         resources: 2,
         influence: 3,
     },
-    {
-        name: 'Shalloq',
+    Shalloq: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Arretze',
+    Arretze: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Kamdorn',
+    Kamdorn: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Hercant',
+    Hercant: {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Mecatol Rex',
+    'Mecatol Rex': {
         resources: 1,
         influence: 6,
     },
-    {
-        name: 'Wellon',
+    Wellon: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Vefut II',
+    'Vefut II': {
         resources: 2,
         influence: 2,
     },
-    {
-        name: 'Thibah',
+    Thibah: {
         resources: 1,
         influence: 1,
     },
-    {
-        name: "Tar'mann",
+    "Tar'mann": {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Saudor',
+    Saudor: {
         resources: 2,
         influence: 2,
     },
-    {
-        name: 'Mehar Xull',
+    'Mehar Xull': {
         resources: 1,
         influence: 3,
     },
-    {
-        name: 'Quann',
+    Quann: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Lodor',
+    Lodor: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: 'New Albion',
+    'New Albion': {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Starpoint',
+    Starpoint: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: "Tequ'ran",
+    "Tequ'ran": {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Torkan',
+    Torkan: {
         resources: 0,
         influence: 3,
     },
-    {
-        name: "Qucen'n",
+    "Qucen'n": {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Rarron',
+    Rarron: {
         resources: 0,
         influence: 3,
     },
-    {
-        name: 'Mellon',
+    Mellon: {
         resources: 0,
         influence: 2,
     },
-    {
-        name: 'Zohbat',
+    Zohbat: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: 'Lazar',
+    Lazar: {
         resources: 1,
         influence: 0,
     },
-    {
-        name: 'Sakulag',
+    Sakulag: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Dal Bootha',
+    'Dal Bootha': {
         resources: 0,
         influence: 2,
     },
-    {
-        name: 'Xxehan',
+    Xxehan: {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Corneeq',
+    Corneeq: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Resculon',
+    Resculon: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Centauri',
+    Centauri: {
         resources: 1,
         influence: 3,
     },
-    {
-        name: 'Gral',
+    Gral: {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Bereg',
+    Bereg: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: 'Lirta IV',
+    'Lirta IV': {
         resources: 2,
         influence: 3,
     },
-    {
-        name: 'Xxehan',
-        resources: 1,
-        influence: 1,
-    },
-    {
-        name: 'Arnor',
+    Arnor: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Lor',
+    Lor: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Arinam',
+    Arinam: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Meer',
+    Meer: {
         resources: 0,
         influence: 4,
     },
-    {
-        name: 'Abyz',
+    Abyz: {
         resources: 3,
         influence: 0,
     },
-    {
-        name: 'Fria',
+    Fria: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Creuss',
+    Creuss: {
         resources: 4,
         influence: 2,
     },
-    {
-        name: 'Ixth',
+    Ixth: {
         resources: 3,
         influence: 5,
     },
-    {
-        name: 'Arcturus',
+    Arcturus: {
         resources: 4,
         influence: 4,
     },
-    {
-        name: 'Acheron',
+    Acheron: {
         resources: 4,
         influence: 0,
     },
-    {
-        name: 'Elysium',
+    Elysium: {
         resources: 4,
         influence: 1,
     },
-    {
-        name: 'The Dark',
+    'The Dark': {
         resources: 3,
         influence: 4,
     },
-    {
-        name: 'Naazir',
+    Naazir: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Rohka',
+    Rohka: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Yur',
+    Yur: {
         resources: 0,
         influence: 2,
     },
-    {
-        name: 'Avar',
+    Avar: {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Valk',
+    Valk: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Archon Vail',
+    'Archon Vail': {
         resources: 1,
         influence: 3,
     },
-    {
-        name: 'Perimeter',
+    Perimeter: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Ang',
+    Ang: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Sem-lore',
+    'Sem-lore': {
         resources: 3,
         influence: 2,
     },
-    {
-        name: 'Vorhal',
+    Vorhal: {
         resources: 0,
         influence: 2,
     },
-    {
-        name: 'Atlas',
+    Atlas: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: 'Primor',
+    Primor: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: "Hope's End",
+    "Hope's End": {
         resources: 3,
         influence: 0,
     },
-    {
-        name: 'Cormund',
+    Cormund: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Everra',
+    Everra: {
         resources: 3,
         influence: 1,
     },
-    {
-        name: 'Accoen',
+    Accoen: {
         resources: 2,
         influence: 3,
     },
-    {
-        name: 'Jeol Ir',
+    'Jeol Ir': {
         resources: 2,
         influence: 3,
     },
-    {
-        name: 'Kraag',
+    Kraag: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Siig',
+    Siig: {
         resources: 0,
         influence: 2,
     },
-    {
-        name: "Ba'kal",
+    "Ba'kal": {
         resources: 3,
         influence: 2,
     },
-    {
-        name: 'Alio Prima',
+    'Alio Prima': {
         resources: 1,
         influence: 1,
     },
-    {
-        name: "Ba'kal",
-        resources: 3,
-        influence: 2,
-    },
-    {
-        name: 'Lisis',
+    Lisis: {
         resources: 2,
         influence: 2,
     },
-    {
-        name: 'Velnor',
+    Velnor: {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Cealdri',
+    Cealdri: {
         resources: 0,
         influence: 2,
     },
-    {
-        name: 'Xanhact',
+    Xanhact: {
         resources: 0,
         influence: 1,
     },
-    {
-        name: 'Vega Major',
+    'Vega Major': {
         resources: 2,
         influence: 1,
     },
-    {
-        name: 'Vega Minor',
+    'Vega Minor': {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Abaddon',
+    Abaddon: {
         resources: 1,
         influence: 0,
     },
-    {
-        name: 'Loki',
+    Loki: {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Ashtroth',
+    Ashtroth: {
         resources: 2,
         influence: 0,
     },
-    {
-        name: 'Rigel I',
+    'Rigel I': {
         resources: 0,
         influence: 1,
     },
-    {
-        name: 'Rigel II',
+    'Rigel II': {
         resources: 1,
         influence: 2,
     },
-    {
-        name: 'Rigel III',
+    'Rigel III': {
         resources: 1,
         influence: 1,
     },
-    {
-        name: 'Mallice',
+    Mallice: {
         resources: 0,
         influence: 3,
     },
-];
+};
 
-export { Planet, PlanetName, planets };
+export { Planet, PlanetName, planets, ResourcesAndInfluence };
