@@ -6,7 +6,6 @@ import {
     LinearScale,
     LineElement,
     PointElement,
-    Tooltip,
 } from 'chart.js';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import React from 'react';
@@ -17,14 +16,7 @@ import _ from 'underscore';
 import { Faction, PlayerColor } from './domain';
 import { hexColor } from './galaxy';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Tooltip,
-    Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
 type Props = {
     playerScores: {
