@@ -11,15 +11,14 @@ import {
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
     isPlayerAssignedColorEvent,
+    PlanetControlledEvent,
 } from './events';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 
 /*
  Extract common scoreboard component
- Players taking control of planets
  Background of scoreboard titles
- Only count scores, show as controlled based on the most recent event for each planet
  Don't score, don't show control if planet destroyed
  Only show Creuss tile optionally
  Only show stats graph if round 2 has finished
@@ -57,6 +56,11 @@ const events: Event[] = [
     },
     {
         type: 'PlanetControlled',
+        planet: 'Jord',
+        faction: 'The Mahact Gene-Sorcerers',
+    },
+    {
+        type: 'PlanetControlled',
         planet: 'Wren Terra',
         faction: 'Sardakk N’orr',
     },
@@ -78,9 +82,17 @@ const factionsInGame = _.uniq(
     events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
 );
 
+const latestPlanetControlledEventsByPlanet = events
+    .filter(isPlanetControlledEvent)
+    .reverse()
+    .reduce(
+        (acc: PlanetControlledEvent[], n) =>
+            acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
+        []
+    );
+
 const planetsControlledByFaction = (faction: Faction): PlanetName[] =>
-    events
-        .filter(isPlanetControlledEvent)
+    latestPlanetControlledEventsByPlanet
         .filter((e) => e.faction === faction)
         .map((e) => e.planet);
 
@@ -134,15 +146,10 @@ const Galaxy: React.FC = () => (
                                                             systemTileNumber
                                                     )
                                                     ?.planets.map((p) =>
-                                                        events
-                                                            .filter(
-                                                                isPlanetControlledEvent
-                                                            )
-                                                            .find(
-                                                                (e) =>
-                                                                    e.planet ===
-                                                                    p
-                                                            )
+                                                        latestPlanetControlledEventsByPlanet.find(
+                                                            (e) =>
+                                                                e.planet === p
+                                                        )
                                                     )
                                                     .filter(notUndefined)
                                                     .map(

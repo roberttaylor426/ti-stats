@@ -86,4 +86,5 @@ export {
     isPlanetControlledEvent,
     isPlayerAssignedColorEvent,
     MapTileSelectedEvent,
+    PlanetControlledEvent,
 };
