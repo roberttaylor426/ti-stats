@@ -80,11 +80,12 @@ import tile79 from './assets/tiles/ST_79.png';
 import tile80 from './assets/tiles/ST_80.png';
 import tile81 from './assets/tiles/ST_81.png';
 import tile82 from './assets/tiles/ST_82.png';
+import { PlanetName } from './planets';
 
 type SystemTile = {
     tileNumber: TileNumber;
     image: string;
-    planets: Planet[];
+    planets: PlanetName[];
 };
 
 const tileImages = [
@@ -256,4 +257,417 @@ type TileNumber =
     | 81
     | 82;
 
-export { tileImages,TileNumber };
+const systemTiles: SystemTile[] = [
+    {
+        tileNumber: 1,
+        image: tile1,
+        planets: ['Jord'],
+    },
+    {
+        tileNumber: 2,
+        image: tile2,
+        planets: ['Moll Primus'],
+    },
+    {
+        tileNumber: 3,
+        image: tile3,
+        planets: ['Darien'],
+    },
+    {
+        tileNumber: 4,
+        image: tile4,
+        planets: ['Muaat'],
+    },
+    {
+        tileNumber: 5,
+        image: tile5,
+        planets: ['Nestphar'],
+    },
+    {
+        tileNumber: 6,
+        image: tile6,
+        planets: ['[0.0.0]'],
+    },
+    {
+        tileNumber: 7,
+        image: tile7,
+        planets: ['Winnu'],
+    },
+    {
+        tileNumber: 8,
+        image: tile8,
+        planets: ['Mordai II'],
+    },
+    {
+        tileNumber: 9,
+        image: tile9,
+        planets: ['Maaluuk', 'Druaa'],
+    },
+    {
+        tileNumber: 10,
+        image: tile10,
+        planets: ['Arc Prime', 'Wren Terra'],
+    },
+    {
+        tileNumber: 11,
+        image: tile11,
+        planets: ['Lisis II', 'Ragh'],
+    },
+    {
+        tileNumber: 12,
+        image: tile12,
+        planets: ['Jol', 'Nar'],
+    },
+    {
+        tileNumber: 13,
+        image: tile13,
+        planets: ["Tren'lak", 'Quinarra'],
+    },
+    {
+        tileNumber: 14,
+        image: tile14,
+        planets: ['Archon Ren', 'Archon Tau'],
+    },
+    {
+        tileNumber: 15,
+        image: tile15,
+        planets: ['Retillion', 'Shalloq'],
+    },
+    {
+        tileNumber: 16,
+        image: tile16,
+        planets: ['Arretze', 'Hercant', 'Kamdorn'],
+    },
+    {
+        tileNumber: 17,
+        image: tile17,
+        planets: [],
+    },
+    {
+        tileNumber: 18,
+        image: tile18,
+        planets: ['Mecatol Rex'],
+    },
+    {
+        tileNumber: 19,
+        image: tile19,
+        planets: [],
+    },
+    {
+        tileNumber: 20,
+        image: tile20,
+        planets: ['Vefut II'],
+    },
+    {
+        tileNumber: 21,
+        image: tile21,
+        planets: ['Thibah'],
+    },
+    {
+        tileNumber: 22,
+        image: tile22,
+        planets: ["Tar'mann"],
+    },
+    {
+        tileNumber: 23,
+        image: tile23,
+        planets: ['Saudor'],
+    },
+    {
+        tileNumber: 24,
+        image: tile24,
+        planets: ['Mehar Xull'],
+    },
+    {
+        tileNumber: 25,
+        image: tile25,
+        planets: ['Quann'],
+    },
+    {
+        tileNumber: 26,
+        image: tile26,
+        planets: ['Lodor'],
+    },
+    {
+        tileNumber: 27,
+        image: tile27,
+        planets: ['New Albion', 'Starpoint'],
+    },
+    {
+        tileNumber: 28,
+        image: tile28,
+        planets: ["Tequ'ran", 'Torkan'],
+    },
+    {
+        tileNumber: 29,
+        image: tile29,
+        planets: ["Qucen'n", 'Rarron'],
+    },
+    {
+        tileNumber: 30,
+        image: tile30,
+        planets: ['Mellon', 'Zohbat'],
+    },
+    {
+        tileNumber: 31,
+        image: tile31,
+        planets: ['Lazar', 'Sakulag'],
+    },
+    {
+        tileNumber: 32,
+        image: tile32,
+        planets: ['Dal Bootha', 'Xxehan'],
+    },
+    {
+        tileNumber: 33,
+        image: tile33,
+        planets: ['Corneeq', 'Resculon'],
+    },
+    {
+        tileNumber: 34,
+        image: tile34,
+        planets: ['Centauri', 'Gral'],
+    },
+    {
+        tileNumber: 35,
+        image: tile35,
+        planets: ['Bereg', 'Lirta IV'],
+    },
+    {
+        tileNumber: 36,
+        image: tile36,
+        planets: ['Arnor', 'Lor'],
+    },
+    {
+        tileNumber: 37,
+        image: tile37,
+        planets: ['Arinam', 'Meer'],
+    },
+    {
+        tileNumber: 38,
+        image: tile38,
+        planets: ['Abyz', 'Fria'],
+    },
+    {
+        tileNumber: 39,
+        image: tile39,
+        planets: [],
+    },
+    {
+        tileNumber: 40,
+        image: tile40,
+        planets: [],
+    },
+    {
+        tileNumber: 41,
+        image: tile41,
+        planets: [],
+    },
+    {
+        tileNumber: 42,
+        image: tile42,
+        planets: [],
+    },
+    {
+        tileNumber: 43,
+        image: tile43,
+        planets: [],
+    },
+    {
+        tileNumber: 44,
+        image: tile44,
+        planets: [],
+    },
+    {
+        tileNumber: 45,
+        image: tile45,
+        planets: [],
+    },
+    {
+        tileNumber: 46,
+        image: tile46,
+        planets: [],
+    },
+    {
+        tileNumber: 47,
+        image: tile47,
+        planets: [],
+    },
+    {
+        tileNumber: 48,
+        image: tile48,
+        planets: [],
+    },
+    {
+        tileNumber: 49,
+        image: tile49,
+        planets: [],
+    },
+    {
+        tileNumber: 50,
+        image: tile50,
+        planets: [],
+    },
+    {
+        tileNumber: 51,
+        image: tile51,
+        planets: ['Creuss'],
+    },
+    {
+        tileNumber: 52,
+        image: tile52,
+        planets: ['Ixth'],
+    },
+    {
+        tileNumber: 53,
+        image: tile53,
+        planets: ['Arcturus'],
+    },
+    {
+        tileNumber: 54,
+        image: tile54,
+        planets: ['Acheron'],
+    },
+    {
+        tileNumber: 55,
+        image: tile55,
+        planets: ['Elysium'],
+    },
+    {
+        tileNumber: 56,
+        image: tile56,
+        planets: ['The Dark'],
+    },
+    {
+        tileNumber: 57,
+        image: tile57,
+        planets: ['Naazir', 'Rohka'],
+    },
+    {
+        tileNumber: 58,
+        image: tile58,
+        planets: ['Yur', 'Valk', 'Avar'],
+    },
+    {
+        tileNumber: 59,
+        image: tile59,
+        planets: ['Archon Vail'],
+    },
+    {
+        tileNumber: 60,
+        image: tile60,
+        planets: ['Perimeter'],
+    },
+    {
+        tileNumber: 61,
+        image: tile61,
+        planets: ['Ang'],
+    },
+    {
+        tileNumber: 62,
+        image: tile62,
+        planets: ['Sem-lore'],
+    },
+    {
+        tileNumber: 63,
+        image: tile63,
+        planets: ['Vorhal'],
+    },
+    {
+        tileNumber: 64,
+        image: tile64,
+        planets: ['Atlas'],
+    },
+    {
+        tileNumber: 65,
+        image: tile65,
+        planets: ['Primor'],
+    },
+    {
+        tileNumber: 66,
+        image: tile66,
+        planets: ["Hope's End"],
+    },
+    {
+        tileNumber: 67,
+        image: tile67,
+        planets: ['Cormund'],
+    },
+    {
+        tileNumber: 68,
+        image: tile68,
+        planets: ['Everra'],
+    },
+    {
+        tileNumber: 69,
+        image: tile69,
+        planets: ['Accoen', 'Jeol Ir'],
+    },
+    {
+        tileNumber: 70,
+        image: tile70,
+        planets: ['Kraag', 'Siig'],
+    },
+    {
+        tileNumber: 71,
+        image: tile71,
+        planets: ["Ba'kal", 'Alio Prima'],
+    },
+    {
+        tileNumber: 72,
+        image: tile72,
+        planets: ['Lisis', 'Velnor'],
+    },
+    {
+        tileNumber: 73,
+        image: tile73,
+        planets: ['Cealdri', 'Xanhact'],
+    },
+    {
+        tileNumber: 74,
+        image: tile74,
+        planets: ['Vega Major', 'Vega Minor'],
+    },
+    {
+        tileNumber: 75,
+        image: tile75,
+        planets: ['Abaddon', 'Loki', 'Ashtroth'],
+    },
+    {
+        tileNumber: 76,
+        image: tile76,
+        planets: ['Rigel I', 'Rigel II', 'Rigel III'],
+    },
+    {
+        tileNumber: 77,
+        image: tile77,
+        planets: [],
+    },
+    {
+        tileNumber: 78,
+        image: tile78,
+        planets: [],
+    },
+    {
+        tileNumber: 79,
+        image: tile79,
+        planets: [],
+    },
+    {
+        tileNumber: 80,
+        image: tile80,
+        planets: [],
+    },
+    {
+        tileNumber: 81,
+        image: tile81,
+        planets: [],
+    },
+    {
+        tileNumber: 82,
+        image: tile82,
+        planets: ['Mallice'],
+    },
+];
+
+export { systemTiles,tileImages, TileNumber };
