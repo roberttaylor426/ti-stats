@@ -20,7 +20,7 @@ import { systemTileImages, systemTiles, tile0 } from './systemTiles';
  Background of scoreboard titles
  Don't score, don't show control if planet destroyed
  Only show Creuss tile optionally
- Only show stats graph if round 2 has finished
+ Support planet enhanced events
  */
 
 const range = (n: number) => [...Array(n).keys()];
