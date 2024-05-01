@@ -5,32 +5,24 @@ import _, { identity } from 'underscore';
 import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
-import { Faction, hexColor, PlayerColor } from './domain';
-import { Event, isMapTileSelected } from './events';
-import { systemTileImages, tile0 } from './systemTiles';
+import { Faction, hexColor, notUndefined, PlayerColor } from './domain';
+import {
+    Event,
+    isMapTileSelectedEvent,
+    isPlanetControlledEvent,
+    isPlayerAssignedColorEvent,
+} from './events';
+import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 
 /*
  Extract common scoreboard component
  Players taking control of planets
- Background of titles
+ Background of scoreboard titles
  Only show Creuss tile optionally
  Only show stats graph if round 2 has finished
  */
 
 const range = (n: number) => [...Array(n).keys()];
-
-const controlledTiles: (PlayerColor[] | undefined)[] = [
-    ['Red', 'Blue', 'Black'],
-    ['Red'],
-    ['Yellow'],
-    ['Yellow'],
-    ['Black'],
-    ['Blue'],
-    ['Orange'],
-    ['Purple'],
-    ['Pink'],
-    ['Green'],
-];
 
 type ResourcesAndInfluence = {
     resources: number;
@@ -77,6 +69,12 @@ const factionScores: FactionResourcesAndInfluence[] = [
 ];
 
 const events: Event[] = [
+    { type: 'PlayerAssignedColor', player: 'Sardakk N’orr', color: 'Red' },
+    {
+        type: 'PlayerAssignedColor',
+        player: 'The Mahact Gene-Sorcerers',
+        color: 'Yellow',
+    },
     {
         type: 'MapTileSelected',
         systemTileNumber: 1,
@@ -87,7 +85,29 @@ const events: Event[] = [
         systemTileNumber: 10,
         position: 1,
     },
+    {
+        type: 'PlanetControlled',
+        planet: 'Jord',
+        player: 'Sardakk N’orr',
+    },
+    {
+        type: 'PlanetControlled',
+        planet: 'Wren Terra',
+        player: 'Sardakk N’orr',
+    },
+    {
+        type: 'PlanetControlled',
+        planet: 'Arc Prime',
+        player: 'The Mahact Gene-Sorcerers',
+    },
 ];
+
+const playerColors = events
+    .filter(isPlayerAssignedColorEvent)
+    .reduce(
+        (acc, n) => ({ ...acc, [n.player]: n.color }),
+        {} as Record<Faction, PlayerColor>
+    );
 
 const Galaxy: React.FC = () => (
     <StyledGalaxy>
@@ -100,28 +120,48 @@ const Galaxy: React.FC = () => (
                             key={columnIndex}
                         >
                             {range(tilesPerColumn(columnIndex)).map(
-                                (rowIndex) => (
-                                    <HighlightableSystemTile
-                                        key={`tile ${tileIndex(columnIndex, rowIndex)}`}
-                                        systemTileNumber={
-                                            events
-                                                .filter(isMapTileSelected)
-                                                .find(
-                                                    (e) =>
-                                                        e.position ===
-                                                        tileIndex(
-                                                            columnIndex,
-                                                            rowIndex
-                                                        )
-                                                )?.systemTileNumber
-                                        }
-                                        controllingPlayerColors={
-                                            controlledTiles[
+                                (rowIndex) => {
+                                    const systemTileNumber = events
+                                        .filter(isMapTileSelectedEvent)
+                                        .find(
+                                            (e) =>
+                                                e.position ===
                                                 tileIndex(columnIndex, rowIndex)
-                                            ] || []
-                                        }
-                                    />
-                                )
+                                        )?.systemTileNumber;
+
+                                    return (
+                                        <HighlightableSystemTile
+                                            key={`tile ${tileIndex(columnIndex, rowIndex)}`}
+                                            systemTileNumber={systemTileNumber}
+                                            controllingPlayerColors={
+                                                systemTiles
+                                                    .find(
+                                                        (st) =>
+                                                            st.tileNumber ===
+                                                            systemTileNumber
+                                                    )
+                                                    ?.planets.map((p) =>
+                                                        events
+                                                            .filter(
+                                                                isPlanetControlledEvent
+                                                            )
+                                                            .find(
+                                                                (e) =>
+                                                                    e.planet ===
+                                                                    p
+                                                            )
+                                                    )
+                                                    .filter(notUndefined)
+                                                    .map(
+                                                        (e) =>
+                                                            playerColors[
+                                                                e.player
+                                                            ]
+                                                    ) || []
+                                            }
+                                        />
+                                    );
+                                }
                             )}
                         </TileColumn>
                     ))}

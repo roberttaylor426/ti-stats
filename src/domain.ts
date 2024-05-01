@@ -55,4 +55,6 @@ const hexColor = (pc: PlayerColor): string => {
     }
 };
 
-export { Faction, hexColor, PlayerColor };
+const notUndefined = <T>(x: T | undefined): x is T => x !== undefined;
+
+export { Faction, hexColor, notUndefined,PlayerColor };
