@@ -55,7 +55,7 @@ type PlanetDestroyedEvent = {
 };
 
 type RoundEndedEvent = {
-    type: 'RoundStarted';
+    type: 'RoundEnded';
     time: number;
 };
 

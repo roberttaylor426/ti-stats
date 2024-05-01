@@ -51,6 +51,43 @@ const Stats: React.FC<Props> = ({
             .reduce((acc, n) => acc + n.delta, 0),
     }));
 
+    const playerScoresByRound: Record<Faction, number>[] = events.reduce(
+        (acc, n) => {
+            const currentRoundScores = _.last(acc) as Record<Faction, number>;
+
+            if (n.type === 'RoundEnded') {
+                return [...acc, currentRoundScores];
+            }
+
+            if (n.type === 'PlayerScoredVictoryPoint') {
+                return [
+                    ..._.initial(acc),
+                    {
+                        ...currentRoundScores,
+                        [n.faction]: currentRoundScores[n.faction] + n.delta,
+                    },
+                ];
+            }
+
+            return acc;
+        },
+        [
+            factionsInGame.reduce(
+                (acc, n) => ({ ...acc, [n]: 0 }),
+                {} as Record<Faction, number>
+            ),
+        ]
+    );
+
+    //     factionsInGame.map((f) => ({
+    //     faction: f,
+    //     playerColor: playerColors[f],
+    //     score: events
+    //         .filter(isPlayerScoredVictoryPointEvent)
+    //         .filter((e) => e.faction === f)
+    //         .reduce((acc, n) => acc + n.delta, 0),
+    // }));
+
     return (
         <StyledStats>
             <VpScores>
@@ -73,29 +110,19 @@ const Stats: React.FC<Props> = ({
                 </Scoreboard>
                 <Line
                     data={{
-                        datasets: [
-                            {
-                                borderColor: hexColor('Green'),
-                                pointBackgroundColor: hexColor('Green'),
-                                data: [0, 2, 3, 5],
-                            },
-                            {
-                                borderColor: hexColor('Red'),
-                                pointBackgroundColor: hexColor('Red'),
-                                data: [0, 2, 2, 3],
-                            },
-                        ],
+                        datasets: factionsInGame.map((f) => ({
+                            borderColor: hexColor(playerColors[f]),
+                            pointBackgroundColor: hexColor(playerColors[f]),
+                            data: [
+                                0,
+                                ...playerScoresByRound.map((sbr) => sbr[f]),
+                            ],
+                        })),
                         labels: [
                             '',
-                            'Round 1',
-                            'Round 2',
-                            'Round 3',
-                            'Round 4',
-                            'Round 5',
-                            'Round 6',
-                            'Round 7',
-                            'Round 8',
-                            'Round 9',
+                            ...playerScoresByRound.map(
+                                (_, index) => `Round ${index + 1}`
+                            ),
                         ],
                     }}
                     options={{
