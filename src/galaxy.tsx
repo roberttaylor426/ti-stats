@@ -150,16 +150,20 @@ const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
                 />
                 {_.sortBy(
                     factionResourcesAndInfluence,
-                    (fsi) => fsi.faction
-                ).map((fsi) => (
-                    <ResourcesInfluenceScoreboardRow
-                        key={fsi.faction}
-                        title={fsi.faction}
-                        color={hexColor(fsi.playerColor)}
-                        resources={`${fsi.resourcesAndInfluence.resources}`}
-                        influence={`${fsi.resourcesAndInfluence.influence}`}
-                    />
-                ))}
+                    (fsi) =>
+                        fsi.resourcesAndInfluence.influence +
+                        fsi.resourcesAndInfluence.resources
+                )
+                    .reverse()
+                    .map((fsi) => (
+                        <ResourcesInfluenceScoreboardRow
+                            key={fsi.faction}
+                            title={fsi.faction}
+                            color={hexColor(fsi.playerColor)}
+                            resources={`${fsi.resourcesAndInfluence.resources}`}
+                            influence={`${fsi.resourcesAndInfluence.influence}`}
+                        />
+                    ))}
             </Scoreboard>
         </StyledGalaxy>
     );
