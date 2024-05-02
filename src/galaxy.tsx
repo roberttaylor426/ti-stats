@@ -11,13 +11,13 @@ import {
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
+    isPlanetEnhancedEvent,
     PlanetControlledEvent,
 } from './events';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 
 /*
- Don't score, don't show control if planet destroyed
  Support planet enhanced events
 
  We need a server!
@@ -38,6 +38,7 @@ type Props = {
 
 const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
     const mapTileSelectedEvents = events.filter(isMapTileSelectedEvent);
+    const planetEnhancedEvents = events.filter(isPlanetEnhancedEvent);
     const planetDestroyedEvents = events.filter(isPlanetDestroyedEvent);
 
     const latestPlanetControlledEventsByPlanet = events
@@ -66,7 +67,18 @@ const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
             faction: f,
             playerColor: playerColors[f],
             resourcesAndInfluence: planetsControlledByFaction(f)
-                .map((p) => planets[p])
+                .map((p) => ({
+                    resources:
+                        planets[p].resources +
+                        planetEnhancedEvents
+                            .filter((e) => e.planet === p)
+                            .reduce((acc, n) => acc + n.extraResources, 0),
+                    influence:
+                        planets[p].influence +
+                        planetEnhancedEvents
+                            .filter((e) => e.planet === p)
+                            .reduce((acc, n) => acc + n.extraInfluence, 0),
+                }))
                 .reduce(
                     (acc, n) => ({
                         resources: acc.resources + n.resources,

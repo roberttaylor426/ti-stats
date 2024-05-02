@@ -84,6 +84,12 @@ const events: Event[] = [
         planet: 'Arc Prime',
     },
     {
+        type: 'PlanetEnhanced',
+        planet: 'Jord',
+        extraResources: 1,
+        extraInfluence: 2,
+    },
+    {
         type: 'PlayerScoredVictoryPoint',
         faction: 'Sardakk N’orr',
         delta: 1,
