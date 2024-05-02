@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -7,227 +7,97 @@ import {
 } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import _ from 'underscore';
+import useAsyncEffect from 'use-async-effect';
+import useInterval from 'use-interval';
 
+import { AdminPage } from './adminPage';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
-import { Faction, PlayerColor } from './domain';
 import { Event, isPlayerAssignedColorEvent } from './events';
-import { Galaxy } from './galaxy';
-import { Stats } from './stats';
+import { Faction } from './factions';
+import { GalaxyPage } from './galaxyPage';
+import { PlayerColor } from './playerColor';
+import { StatsPage } from './statsPage';
 
-const events: Event[] = [
-    { type: 'PlayerAssignedColor', faction: 'Sardakk N’orr', color: 'Red' },
-    {
-        type: 'PlayerAssignedColor',
-        faction: 'The Mahact Gene-Sorcerers',
-        color: 'Yellow',
-    },
-    {
-        type: 'PlayerAssignedColor',
-        faction: 'The Xxcha Kingdom',
-        color: 'Black',
-    },
-    {
-        type: 'PlayerAssignedColor',
-        faction: 'The L1Z1X Mindnet',
-        color: 'Pink',
-    },
-    {
-        type: 'PlayerAssignedColor',
-        faction: 'The Yin Brotherhood',
-        color: 'Green',
-    },
-    {
-        type: 'PlayerAssignedColor',
-        faction: 'The Clan of Saar',
-        color: 'Orange',
-    },
-    {
-        type: 'MapTileSelected',
-        systemTileNumber: 1,
-        position: 0,
-    },
-    {
-        type: 'MapTileSelected',
-        systemTileNumber: 10,
-        position: 1,
-    },
-    {
-        type: 'RoundStarted',
-        time: 0,
-    },
-    {
-        type: 'ActionPhaseStarted',
-        time: 0,
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Jord',
-        faction: 'Sardakk N’orr',
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Jord',
-        faction: 'The Mahact Gene-Sorcerers',
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Wren Terra',
-        faction: 'Sardakk N’orr',
-    },
-    {
-        type: 'PlanetControlled',
-        planet: 'Arc Prime',
-        faction: 'The Mahact Gene-Sorcerers',
-    },
-    {
-        type: 'PlanetDestroyed',
-        planet: 'Arc Prime',
-    },
-    {
-        type: 'PlanetEnhanced',
-        planet: 'Jord',
-        extraResources: 1,
-        extraInfluence: 2,
-    },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'Sardakk N’orr',
-        delta: 1,
-    },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'Sardakk N’orr',
-        delta: 1,
-    },
-    {
-        type: 'PlayerFinishedTurn',
-        faction: 'Sardakk N’orr',
-        time: new Date().getTime(),
-    },
-    {
-        type: 'PlayerFinishedTurn',
-        faction: 'The Mahact Gene-Sorcerers',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'PlayerFinishedTurn',
-        faction: 'Sardakk N’orr',
-        time: new Date().getTime() + 180_000,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime(),
-    },
-    {
-        type: 'RoundStarted',
-        time: new Date().getTime(),
-    },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'Sardakk N’orr',
-        delta: 1,
-    },
-    {
-        type: 'PlayerScoredVictoryPoint',
-        faction: 'The Clan of Saar',
-        delta: 1,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'RoundStarted',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime() + 220_000,
-    },
-    {
-        type: 'RoundStarted',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime() + 220_000,
-    },
-    {
-        type: 'RoundStarted',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime() + 220_000,
-    },
-    {
-        type: 'RoundStarted',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime() + 220_000,
-    },
-    {
-        type: 'RoundStarted',
-        time: new Date().getTime() + 120_000,
-    },
-    {
-        type: 'RoundEnded',
-        time: new Date().getTime() + 220_000,
-    },
-];
+const App: React.FC = () => {
+    const [events, setEvents] = useState<Event[]>([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-const playerColors = events
-    .filter(isPlayerAssignedColorEvent)
-    .reduce(
-        (acc, n) => ({ ...acc, [n.faction]: n.color }),
-        {} as Record<Faction, PlayerColor>
+    useAsyncEffect(async () => {
+        try {
+            const response = await fetch('/api');
+
+            if (response.status === 200) {
+                const responseJson = await response.json();
+
+                if (responseJson.length > events.length) {
+                    setEvents(responseJson);
+                }
+            }
+        } catch {}
+    }, [refreshTrigger]);
+
+    useInterval(() => {
+        setRefreshTrigger(refreshTrigger + 1);
+    }, 15_000);
+
+    const playerColors = events
+        .filter(isPlayerAssignedColorEvent)
+        .reduce(
+            (acc, n) => ({ ...acc, [n.faction]: n.color }),
+            {} as Record<Faction, PlayerColor>
+        );
+
+    const factionsInGame = _.uniq(
+        events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
     );
 
-const factionsInGame = _.uniq(
-    events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
-);
-
-const App: React.FC = () => (
-    <>
-        <GlobalStyle />
-        <FullScreenPage>
-            <RouterProvider
-                router={createBrowserRouter(
-                    createRoutesFromElements([
-                        <Route
-                            key="galaxy"
-                            path={'/galaxy'}
-                            element={
-                                <Galaxy
-                                    {...{
-                                        events,
-                                        playerColors,
-                                        factionsInGame,
-                                    }}
-                                />
-                            }
-                        />,
-                        <Route
-                            key="stats"
-                            path={'/stats'}
-                            element={
-                                <Stats
-                                    {...{
-                                        events,
-                                        playerColors,
-                                        factionsInGame,
-                                    }}
-                                />
-                            }
-                        />,
-                    ])
-                )}
-            />
-        </FullScreenPage>
-    </>
-);
+    return (
+        <>
+            <GlobalStyle />
+            <FullScreenPage>
+                <RouterProvider
+                    router={createBrowserRouter(
+                        createRoutesFromElements([
+                            <Route
+                                key="galaxy"
+                                path={'/galaxy'}
+                                element={
+                                    <GalaxyPage
+                                        {...{
+                                            events,
+                                            playerColors,
+                                            factionsInGame,
+                                        }}
+                                    />
+                                }
+                            />,
+                            <Route
+                                key="stats"
+                                path={'/stats'}
+                                element={
+                                    <StatsPage
+                                        {...{
+                                            events,
+                                            playerColors,
+                                            factionsInGame,
+                                        }}
+                                    />
+                                }
+                            />,
+                            <Route
+                                key="admin"
+                                path={'/admin'}
+                                element={
+                                    <AdminPage {...{ events, setEvents }} />
+                                }
+                            />,
+                        ])
+                    )}
+                />
+            </FullScreenPage>
+        </>
+    );
+};
 
 const GlobalStyle = createGlobalStyle`
     @font-face {

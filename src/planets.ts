@@ -71,7 +71,7 @@ type PlanetName =
     | 'The Dark'
     | 'Naazir'
     | 'Rohka'
-    | 'Yur'
+    | 'Ylir'
     | 'Valk'
     | 'Avar'
     | 'Archon Vail'

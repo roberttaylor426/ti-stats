@@ -1,5 +1,6 @@
-import { Faction, PlayerColor } from './domain';
+import { Faction } from './factions';
 import { PlanetName } from './planets';
+import { PlayerColor } from './playerColor';
 import { SystemTileNumber } from './systemTiles';
 
 type PlayerAssignedColorEvent = {

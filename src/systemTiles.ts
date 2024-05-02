@@ -81,6 +81,7 @@ import tile79 from './assets/tiles/ST_79.png';
 import tile80 from './assets/tiles/ST_80.png';
 import tile81 from './assets/tiles/ST_81.png';
 import tile82 from './assets/tiles/ST_82.png';
+import { homeworlds } from './factions';
 import { PlanetName } from './planets';
 
 type SystemTile = {
@@ -262,82 +263,82 @@ const systemTiles: SystemTile[] = [
     {
         tileNumber: 1,
         image: tile1,
-        planets: ['Jord'],
+        planets: homeworlds('The Federation of Sol'),
     },
     {
         tileNumber: 2,
         image: tile2,
-        planets: ['Moll Primus'],
+        planets: homeworlds('The Mentak Coalition'),
     },
     {
         tileNumber: 3,
         image: tile3,
-        planets: ['Darien'],
+        planets: homeworlds('The Yin Brotherhood'),
     },
     {
         tileNumber: 4,
         image: tile4,
-        planets: ['Muaat'],
+        planets: homeworlds('The Embers of Muaat'),
     },
     {
         tileNumber: 5,
         image: tile5,
-        planets: ['Nestphar'],
+        planets: homeworlds('The Arborec'),
     },
     {
         tileNumber: 6,
         image: tile6,
-        planets: ['[0.0.0]'],
+        planets: homeworlds('The L1Z1X Mindnet'),
     },
     {
         tileNumber: 7,
         image: tile7,
-        planets: ['Winnu'],
+        planets: homeworlds('The Winnu'),
     },
     {
         tileNumber: 8,
         image: tile8,
-        planets: ['Mordai II'],
+        planets: homeworlds('The Nekro Virus'),
     },
     {
         tileNumber: 9,
         image: tile9,
-        planets: ['Maaluuk', 'Druaa'],
+        planets: homeworlds('The Naalu Collective'),
     },
     {
         tileNumber: 10,
         image: tile10,
-        planets: ['Arc Prime', 'Wren Terra'],
+        planets: homeworlds('The Barony of Letnev'),
     },
     {
         tileNumber: 11,
         image: tile11,
-        planets: ['Lisis II', 'Ragh'],
+        planets: homeworlds('The Clan of Saar'),
     },
     {
         tileNumber: 12,
         image: tile12,
-        planets: ['Jol', 'Nar'],
+        planets: homeworlds('The Universities of Jol-Nar'),
     },
     {
         tileNumber: 13,
         image: tile13,
-        planets: ["Tren'lak", 'Quinarra'],
+        planets: homeworlds('Sardakk N’orr'),
     },
     {
         tileNumber: 14,
         image: tile14,
-        planets: ['Archon Ren', 'Archon Tau'],
+        planets: homeworlds('The Xxcha Kingdom'),
     },
     {
         tileNumber: 15,
         image: tile15,
-        planets: ['Retillion', 'Shalloq'],
+        planets: homeworlds('The Yssaril Tribes'),
     },
     {
         tileNumber: 16,
         image: tile16,
-        planets: ['Arretze', 'Hercant', 'Kamdorn'],
+        planets: homeworlds('The Emirates of Hacan'),
     },
     {
         tileNumber: 17,
@@ -512,42 +513,42 @@ const systemTiles: SystemTile[] = [
     {
         tileNumber: 51,
         image: tile51,
-        planets: ['Creuss'],
+        planets: homeworlds('The Ghosts of Creuss'),
     },
     {
         tileNumber: 52,
         image: tile52,
-        planets: ['Ixth'],
+        planets: homeworlds('The Mahact Gene-Sorcerers'),
     },
     {
         tileNumber: 53,
         image: tile53,
-        planets: ['Arcturus'],
+        planets: homeworlds('The Nomad'),
     },
     {
         tileNumber: 54,
         image: tile54,
-        planets: ['Acheron'],
+        planets: homeworlds("The Vuil'Raith Cabal"),
     },
     {
         tileNumber: 55,
         image: tile55,
-        planets: ['Elysium'],
+        planets: homeworlds('The Titans of Ul'),
     },
     {
         tileNumber: 56,
         image: tile56,
-        planets: ['The Dark'],
+        planets: homeworlds('The Empyrean'),
     },
     {
         tileNumber: 57,
         image: tile57,
-        planets: ['Naazir', 'Rohka'],
+        planets: homeworlds('The Naaz-Rokha Alliance'),
     },
     {
         tileNumber: 58,
         image: tile58,
-        planets: ['Yur', 'Valk', 'Avar'],
+        planets: homeworlds('The Argent Flight'),
     },
     {
         tileNumber: 59,

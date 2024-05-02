@@ -13,13 +13,15 @@ import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { Faction, hexColor, PlayerColor } from './domain';
 import {
     Event,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
 } from './events';
+import { Faction } from './factions';
+import { PlayerColor } from './playerColor';
+import { hexColor } from './util';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
@@ -31,7 +33,11 @@ type Props = {
 
 Chart.defaults.color = 'white';
 
-const Stats: React.FC<Props> = ({ events, playerColors, factionsInGame }) => {
+const StatsPage: React.FC<Props> = ({
+    events,
+    playerColors,
+    factionsInGame,
+}) => {
     const playerScores = factionsInGame.map((f) => ({
         faction: f,
         playerColor: playerColors[f],
@@ -344,4 +350,4 @@ const Value = styled.span`
     text-align: end;
 `;
 
-export { Stats };
+export { StatsPage };

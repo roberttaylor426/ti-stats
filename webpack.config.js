@@ -8,6 +8,9 @@ module.exports = [
         entry: './src/index',
 
         devServer: {
+            client: {
+                webSocketURL: 'auto://0.0.0.0:0/ws',
+            },
             historyApiFallback: true,
         },
 

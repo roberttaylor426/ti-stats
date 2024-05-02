@@ -5,7 +5,6 @@ import _, { identity } from 'underscore';
 import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
-import { Faction, hexColor, notUndefined, PlayerColor } from './domain';
 import {
     Event,
     isMapTileSelectedEvent,
@@ -14,21 +13,21 @@ import {
     isPlanetEnhancedEvent,
     PlanetControlledEvent,
 } from './events';
+import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
+import { PlayerColor } from './playerColor';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
+import { hexColor, notUndefined, range } from './util';
 
 /*
- Support planet enhanced events
+ We need an admin front-end!
 
  We need a server!
-
- We need an admin front-end!
+  - that stores and retrieves data!
 
  Background of scoreboard titles
  Extract common scoreboard component
  */
-
-const range = (n: number) => [...Array(n).keys()];
 
 type Props = {
     events: Event[];
@@ -36,7 +35,11 @@ type Props = {
     playerColors: Record<Faction, PlayerColor>;
 };
 
-const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
+const GalaxyPage: React.FC<Props> = ({
+    events,
+    factionsInGame,
+    playerColors,
+}) => {
     const mapTileSelectedEvents = events.filter(isMapTileSelectedEvent);
     const planetEnhancedEvents = events.filter(isPlanetEnhancedEvent);
     const planetDestroyedEvents = events.filter(isPlanetDestroyedEvent);
@@ -470,4 +473,4 @@ const GhostsOfCreussHomeTile: React.FC<GhostsOfCresussHomeTileProps> = ({
     />
 );
 
-export { Galaxy };
+export { GalaxyPage };

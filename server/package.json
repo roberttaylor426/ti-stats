@@ -1,0 +1,19 @@
+{
+    "name": "ti-stats-server",
+    "version": "1.0.0",
+    "description": "A set of tools for visualizing stats during a game of TI4",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitlab.com/green-build-code/aws-cec/local-api-gateway.git"
+    },
+    "license": "UNLICENSED",
+    "dependencies": {
+        "body-parser": "^1.20.2",
+        "express": "^4.19.2",
+        "http-proxy-middleware": "^2.0.6"
+    }
+}
