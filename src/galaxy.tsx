@@ -126,7 +126,13 @@ const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
                 </StandardGalaxy>
             </GalaxyContainer>
             <ExtraTiles>
-                <MalliceTile controllingPlayerColor={undefined} />
+                <MalliceTile
+                    controllingPlayerColor={
+                        latestPlanetControlledEventsByPlanet
+                            .filter((e) => e.planet === 'Mallice')
+                            .map((e) => playerColors[e.faction])[0]
+                    }
+                />
                 {mapTileSelectedEvents.some(
                     (e) => e.systemTileNumber === 51
                 ) ? (
