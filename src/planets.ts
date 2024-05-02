@@ -4,105 +4,108 @@ type Planet = {
     influence: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 };
 
-type PlanetName =
-    | 'Jord'
-    | 'Moll Primus'
-    | 'Darien'
-    | 'Muaat'
-    | 'Nestphar'
-    | '[0.0.0]'
-    | 'Winnu'
-    | 'Mordai II'
-    | 'Maaluuk'
-    | 'Druaa'
-    | 'Wren Terra'
-    | 'Arc Prime'
-    | 'Lisis II'
-    | 'Ragh'
-    | 'Jol'
-    | 'Nar'
-    | "Tren'lak"
-    | 'Quinarra'
-    | 'Archon Ren'
-    | 'Archon Tau'
-    | 'Retillion'
-    | 'Shalloq'
-    | 'Arretze'
-    | 'Hercant'
-    | 'Kamdorn'
-    | 'Mecatol Rex'
-    | 'Wellon'
-    | 'Vefut II'
-    | 'Thibah'
-    | "Tar'mann"
-    | 'Saudor'
-    | 'Mehar Xull'
-    | 'Quann'
-    | 'Lodor'
-    | 'New Albion'
-    | 'Starpoint'
-    | "Tequ'ran"
-    | 'Torkan'
-    | "Qucen'n"
-    | 'Rarron'
-    | 'Mellon'
-    | 'Zohbat'
-    | 'Lazar'
-    | 'Sakulag'
-    | 'Dal Bootha'
-    | 'Xxehan'
-    | 'Corneeq'
-    | 'Resculon'
-    | 'Centauri'
-    | 'Gral'
-    | 'Bereg'
-    | 'Lirta IV'
-    | 'Arnor'
-    | 'Lor'
-    | 'Arinam'
-    | 'Meer'
-    | 'Abyz'
-    | 'Fria'
-    | 'Creuss'
-    | 'Ixth'
-    | 'Arcturus'
-    | 'Acheron'
-    | 'Elysium'
-    | 'The Dark'
-    | 'Naazir'
-    | 'Rohka'
-    | 'Ylir'
-    | 'Valk'
-    | 'Avar'
-    | 'Archon Vail'
-    | 'Perimeter'
-    | 'Ang'
-    | 'Sem-lore'
-    | 'Vorhal'
-    | 'Atlas'
-    | 'Primor'
-    | "Hope's End"
-    | 'Cormund'
-    | 'Everra'
-    | 'Accoen'
-    | 'Jeol Ir'
-    | 'Kraag'
-    | 'Siig'
-    | "Ba'kal"
-    | 'Alio Prima'
-    | 'Lisis'
-    | 'Velnor'
-    | 'Cealdri'
-    | 'Xanhact'
-    | 'Vega Major'
-    | 'Vega Minor'
-    | 'Abaddon'
-    | 'Loki'
-    | 'Ashtroth'
-    | 'Rigel II'
-    | 'Rigel III'
-    | 'Rigel I'
-    | 'Mallice';
+const planetNames = [
+    'Jord',
+    'Moll Primus',
+    'Darien',
+    'Muaat',
+    'Nestphar',
+    '[0.0.0]',
+    'Winnu',
+    'Mordai II',
+    'Maaluuk',
+    'Druaa',
+    'Wren Terra',
+    'Arc Prime',
+    'Lisis II',
+    'Ragh',
+    'Jol',
+    'Nar',
+    "Tren'lak",
+    'Quinarra',
+    'Archon Ren',
+    'Archon Tau',
+    'Retillion',
+    'Shalloq',
+    'Arretze',
+    'Hercant',
+    'Kamdorn',
+    'Mecatol Rex',
+    'Wellon',
+    'Vefut II',
+    'Thibah',
+    "Tar'mann",
+    'Saudor',
+    'Mehar Xull',
+    'Quann',
+    'Lodor',
+    'New Albion',
+    'Starpoint',
+    "Tequ'ran",
+    'Torkan',
+    "Qucen'n",
+    'Rarron',
+    'Mellon',
+    'Zohbat',
+    'Lazar',
+    'Sakulag',
+    'Dal Bootha',
+    'Xxehan',
+    'Corneeq',
+    'Resculon',
+    'Centauri',
+    'Gral',
+    'Bereg',
+    'Lirta IV',
+    'Arnor',
+    'Lor',
+    'Arinam',
+    'Meer',
+    'Abyz',
+    'Fria',
+    'Creuss',
+    'Ixth',
+    'Arcturus',
+    'Acheron',
+    'Elysium',
+    'The Dark',
+    'Naazir',
+    'Rohka',
+    'Ylir',
+    'Valk',
+    'Avar',
+    'Archon Vail',
+    'Perimeter',
+    'Ang',
+    'Sem-lore',
+    'Vorhal',
+    'Atlas',
+    'Primor',
+    "Hope's End",
+    'Cormund',
+    'Everra',
+    'Accoen',
+    'Jeol Ir',
+    'Kraag',
+    'Siig',
+    "Ba'kal",
+    'Alio Prima',
+    'Lisis',
+    'Velnor',
+    'Cealdri',
+    'Xanhact',
+    'Vega Major',
+    'Vega Minor',
+    'Abaddon',
+    'Loki',
+    'Ashtroth',
+    'Rigel II',
+    'Rigel III',
+    'Rigel I',
+    'Mallice',
+] as const;
+
+type PlanetName = (typeof planetNames)[number];
 
 type ResourcesAndInfluence = {
     resources: number;
@@ -504,4 +507,4 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     },
 };
 
-export { Planet, PlanetName, planets, ResourcesAndInfluence };
+export { Planet, PlanetName, planetNames,planets, ResourcesAndInfluence };

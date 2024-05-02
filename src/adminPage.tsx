@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import _, { identity } from 'underscore';
 
-import { Event } from './events';
+import {
+    Event,
+    isMapTileSelectedEvent,
+    isPlayerAssignedColorEvent,
+    isRoundEndedEvent,
+} from './events';
 import { Faction, factions, homeworlds } from './factions';
+import { planetNames } from './planets';
 import { PlayerColor, playerColors } from './playerColor';
 import { SystemTileNumber, systemTiles } from './systemTiles';
 import { range } from './util';
@@ -21,6 +28,24 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const [tileSelections, setTileSelections] = useState<
         Record<number, SystemTileNumber>
     >({});
+
+    const [playerOrderByRound, setPlayerOrderByRound] = useState<
+        Record<number, Faction[]>
+    >({});
+
+    const publishNewEvents = async (newEvents: Event[]) => {
+        const updatedEvents = [...events, ...newEvents];
+
+        const response = await fetch('/api', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedEvents),
+        });
+
+        if (response.status === 200) {
+            setEvents(updatedEvents);
+        }
+    };
 
     const publishPlayerColorAssignmentEvents = async () => {
         if (
@@ -48,17 +73,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 ),
             ];
 
-            const updatedEvents = [...events, ...newEvents];
-
-            const response = await fetch('/api', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedEvents),
-            });
-
-            if (response.status === 200) {
-                setEvents(updatedEvents);
-            }
+            await publishNewEvents(newEvents);
         }
     };
 
@@ -75,19 +90,36 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 ),
             ];
 
-            const updatedEvents = [...events, ...newEvents];
-
-            const response = await fetch('/api', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedEvents),
-            });
-
-            if (response.status === 200) {
-                setEvents(updatedEvents);
-            }
+            await publishNewEvents(newEvents);
         }
     };
+
+    const publishRoundStartedEvent = async () => {
+        const newEvent: Event = {
+            type: 'RoundStarted',
+            time: new Date().getTime(),
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishActionPhaseStartedEvent = async (roundNumber: number) => {
+        if (
+            _.uniq(playerOrderByRound[roundNumber]).length ===
+            events.filter(isPlayerAssignedColorEvent).length
+        ) {
+            const newEvent: Event = {
+                type: 'ActionPhaseStarted',
+                time: new Date().getTime(),
+            };
+
+            await publishNewEvents([newEvent]);
+        }
+    };
+
+    function currentRoundNumber() {
+        return events.filter(isRoundEndedEvent).length + 1;
+    }
 
     return (
         <StyledAdminPage>
@@ -108,8 +140,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                         Continue
                     </Button>
                 </>
-            ) : events.filter((e) => e.type === 'MapTileSelected').length <
-              37 ? (
+            ) : events.filter(isMapTileSelectedEvent).length < 37 ? (
                 <>
                     {range(37).map((n) => (
                         <MapTileSelectionRow key={n}>
@@ -140,8 +171,90 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                         Continue
                     </Button>
                 </>
+            ) : _.last(events)?.type === 'MapTileSelected' ||
+              _.last(events)?.type === 'RoundEnded' ? (
+                <Button onClick={publishRoundStartedEvent}>
+                    {`Start Round ${currentRoundNumber()}`}
+                </Button>
+            ) : _.last(events)?.type === 'RoundStarted' ? (
+                <>
+                    <span>{`Round ${currentRoundNumber()} player order`}</span>
+                    {events
+                        .filter(isPlayerAssignedColorEvent)
+                        .map((_, index) => (
+                            <Select
+                                key={index}
+                                onChange={(e) =>
+                                    setPlayerOrderByRound({
+                                        ...playerOrderByRound,
+                                        [currentRoundNumber()]: Object.assign(
+                                            [],
+                                            playerOrderByRound[
+                                                currentRoundNumber()
+                                            ],
+                                            {
+                                                [index]: e.target
+                                                    .value as Faction,
+                                            }
+                                        ),
+                                    })
+                                }
+                            >
+                                <option value={''}>--Faction--</option>
+                                {events
+                                    .filter(isPlayerAssignedColorEvent)
+                                    .map((e) => (
+                                        <option
+                                            key={e.faction}
+                                            value={e.faction}
+                                        >
+                                            {e.faction}
+                                        </option>
+                                    ))}
+                            </Select>
+                        ))}
+                    <Button
+                        onClick={() =>
+                            publishActionPhaseStartedEvent(currentRoundNumber())
+                        }
+                    >
+                        Continue
+                    </Button>
+                </>
             ) : (
-                <h1>Harrow!</h1>
+                <PlayerTurnPage>
+                    <span>Ghosts of Creuss turn</span>
+                    <StyledPlanetControlledRow>
+                        <Select>
+                            <option value={''}>--Planet--</option>
+                            {_.sortBy(planetNames, identity).map((p) => (
+                                <option key={p} value={p}>
+                                    {p}
+                                </option>
+                            ))}
+                        </Select>
+                        <Button>Take control</Button>
+                    </StyledPlanetControlledRow>
+                    <StyledPlanetEnhancedRow>
+                        <Select>
+                            <option value={''}>--Planet--</option>
+                            {_.sortBy(planetNames, identity).map((p) => (
+                                <option key={p} value={p}>
+                                    {p}
+                                </option>
+                            ))}
+                        </Select>
+                        <PlanetEnhancementInputsRow>
+                            <NumberInput />
+                            <NumberInput />
+                        </PlanetEnhancementInputsRow>
+                        <Button>Enhance</Button>
+                    </StyledPlanetEnhancedRow>
+                    <ButtonsContainer>
+                        <Button>Pass</Button>
+                        <Button>Turn finished</Button>
+                    </ButtonsContainer>
+                </PlayerTurnPage>
             )}
         </StyledAdminPage>
     );
@@ -215,11 +328,61 @@ const MapTileSelectionRow = styled.div`
     }
 `;
 
+const PlayerTurnPage = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+`;
+
+const StyledPlanetControlledRow = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+    row-gap: 1rem;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const StyledPlanetEnhancedRow = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+    row-gap: 1rem;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const PlanetEnhancementInputsRow = styled.div`
+    display: flex;
+    column-gap: 2rem;
+    row-gap: 1rem;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const ButtonsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+`;
+
 const Select = styled.select`
     font-size: 2.25rem;
 `;
 
 const Button = styled.button`
+    font-size: 2.25rem;
+`;
+
+const NumberInput = styled.input.attrs(() => ({ type: 'number' }))`
+    min-width: 0;
     font-size: 2.25rem;
 `;
 
