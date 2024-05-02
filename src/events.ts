@@ -80,6 +80,9 @@ const isRoundStartedOrEndedEvent = (
 const isRoundEndedEvent = (e: Event): e is RoundEndedEvent =>
     e.type === 'RoundEnded';
 
+const isPlanetDestroyedEvent = (e: Event): e is PlanetDestroyedEvent =>
+    e.type === 'PlanetDestroyed';
+
 type Event =
     | ActionPhaseStartedEvent
     | MapTileSelectedEvent
@@ -96,6 +99,7 @@ export {
     Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
+    isPlanetDestroyedEvent,
     isPlayerAssignedColorEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,

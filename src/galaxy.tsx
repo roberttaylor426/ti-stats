@@ -10,6 +10,7 @@ import {
     Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
+    isPlanetDestroyedEvent,
     PlanetControlledEvent,
 } from './events';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
@@ -18,6 +19,10 @@ import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 /*
  Don't score, don't show control if planet destroyed
  Support planet enhanced events
+
+ We need a server!
+
+ We need an admin front-end!
 
  Background of scoreboard titles
  Extract common scoreboard component
@@ -33,6 +38,7 @@ type Props = {
 
 const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
     const mapTileSelectedEvents = events.filter(isMapTileSelectedEvent);
+    const planetDestroyedEvents = events.filter(isPlanetDestroyedEvent);
 
     const latestPlanetControlledEventsByPlanet = events
         .filter(isPlanetControlledEvent)
@@ -41,11 +47,18 @@ const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
             (acc: PlanetControlledEvent[], n) =>
                 acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
             []
+        )
+        .filter(
+            (e) => !planetDestroyedEvents.some((de) => de.planet === e.planet)
         );
 
     const planetsControlledByFaction = (faction: Faction): PlanetName[] =>
         latestPlanetControlledEventsByPlanet
             .filter((e) => e.faction === faction)
+            .filter(
+                (e) =>
+                    !planetDestroyedEvents.some((de) => de.planet === e.planet)
+            )
             .map((e) => e.planet);
 
     const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =

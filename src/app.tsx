@@ -80,6 +80,10 @@ const events: Event[] = [
         faction: 'The Mahact Gene-Sorcerers',
     },
     {
+        type: 'PlanetDestroyed',
+        planet: 'Arc Prime',
+    },
+    {
         type: 'PlayerScoredVictoryPoint',
         faction: 'Sardakk N’orr',
         delta: 1,
