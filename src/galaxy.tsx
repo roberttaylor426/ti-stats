@@ -16,11 +16,11 @@ import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 
 /*
- Extract common scoreboard component
- Background of scoreboard titles
  Don't score, don't show control if planet destroyed
- Only show Creuss tile optionally
  Support planet enhanced events
+
+ Background of scoreboard titles
+ Extract common scoreboard component
  */
 
 const range = (n: number) => [...Array(n).keys()];
@@ -32,6 +32,8 @@ type Props = {
 };
 
 const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
+    const mapTileSelectedEvents = events.filter(isMapTileSelectedEvent);
+
     const latestPlanetControlledEventsByPlanet = events
         .filter(isPlanetControlledEvent)
         .reverse()
@@ -76,9 +78,8 @@ const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
                             >
                                 {range(tilesPerColumn(columnIndex)).map(
                                     (rowIndex) => {
-                                        const systemTileNumber = events
-                                            .filter(isMapTileSelectedEvent)
-                                            .find(
+                                        const systemTileNumber =
+                                            mapTileSelectedEvents.find(
                                                 (e) =>
                                                     e.position ===
                                                     tileIndex(
@@ -126,7 +127,13 @@ const Galaxy: React.FC<Props> = ({ events, factionsInGame, playerColors }) => {
             </GalaxyContainer>
             <ExtraTiles>
                 <MalliceTile controllingPlayerColor={undefined} />
-                <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
+                {mapTileSelectedEvents.some(
+                    (e) => e.systemTileNumber === 51
+                ) ? (
+                    <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
+                ) : (
+                    <div />
+                )}
             </ExtraTiles>
             <Scoreboard>
                 <ResourcesInfluenceScoreboardRow
