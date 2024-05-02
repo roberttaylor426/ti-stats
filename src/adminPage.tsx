@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Event } from './events';
 import { Faction, factions, homeworlds } from './factions';
 import { PlayerColor, playerColors } from './playerColor';
-import { systemTiles } from './systemTiles';
+import { SystemTileNumber, systemTiles } from './systemTiles';
 import { range } from './util';
 
 type AdminPageProps = {
@@ -18,7 +18,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         Record<number, PlayerColor>
     >({});
 
-    const publishEvents = async () => {
+    const [tileSelections, setTileSelections] = useState<
+        Record<number, SystemTileNumber>
+    >({});
+
+    const publishPlayerColorAssignmentEvents = async () => {
         if (
             Object.keys(factions).length === 6 &&
             Object.keys(playerColors).length === 6
@@ -58,6 +62,33 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         }
     };
 
+    const publishMapTileSelectionEvents = async () => {
+        if (Object.keys(tileSelections).length === 37) {
+            const newEvents: Event[] = [
+                ...range(37).map(
+                    (n) =>
+                        ({
+                            type: 'MapTileSelected',
+                            systemTileNumber: tileSelections[n + 1],
+                            position: n,
+                        }) as const
+                ),
+            ];
+
+            const updatedEvents = [...events, ...newEvents];
+
+            const response = await fetch('/api', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedEvents),
+            });
+
+            if (response.status === 200) {
+                setEvents(updatedEvents);
+            }
+        }
+    };
+
     return (
         <StyledAdminPage>
             {events.length === 0 ? (
@@ -73,14 +104,26 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                             }
                         />
                     ))}
-                    <Button onClick={publishEvents}>Continue</Button>
+                    <Button onClick={publishPlayerColorAssignmentEvents}>
+                        Continue
+                    </Button>
                 </>
-            ) : (
+            ) : events.filter((e) => e.type === 'MapTileSelected').length <
+              37 ? (
                 <>
                     {range(37).map((n) => (
                         <MapTileSelectionRow key={n}>
                             <span>{n + 1}</span>
-                            <Select>
+                            <Select
+                                onChange={(e) =>
+                                    setTileSelections({
+                                        ...tileSelections,
+                                        [n + 1]: Number.parseInt(
+                                            e.target.value
+                                        ) as SystemTileNumber,
+                                    })
+                                }
+                            >
                                 <option value={''}>--Tile--</option>
                                 {systemTiles.map((st) => (
                                     <option
@@ -93,8 +136,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                             </Select>
                         </MapTileSelectionRow>
                     ))}
-                    <Button>Continue</Button>
+                    <Button onClick={publishMapTileSelectionEvents}>
+                        Continue
+                    </Button>
                 </>
+            ) : (
+                <h1>Harrow!</h1>
             )}
         </StyledAdminPage>
     );
