@@ -10,6 +10,7 @@ import {
     isPlayerAssignedColorEvent,
     isRoundEndedEvent,
     PlanetControlledEvent,
+    PlayerFinishedTurnEvent,
 } from './events';
 import { Faction, factions, homeworlds } from './factions';
 import { PlanetName, planets } from './planets';
@@ -48,6 +49,21 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         useState<PlanetName>();
     const [resourcesToEnhance, setResourcesToEnhance] = useState(0);
     const [influenceToEnhance, setInfluenceToEnhance] = useState(0);
+
+    const turnsFinishedThisActionPhase = events.reduce((acc, n) => {
+        if (n.type === 'ActionPhaseStarted') {
+            return [];
+        }
+        if (n.type === 'PlayerFinishedTurn') {
+            return [...acc, n];
+        }
+        return acc;
+    }, [] as PlayerFinishedTurnEvent[]);
+
+    const unpassedPlayersInOrder = currentRoundPlayerOrder.filter(
+        (f) =>
+            !turnsFinishedThisActionPhase.some((e) => e.faction === f && e.pass)
+    );
 
     const latestPlanetControlledEventsByPlanet = events
         .filter(isPlanetControlledEvent)
@@ -176,6 +192,26 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         await publishNewEvents([newEvent]);
     };
 
+    const publishTurnFinishedEvent = async (f: Faction, pass: boolean) => {
+        const newEvent: Event = {
+            type: 'PlayerFinishedTurn',
+            faction: f,
+            time: new Date().getTime(),
+            pass,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishRoundEndedEvent = async () => {
+        const newEvent: Event = {
+            type: 'RoundEnded',
+            time: new Date().getTime(),
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
     const planetsOnTheBoard: PlanetName[] = [
         ...events
             .filter(isMapTileSelectedEvent)
@@ -190,7 +226,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const currentRoundNumber = () =>
         events.filter(isRoundEndedEvent).length + 1;
 
-    const currentPlayerTurn = () => undefined;
+    const currentPlayerTurn = () => {
+        const lastPlayerToHaveATurn = _.last(turnsFinishedThisActionPhase);
+
+        const currentPlayerToHaveATurn = !lastPlayerToHaveATurn
+            ? 0
+            : (unpassedPlayersInOrder.indexOf(lastPlayerToHaveATurn.faction) +
+                  1) %
+              unpassedPlayersInOrder.length;
+
+        return unpassedPlayersInOrder[currentPlayerToHaveATurn];
+    };
 
     const factionCurrentlyControllingPlanet = (p: PlanetName) =>
         latestPlanetControlledEventsByPlanet.find((e) => e.planet === p)
@@ -315,7 +361,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                         Continue
                     </Button>
                 </>
-            ) : (
+            ) : unpassedPlayersInOrder.length > 0 ? (
                 <PlayerTurnPage>
                     <span>{`${currentPlayerTurn()} turn`}</span>
                     <StyledPlanetControlledRow>
@@ -338,7 +384,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                                 if (selectedPlanetToControl) {
                                     await publishPlanetControlledEvent(
                                         selectedPlanetToControl,
-                                        'Sardakk N’orr'
+                                        currentPlayerTurn()
                                     );
                                 }
                             }}
@@ -398,10 +444,32 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                         </Button>
                     </StyledPlanetEnhancedRow>
                     <ButtonsContainer>
-                        <Button>Pass</Button>
-                        <Button>Turn finished</Button>
+                        <Button
+                            onClick={() =>
+                                publishTurnFinishedEvent(
+                                    currentPlayerTurn(),
+                                    true
+                                )
+                            }
+                        >
+                            Pass
+                        </Button>
+                        <Button
+                            onClick={() =>
+                                publishTurnFinishedEvent(
+                                    currentPlayerTurn(),
+                                    false
+                                )
+                            }
+                        >
+                            Turn finished
+                        </Button>
                     </ButtonsContainer>
                 </PlayerTurnPage>
+            ) : (
+                <Button onClick={publishRoundEndedEvent}>
+                    {`End Round ${currentRoundNumber()}`}
+                </Button>
             )}
         </StyledAdminPage>
     );

@@ -29,6 +29,7 @@ type PlayerFinishedTurnEvent = {
     type: 'PlayerFinishedTurn';
     time: number;
     faction: Faction;
+    pass: boolean;
 };
 
 type PlayerScoredVictoryPointEvent = {
@@ -111,4 +112,5 @@ export {
     isRoundStartedOrEndedEvent,
     MapTileSelectedEvent,
     PlanetControlledEvent,
+    PlayerFinishedTurnEvent,
 };

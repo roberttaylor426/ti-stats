@@ -377,7 +377,7 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
         resources: 1,
         influence: 2,
     },
-    Yur: {
+    Ylir: {
         resources: 0,
         influence: 2,
     },
@@ -507,4 +507,4 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     },
 };
 
-export { Planet, PlanetName, planetNames,planets, ResourcesAndInfluence };
+export { Planet, PlanetName, planetNames, planets, ResourcesAndInfluence };

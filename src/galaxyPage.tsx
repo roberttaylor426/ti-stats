@@ -20,10 +20,11 @@ import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { hexColor, notUndefined, range } from './util';
 
 /*
- We need an admin front-end!
-
- We need a server!
-  - that stores and retrieves data!
+ Turn finished
+ Pass
+ Round ended
+ Destory planet
+ Score VPs
 
  Background of scoreboard titles
  Extract common scoreboard component
@@ -71,17 +72,17 @@ const GalaxyPage: React.FC<Props> = ({
             playerColor: playerColors[f],
             resourcesAndInfluence: planetsControlledByFaction(f)
                 .map((p) => ({
-                    resources:
-                        planets[p].resources +
-                        planetEnhancedEvents
-                            .filter((e) => e.planet === p)
-                            .reduce((acc, n) => acc + n.extraResources, 0),
-                    influence:
-                        planets[p].influence +
-                        planetEnhancedEvents
-                            .filter((e) => e.planet === p)
-                            .reduce((acc, n) => acc + n.extraInfluence, 0),
-                }))
+                        resources:
+                            planets[p].resources +
+                            planetEnhancedEvents
+                                .filter((e) => e.planet === p)
+                                .reduce((acc, n) => acc + n.extraResources, 0),
+                        influence:
+                            planets[p].influence +
+                            planetEnhancedEvents
+                                .filter((e) => e.planet === p)
+                                .reduce((acc, n) => acc + n.extraInfluence, 0),
+                    }))
                 .reduce(
                     (acc, n) => ({
                         resources: acc.resources + n.resources,
