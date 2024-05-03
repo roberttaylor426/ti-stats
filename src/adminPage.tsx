@@ -6,6 +6,7 @@ import {
     Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
+    isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     isPlayerAssignedColorEvent,
     isPlayerScoredVictoryPointEvent,
@@ -53,6 +54,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
 
     const [playerToScoreVps, setPlayerToScoreVps] = useState<Faction>();
     const [vpsToAdd, setVpsToAdd] = useState<number>(0);
+
+    const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
 
     const turnsFinishedThisActionPhase = events.reduce((acc, n) => {
         if (n.type === 'ActionPhaseStarted') {
@@ -229,6 +232,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         return await publishNewEvents([newEvent]);
     };
 
+    const publishPlanetDestroyedEvent = async (
+        p: PlanetName
+    ): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'PlanetDestroyed',
+            planet: p,
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
     const planetsOnTheBoard: PlanetName[] = [
         ...events
             .filter(isMapTileSelectedEvent)
@@ -236,6 +250,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 (e) =>
                     systemTiles.find((t) => t.tileNumber === e.systemTileNumber)
                         ?.planets || []
+            )
+            .filter(
+                (p) =>
+                    !events
+                        .filter(isPlanetDestroyedEvent)
+                        .some((dp) => dp.planet === p)
             ),
         'Mallice',
     ];
@@ -479,7 +499,31 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                             Score
                         </Button>
                     </ScoreVpsRow>
-
+                    <DestroyPlanetContainer>
+                        <Select
+                            onChange={(e) =>
+                                setPlanetToDestroy(e.target.value as PlanetName)
+                            }
+                        >
+                            <option value={''}>--Planet--</option>
+                            {_.sortBy(planetsOnTheBoard, identity).map((p) => (
+                                <option key={p} value={p}>
+                                    {planetNameWithControllingFaction(p)}
+                                </option>
+                            ))}
+                        </Select>
+                        <Button
+                            onClick={async () => {
+                                if (planetToDestroy) {
+                                    await publishPlanetDestroyedEvent(
+                                        planetToDestroy
+                                    );
+                                }
+                            }}
+                        >
+                            Destroy planet
+                        </Button>
+                    </DestroyPlanetContainer>
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
@@ -675,6 +719,17 @@ const FactionScoresVpsContainer = styled.div`
 const ScoreVpsRow = styled.div`
     display: flex;
     column-gap: 1rem;
+    row-gap: 1rem;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const DestroyPlanetContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
     row-gap: 1rem;
 
     > * {

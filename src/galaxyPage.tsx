@@ -20,10 +20,6 @@ import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { hexColor, notUndefined, range } from './util';
 
 /*
- Clear inputs on turn finished
- Destroy planet
- Score VPs
-
  Background of scoreboard titles
  Extract common scoreboard component
  */
