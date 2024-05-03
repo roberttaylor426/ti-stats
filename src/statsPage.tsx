@@ -181,6 +181,7 @@ const StatsPage: React.FC<Props> = ({
                             ],
                         }}
                         options={{
+                            animation: { duration: 0 },
                             elements: {
                                 point: {
                                     radius: 10,
