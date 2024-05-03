@@ -5,11 +5,13 @@ import _, { identity } from 'underscore';
 import {
     Event,
     isMapTileSelectedEvent,
+    isPlanetControlledEvent,
     isPlayerAssignedColorEvent,
     isRoundEndedEvent,
+    PlanetControlledEvent,
 } from './events';
 import { Faction, factions, homeworlds } from './factions';
-import { planetNames } from './planets';
+import { PlanetName } from './planets';
 import { PlayerColor, playerColors } from './playerColor';
 import { SystemTileNumber, systemTiles } from './systemTiles';
 import { range } from './util';
@@ -33,7 +35,21 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         Record<number, Faction[]>
     >({});
 
-    const publishNewEvents = async (newEvents: Event[]) => {
+    const storedPlayerOrder = localStorage.getItem('playerOrder');
+    const [currentRoundPlayerOrder, setCurrentRoundPlayerOrder] = useState<
+        Faction[]
+    >(storedPlayerOrder ? JSON.parse(storedPlayerOrder) : []);
+
+    const latestPlanetControlledEventsByPlanet = events
+        .filter(isPlanetControlledEvent)
+        .reverse()
+        .reduce(
+            (acc: PlanetControlledEvent[], n) =>
+                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
+            []
+        );
+
+    const publishNewEvents = async (newEvents: Event[]): Promise<boolean> => {
         const updatedEvents = [...events, ...newEvents];
 
         const response = await fetch('/api', {
@@ -44,7 +60,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
 
         if (response.status === 200) {
             setEvents(updatedEvents);
+            return true;
         }
+
+        return false;
     };
 
     const publishPlayerColorAssignmentEvents = async () => {
@@ -113,13 +132,38 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 time: new Date().getTime(),
             };
 
-            await publishNewEvents([newEvent]);
+            if (await publishNewEvents([newEvent])) {
+                localStorage.setItem(
+                    'playerOrder',
+                    JSON.stringify(playerOrderByRound[roundNumber])
+                );
+                setCurrentRoundPlayerOrder(playerOrderByRound[roundNumber]);
+            }
         }
     };
 
-    function currentRoundNumber() {
-        return events.filter(isRoundEndedEvent).length + 1;
-    }
+    const planetsOnTheBoard: PlanetName[] = [
+        ...events
+            .filter(isMapTileSelectedEvent)
+            .flatMap(
+                (e) =>
+                    systemTiles.find((t) => t.tileNumber === e.systemTileNumber)
+                        ?.planets || []
+            ),
+        'Mallice',
+    ];
+
+    const currentRoundNumber = () =>
+        events.filter(isRoundEndedEvent).length + 1;
+
+    const currentPlayerTurn = () => undefined;
+
+    const factionCurrentlyControllingPlanet = (p: PlanetName) =>
+        latestPlanetControlledEventsByPlanet.find((e) => e.planet === p)
+            ?.faction;
+
+    const planetNameWithControllingFaction = (p: PlanetName) =>
+        `${p}${factionCurrentlyControllingPlanet(p) ? ` (${factionCurrentlyControllingPlanet(p)})` : ''}`;
 
     return (
         <StyledAdminPage>
@@ -223,13 +267,13 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 </>
             ) : (
                 <PlayerTurnPage>
-                    <span>Ghosts of Creuss turn</span>
+                    <span>{`${currentPlayerTurn()} turn`}</span>
                     <StyledPlanetControlledRow>
                         <Select>
                             <option value={''}>--Planet--</option>
-                            {_.sortBy(planetNames, identity).map((p) => (
+                            {_.sortBy(planetsOnTheBoard, identity).map((p) => (
                                 <option key={p} value={p}>
-                                    {p}
+                                    {planetNameWithControllingFaction(p)}
                                 </option>
                             ))}
                         </Select>
@@ -238,9 +282,9 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                     <StyledPlanetEnhancedRow>
                         <Select>
                             <option value={''}>--Planet--</option>
-                            {_.sortBy(planetNames, identity).map((p) => (
+                            {_.sortBy(planetsOnTheBoard, identity).map((p) => (
                                 <option key={p} value={p}>
-                                    {p}
+                                    {planetNameWithControllingFaction(p)}
                                 </option>
                             ))}
                         </Select>
