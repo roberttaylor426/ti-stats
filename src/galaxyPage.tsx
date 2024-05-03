@@ -20,10 +20,8 @@ import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { hexColor, notUndefined, range } from './util';
 
 /*
- Turn finished
- Pass
- Round ended
- Destory planet
+ Clear inputs on turn finished
+ Destroy planet
  Score VPs
 
  Background of scoreboard titles
@@ -72,17 +70,17 @@ const GalaxyPage: React.FC<Props> = ({
             playerColor: playerColors[f],
             resourcesAndInfluence: planetsControlledByFaction(f)
                 .map((p) => ({
-                        resources:
-                            planets[p].resources +
-                            planetEnhancedEvents
-                                .filter((e) => e.planet === p)
-                                .reduce((acc, n) => acc + n.extraResources, 0),
-                        influence:
-                            planets[p].influence +
-                            planetEnhancedEvents
-                                .filter((e) => e.planet === p)
-                                .reduce((acc, n) => acc + n.extraInfluence, 0),
-                    }))
+                    resources:
+                        planets[p].resources +
+                        planetEnhancedEvents
+                            .filter((e) => e.planet === p)
+                            .reduce((acc, n) => acc + n.extraResources, 0),
+                    influence:
+                        planets[p].influence +
+                        planetEnhancedEvents
+                            .filter((e) => e.planet === p)
+                            .reduce((acc, n) => acc + n.extraInfluence, 0),
+                }))
                 .reduce(
                     (acc, n) => ({
                         resources: acc.resources + n.resources,

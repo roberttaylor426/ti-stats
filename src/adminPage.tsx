@@ -8,6 +8,7 @@ import {
     isPlanetControlledEvent,
     isPlanetEnhancedEvent,
     isPlayerAssignedColorEvent,
+    isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     PlanetControlledEvent,
     PlayerFinishedTurnEvent,
@@ -49,6 +50,9 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         useState<PlanetName>();
     const [resourcesToEnhance, setResourcesToEnhance] = useState(0);
     const [influenceToEnhance, setInfluenceToEnhance] = useState(0);
+
+    const [playerToScoreVps, setPlayerToScoreVps] = useState<Faction>();
+    const [vpsToAdd, setVpsToAdd] = useState<number>(0);
 
     const turnsFinishedThisActionPhase = events.reduce((acc, n) => {
         if (n.type === 'ActionPhaseStarted') {
@@ -207,6 +211,16 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         const newEvent: Event = {
             type: 'RoundEnded',
             time: new Date().getTime(),
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishVpScoredEvent = async (f: Faction, delta: number) => {
+        const newEvent: Event = {
+            type: 'PlayerScoredVictoryPoint',
+            faction: f,
+            delta,
         };
 
         await publishNewEvents([newEvent]);
@@ -467,9 +481,57 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                     </ButtonsContainer>
                 </PlayerTurnPage>
             ) : (
-                <Button onClick={publishRoundEndedEvent}>
-                    {`End Round ${currentRoundNumber()}`}
-                </Button>
+                <>
+                    <FactionScoresVpsContainer>
+                        <Select
+                            onChange={(e) =>
+                                setPlayerToScoreVps(e.target.value as Faction)
+                            }
+                        >
+                            <option value={''}>--Faction--</option>
+                            {events
+                                .filter(isPlayerAssignedColorEvent)
+                                .map((e) => (
+                                    <option key={e.faction} value={e.faction}>
+                                        {`${e.faction} (${events
+                                            .filter(
+                                                isPlayerScoredVictoryPointEvent
+                                            )
+                                            .filter(
+                                                (vpe) =>
+                                                    vpe.faction === e.faction
+                                            )
+                                            .reduce(
+                                                (acc, n) => acc + n.delta,
+                                                0
+                                            )}vp)`}
+                                    </option>
+                                ))}
+                        </Select>
+                        <ScoreVpsRow>
+                            <NumberInput
+                                onChange={(e) =>
+                                    setVpsToAdd(Number.parseInt(e.target.value))
+                                }
+                            />
+                            <Button
+                                onClick={async () => {
+                                    if (playerToScoreVps && vpsToAdd) {
+                                        await publishVpScoredEvent(
+                                            playerToScoreVps,
+                                            vpsToAdd
+                                        );
+                                    }
+                                }}
+                            >
+                                Score
+                            </Button>
+                        </ScoreVpsRow>
+                    </FactionScoresVpsContainer>
+                    <Button onClick={publishRoundEndedEvent}>
+                        {`End Round ${currentRoundNumber()}`}
+                    </Button>
+                </>
             )}
         </StyledAdminPage>
     );
@@ -575,6 +637,22 @@ const StyledPlanetEnhancedRow = styled.div`
 const PlanetEnhancementInputsRow = styled.div`
     display: flex;
     column-gap: 2rem;
+    row-gap: 1rem;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const FactionScoresVpsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+`;
+
+const ScoreVpsRow = styled.div`
+    display: flex;
+    column-gap: 1rem;
     row-gap: 1rem;
 
     > * {

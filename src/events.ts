@@ -35,7 +35,7 @@ type PlayerFinishedTurnEvent = {
 type PlayerScoredVictoryPointEvent = {
     type: 'PlayerScoredVictoryPoint';
     faction: Faction;
-    delta: 1 | -1;
+    delta: number;
 };
 
 type PlanetEnhancedEvent = {
