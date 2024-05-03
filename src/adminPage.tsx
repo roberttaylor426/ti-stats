@@ -6,12 +6,13 @@ import {
     Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
+    isPlanetEnhancedEvent,
     isPlayerAssignedColorEvent,
     isRoundEndedEvent,
     PlanetControlledEvent,
 } from './events';
 import { Faction, factions, homeworlds } from './factions';
-import { PlanetName } from './planets';
+import { PlanetName, planets } from './planets';
 import { PlayerColor, playerColors } from './playerColor';
 import { SystemTileNumber, systemTiles } from './systemTiles';
 import { range } from './util';
@@ -39,6 +40,14 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const [currentRoundPlayerOrder, setCurrentRoundPlayerOrder] = useState<
         Faction[]
     >(storedPlayerOrder ? JSON.parse(storedPlayerOrder) : []);
+
+    const [selectedPlanetToControl, setSelectedPlanetToControl] =
+        useState<PlanetName>();
+
+    const [selectedPlanetToEnhance, setSelectedPlanetToEnhance] =
+        useState<PlanetName>();
+    const [resourcesToEnhance, setResourcesToEnhance] = useState(0);
+    const [influenceToEnhance, setInfluenceToEnhance] = useState(0);
 
     const latestPlanetControlledEventsByPlanet = events
         .filter(isPlanetControlledEvent)
@@ -142,6 +151,31 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         }
     };
 
+    const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
+        const newEvent: Event = {
+            type: 'PlanetControlled',
+            planet: p,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishPlanetEnhancedEvent = async (
+        p: PlanetName,
+        extraResources: number,
+        extraInfluence: number
+    ) => {
+        const newEvent: Event = {
+            type: 'PlanetEnhanced',
+            planet: p,
+            extraResources,
+            extraInfluence,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
     const planetsOnTheBoard: PlanetName[] = [
         ...events
             .filter(isMapTileSelectedEvent)
@@ -164,6 +198,22 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
 
     const planetNameWithControllingFaction = (p: PlanetName) =>
         `${p}${factionCurrentlyControllingPlanet(p) ? ` (${factionCurrentlyControllingPlanet(p)})` : ''}`;
+
+    const currentPlanetResourcesAndInfluence = (p: PlanetName) => ({
+        resources:
+            planets[p].resources +
+            events
+                .filter(isPlanetEnhancedEvent)
+                .reduce((acc, n) => acc + n.extraResources, 0),
+        influence:
+            planets[p].influence +
+            events
+                .filter(isPlanetEnhancedEvent)
+                .reduce((acc, n) => acc + n.extraInfluence, 0),
+    });
+
+    const planetNameWithResourcesAndInfluence = (p: PlanetName) =>
+        `${p} (${currentPlanetResourcesAndInfluence(p).resources}R, ${currentPlanetResourcesAndInfluence(p).influence}I)`;
 
     return (
         <StyledAdminPage>
@@ -269,7 +319,13 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 <PlayerTurnPage>
                     <span>{`${currentPlayerTurn()} turn`}</span>
                     <StyledPlanetControlledRow>
-                        <Select>
+                        <Select
+                            onChange={(e) =>
+                                setSelectedPlanetToControl(
+                                    e.target.value as PlanetName
+                                )
+                            }
+                        >
                             <option value={''}>--Planet--</option>
                             {_.sortBy(planetsOnTheBoard, identity).map((p) => (
                                 <option key={p} value={p}>
@@ -277,22 +333,69 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                                 </option>
                             ))}
                         </Select>
-                        <Button>Take control</Button>
+                        <Button
+                            onClick={async () => {
+                                if (selectedPlanetToControl) {
+                                    await publishPlanetControlledEvent(
+                                        selectedPlanetToControl,
+                                        'Sardakk N’orr'
+                                    );
+                                }
+                            }}
+                        >
+                            Take control
+                        </Button>
                     </StyledPlanetControlledRow>
                     <StyledPlanetEnhancedRow>
-                        <Select>
+                        <Select
+                            onChange={(e) =>
+                                setSelectedPlanetToEnhance(
+                                    e.target.value as PlanetName
+                                )
+                            }
+                        >
                             <option value={''}>--Planet--</option>
                             {_.sortBy(planetsOnTheBoard, identity).map((p) => (
                                 <option key={p} value={p}>
-                                    {planetNameWithControllingFaction(p)}
+                                    {planetNameWithResourcesAndInfluence(p)}
                                 </option>
                             ))}
                         </Select>
                         <PlanetEnhancementInputsRow>
-                            <NumberInput />
-                            <NumberInput />
+                            <NumberInput
+                                placeholder={'Resources'}
+                                onChange={(e) =>
+                                    setResourcesToEnhance(
+                                        Number.parseInt(e.target.value)
+                                    )
+                                }
+                            />
+                            <NumberInput
+                                placeholder={'Influence'}
+                                onChange={(e) =>
+                                    setInfluenceToEnhance(
+                                        Number.parseInt(e.target.value)
+                                    )
+                                }
+                            />
                         </PlanetEnhancementInputsRow>
-                        <Button>Enhance</Button>
+                        <Button
+                            onClick={async () => {
+                                if (
+                                    selectedPlanetToEnhance &&
+                                    resourcesToEnhance &&
+                                    influenceToEnhance
+                                ) {
+                                    await publishPlanetEnhancedEvent(
+                                        selectedPlanetToEnhance,
+                                        resourcesToEnhance,
+                                        influenceToEnhance
+                                    );
+                                }
+                            }}
+                        >
+                            Enhance
+                        </Button>
                     </StyledPlanetEnhancedRow>
                     <ButtonsContainer>
                         <Button>Pass</Button>
