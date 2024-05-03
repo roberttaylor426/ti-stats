@@ -106,7 +106,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     };
 
     const publishMapTileSelectionEvents = async () => {
-        if (Object.keys(tileSelections).length === 37) {
+        if (_.uniq(Object.keys(tileSelections)).length === 37) {
             const newEvents: Event[] = [
                 ...range(37).map(
                     (n) =>
