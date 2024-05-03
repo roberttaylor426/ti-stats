@@ -216,14 +216,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         await publishNewEvents([newEvent]);
     };
 
-    const publishVpScoredEvent = async (f: Faction, delta: number) => {
+    const publishVpScoredEvent = async (
+        f: Faction,
+        delta: number
+    ): Promise<boolean> => {
         const newEvent: Event = {
             type: 'PlayerScoredVictoryPoint',
             faction: f,
             delta,
         };
 
-        await publishNewEvents([newEvent]);
+        return await publishNewEvents([newEvent]);
     };
 
     const planetsOnTheBoard: PlanetName[] = [
@@ -457,6 +460,26 @@ const AdminPage: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                             Enhance
                         </Button>
                     </StyledPlanetEnhancedRow>
+                    <ScoreVpsRow>
+                        <NumberInput
+                            onChange={(e) =>
+                                setVpsToAdd(Number.parseInt(e.target.value))
+                            }
+                        />
+                        <Button
+                            onClick={async () => {
+                                if (vpsToAdd) {
+                                    await publishVpScoredEvent(
+                                        currentPlayerTurn(),
+                                        vpsToAdd
+                                    );
+                                }
+                            }}
+                        >
+                            Score
+                        </Button>
+                    </ScoreVpsRow>
+
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
@@ -636,8 +659,7 @@ const StyledPlanetEnhancedRow = styled.div`
 
 const PlanetEnhancementInputsRow = styled.div`
     display: flex;
-    column-gap: 2rem;
-    row-gap: 1rem;
+    column-gap: 1rem;
 
     > * {
         flex: 1 1 0;
