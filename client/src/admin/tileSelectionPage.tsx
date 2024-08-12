@@ -2,13 +2,21 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { Event } from '../events';
-import { SystemTileNumber, systemTiles } from '../systemTiles';
+import { Event, isPlayerAssignedColorEvent } from '../events';
+import { Faction, factions, homeworlds } from '../factions';
+import { SystemTile, SystemTileNumber, systemTiles } from '../systemTiles';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, Select } from './components';
 
-const TileSelectionPage: React.FC<AdminPageProps> = ({ publishNewEvents }) => {
+type Props = {
+    events: Event[];
+};
+
+const TileSelectionPage: React.FC<Props & AdminPageProps> = ({
+    events,
+    publishNewEvents,
+}) => {
     const [tileSelections, setTileSelections] = useState<
         Record<number, SystemTileNumber>
     >({});
@@ -46,7 +54,11 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({ publishNewEvents }) => {
                         }
                     >
                         <option value={''}>--Tile--</option>
-                        {systemTiles
+                        {systemTilesForGame(
+                            events
+                                .filter(isPlayerAssignedColorEvent)
+                                .map((e) => e.faction)
+                        )
                             .filter(
                                 (st) =>
                                     tileSelections[n + 1] === st.tileNumber ||
@@ -67,6 +79,19 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({ publishNewEvents }) => {
             ))}
             <Button onClick={publishMapTileSelectionEvents}>Continue</Button>
         </>
+    );
+};
+
+const systemTilesForGame = (selectedFactions: Faction[]): SystemTile[] => {
+    const factionsNotSelected = factions.filter(
+        (f) => !selectedFactions.includes(f)
+    );
+
+    return systemTiles.filter(
+        (st) =>
+            !factionsNotSelected.find((f) =>
+                _.isEqual(homeworlds(f), st.planets)
+            )
     );
 };
 

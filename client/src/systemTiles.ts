@@ -672,4 +672,4 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
-export { systemTileImages, SystemTileNumber, systemTiles, tile0 };
+export { SystemTile,systemTileImages, SystemTileNumber, systemTiles, tile0 };

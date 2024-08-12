@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import _, {identity} from 'underscore';
+import _, { identity } from 'underscore';
 
 import {
     Event,
@@ -14,21 +14,19 @@ import {
     PlanetControlledEvent,
     PlayerFinishedTurnEvent,
 } from '../events';
-import {Faction} from '../factions';
-import {PlanetName, planets} from '../planets';
-import {systemTiles} from '../systemTiles';
-import {Button, Select} from './components';
-import {FactionSelectionPage} from "./factionSelectionPage";
-import {TileSelectionPage} from './tileSelectionPage';
+import { Faction } from '../factions';
+import { PlanetName, planets } from '../planets';
+import { systemTiles } from '../systemTiles';
+import { Button, Select } from './components';
+import { FactionSelectionPage } from './factionSelectionPage';
+import { TileSelectionPage } from './tileSelectionPage';
 
 type AdminPageProps = {
     events: Event[];
     setEvents: (updatedEvents: Event[]) => void;
 };
 
-const AdminPages: React.FC<AdminPageProps> = ({events, setEvents}) => {
-
-
+const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const [playerOrderByRound, setPlayerOrderByRound] = useState<
         Record<number, Faction[]>
     >({});
@@ -80,7 +78,7 @@ const AdminPages: React.FC<AdminPageProps> = ({events, setEvents}) => {
 
         const response = await fetch('/api', {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedEvents),
         });
 
@@ -216,8 +214,8 @@ const AdminPages: React.FC<AdminPageProps> = ({events, setEvents}) => {
         const currentPlayerToHaveATurn = !lastPlayerToHaveATurn
             ? 0
             : (unpassedPlayersInOrder.indexOf(lastPlayerToHaveATurn.faction) +
-                1) %
-            unpassedPlayersInOrder.length;
+                  1) %
+              unpassedPlayersInOrder.length;
 
         return unpassedPlayersInOrder[currentPlayerToHaveATurn];
     };
@@ -248,11 +246,11 @@ const AdminPages: React.FC<AdminPageProps> = ({events, setEvents}) => {
     return (
         <StyledAdminPage>
             {events.length === 0 ? (
-                <FactionSelectionPage {...{publishNewEvents}} />
+                <FactionSelectionPage {...{ publishNewEvents }} />
             ) : events.filter(isMapTileSelectedEvent).length < 37 ? (
-                <TileSelectionPage {...{publishNewEvents}} />
+                <TileSelectionPage {...{ events, publishNewEvents }} />
             ) : _.last(events)?.type === 'MapTileSelected' ||
-            _.last(events)?.type === 'RoundEnded' ? (
+              _.last(events)?.type === 'RoundEnded' ? (
                 <Button onClick={publishRoundStartedEvent}>
                     {`Start Round ${currentRoundNumber()}`}
                 </Button>
@@ -271,7 +269,7 @@ const AdminPages: React.FC<AdminPageProps> = ({events, setEvents}) => {
                                             [],
                                             playerOrderByRound[
                                                 currentRoundNumber()
-                                                ],
+                                            ],
                                             {
                                                 [index]: e.target
                                                     .value as Faction,
@@ -514,7 +512,6 @@ const StyledAdminPage = styled.div`
     font-size: 2.25rem;
 `;
 
-
 const PlayerTurnPage = styled.div`
     display: flex;
     flex-direction: column;
@@ -586,9 +583,9 @@ const ButtonsContainer = styled.div`
     gap: 1rem;
 `;
 
-const NumberInput = styled.input.attrs(() => ({type: 'number'}))`
+const NumberInput = styled.input.attrs(() => ({ type: 'number' }))`
     min-width: 0;
     font-size: 2.25rem;
 `;
 
-export {AdminPages};
+export { AdminPages };
