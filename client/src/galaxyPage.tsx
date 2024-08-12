@@ -22,7 +22,7 @@ import { hexColor, notUndefined, range } from './util';
 /*
  Background of scoreboard titles
  Extract common scoreboard component
- When selecting tiles, prevent duplicate picks. Show homeworlds, filter out homeworld not in play
+ Show homeworlds, filter out homeworld not in play
  */
 
 type Props = {

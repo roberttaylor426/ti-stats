@@ -46,11 +46,22 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({ publishNewEvents }) => {
                         }
                     >
                         <option value={''}>--Tile--</option>
-                        {systemTiles.map((st) => (
-                            <option key={st.tileNumber} value={st.tileNumber}>
-                                {st.tileNumber}
-                            </option>
-                        ))}
+                        {systemTiles
+                            .filter(
+                                (st) =>
+                                    tileSelections[n + 1] === st.tileNumber ||
+                                    !Object.values(tileSelections).includes(
+                                        st.tileNumber
+                                    )
+                            )
+                            .map((st) => (
+                                <option
+                                    key={st.tileNumber}
+                                    value={st.tileNumber}
+                                >
+                                    {st.tileNumber}
+                                </option>
+                            ))}
                     </Select>
                 </MapTileSelectionRow>
             ))}
