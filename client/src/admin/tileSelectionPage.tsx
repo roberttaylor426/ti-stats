@@ -71,7 +71,7 @@ const TileSelectionPage: React.FC<Props & AdminPageProps> = ({
                                     key={st.tileNumber}
                                     value={st.tileNumber}
                                 >
-                                    {st.tileNumber}
+                                    {tileLabel(st.tileNumber)}
                                 </option>
                             ))}
                     </Select>
@@ -93,6 +93,12 @@ const systemTilesForGame = (selectedFactions: Faction[]): SystemTile[] => {
                 _.isEqual(homeworlds(f), st.planets)
             )
     );
+};
+
+const tileLabel = (tileNumber: SystemTileNumber): string => {
+    const systemTilePlanets =
+        systemTiles.find((st) => st.tileNumber === tileNumber)?.planets || [];
+    return `${tileNumber}${systemTilePlanets.length > 0 ? ` - ${systemTilePlanets?.join(', ')}` : ''}`;
 };
 
 const MapTileSelectionRow = styled.div`

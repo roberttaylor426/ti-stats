@@ -22,7 +22,6 @@ import { hexColor, notUndefined, range } from './util';
 /*
  Background of scoreboard titles
  Extract common scoreboard component
- Show homeworlds
  */
 
 type Props = {
