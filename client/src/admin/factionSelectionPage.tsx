@@ -11,27 +11,29 @@ import { Button, Select } from './components';
 const FactionSelectionPage: React.FC<AdminPageProps> = ({
     publishNewEvents,
 }) => {
-    const [factions, setFactions] = useState<Record<number, Faction>>({});
+    const [selectedFactions, setSelectedFactions] = useState<
+        Record<number, Faction>
+    >({});
 
-    const [playerColors, setPlayerColors] = useState<
+    const [selectedPlayerColors, setSelectedPlayerColors] = useState<
         Record<number, PlayerColor>
     >({});
 
     const publishPlayerColorAssignmentEvents = async () => {
         if (
-            Object.keys(factions).length === 6 &&
-            Object.keys(playerColors).length === 6
+            Object.keys(selectedFactions).length === 6 &&
+            Object.keys(selectedPlayerColors).length === 6
         ) {
             const newEvents: Event[] = [
                 ...range(6).map(
                     (n) =>
                         ({
                             type: 'PlayerAssignedColor',
-                            faction: factions[n + 1],
-                            color: playerColors[n + 1],
+                            faction: selectedFactions[n + 1],
+                            color: selectedPlayerColors[n + 1],
                         }) as const
                 ),
-                ...Object.values(factions).flatMap((f) =>
+                ...Object.values(selectedFactions).flatMap((f) =>
                     homeworlds(f).map(
                         (p) =>
                             ({
@@ -52,11 +54,17 @@ const FactionSelectionPage: React.FC<AdminPageProps> = ({
             {range(6).map((n) => (
                 <FactionSelectionRow
                     key={n}
+                    rowIndex={n}
+                    selectedFactions={selectedFactions}
+                    selectedPlayerColors={selectedPlayerColors}
                     onFactionSelected={(f) =>
-                        setFactions({ ...factions, [n + 1]: f })
+                        setSelectedFactions({ ...selectedFactions, [n + 1]: f })
                     }
                     onPlayerColorSelected={(c) =>
-                        setPlayerColors({ ...playerColors, [n + 1]: c })
+                        setSelectedPlayerColors({
+                            ...selectedPlayerColors,
+                            [n + 1]: c,
+                        })
                     }
                 />
             ))}
@@ -68,11 +76,17 @@ const FactionSelectionPage: React.FC<AdminPageProps> = ({
 };
 
 type FactionSelectionRowProps = {
+    rowIndex: number;
+    selectedFactions: Record<number, Faction>;
+    selectedPlayerColors: Record<number, PlayerColor>;
     onFactionSelected: (f: Faction) => void;
     onPlayerColorSelected: (p: PlayerColor) => void;
 };
 
 const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
+    rowIndex,
+    selectedFactions,
+    selectedPlayerColors,
     onFactionSelected,
     onPlayerColorSelected,
 }) => (
@@ -85,11 +99,17 @@ const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
             }}
         >
             <option value={''}>--Faction--</option>
-            {factions.map((f) => (
-                <option key={f} value={f}>
-                    {f}
-                </option>
-            ))}
+            {factions
+                .filter(
+                    (f) =>
+                        selectedFactions[rowIndex + 1] === f ||
+                        !Object.values(selectedFactions).includes(f)
+                )
+                .map((f) => (
+                    <option key={f} value={f}>
+                        {f}
+                    </option>
+                ))}
         </Select>
         <Select
             name={'color'}
@@ -99,11 +119,17 @@ const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
             }}
         >
             <option value={''}>--Color--</option>
-            {playerColors.map((c) => (
-                <option key={c} value={c}>
-                    {c}
-                </option>
-            ))}
+            {playerColors
+                .filter(
+                    (c) =>
+                        selectedPlayerColors[rowIndex + 1] === c ||
+                        !Object.values(selectedPlayerColors).includes(c)
+                )
+                .map((c) => (
+                    <option key={c} value={c}>
+                        {c}
+                    </option>
+                ))}
         </Select>
     </StyledFactionSelectionRow>
 );
