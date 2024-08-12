@@ -10,7 +10,7 @@ import _ from 'underscore';
 import useAsyncEffect from 'use-async-effect';
 import useInterval from 'use-interval';
 
-import { AdminPage } from './adminPage';
+import { AdminPages } from './admin/adminPages';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { Event, isPlayerAssignedColorEvent } from './events';
 import { Faction } from './factions';
@@ -88,7 +88,7 @@ const App: React.FC = () => {
                                 key="admin"
                                 path={'/admin'}
                                 element={
-                                    <AdminPage {...{ events, setEvents }} />
+                                    <AdminPages {...{ events, setEvents }} />
                                 }
                             />,
                         ])
