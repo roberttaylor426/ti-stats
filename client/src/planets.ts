@@ -1,9 +1,3 @@
-type Planet = {
-    name: PlanetName;
-    resources: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-    influence: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-};
-
 const planetNames = [
     'Jord',
     'Moll Primus',
@@ -507,4 +501,4 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     },
 };
 
-export { Planet, PlanetName, planetNames, planets, ResourcesAndInfluence };
+export { PlanetName, planetNames, planets, ResourcesAndInfluence };
