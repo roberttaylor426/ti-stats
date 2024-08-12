@@ -353,7 +353,7 @@ const systemTiles: SystemTile[] = [
     {
         tileNumber: 19,
         image: tile19,
-        planets: [],
+        planets: ['Wellon'],
     },
     {
         tileNumber: 20,
