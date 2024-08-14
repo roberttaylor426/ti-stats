@@ -203,21 +203,23 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const planetNameWithControllingFaction = (p: PlanetName) =>
         `${p}${factionCurrentlyControllingPlanet(p) ? ` (${factionCurrentlyControllingPlanet(p)})` : ''}`;
 
-    const currentPlanetResourcesAndInfluence = (p: PlanetName) => ({
+    const planetResourcesAndInfluence = (p: PlanetName) => ({
         resources:
             planets[p].resources +
             events
                 .filter(isPlanetEnhancedEvent)
+                .filter((e) => e.planet === p)
                 .reduce((acc, n) => acc + n.extraResources, 0),
         influence:
             planets[p].influence +
             events
                 .filter(isPlanetEnhancedEvent)
+                .filter((e) => e.planet === p)
                 .reduce((acc, n) => acc + n.extraInfluence, 0),
     });
 
     const planetNameWithResourcesAndInfluence = (p: PlanetName) =>
-        `${p} (${currentPlanetResourcesAndInfluence(p).resources}R, ${currentPlanetResourcesAndInfluence(p).influence}I)`;
+        `${p} (${planetResourcesAndInfluence(p).resources}R, ${planetResourcesAndInfluence(p).influence}I)`;
 
     const adminPageProps = { events, publishNewEvents };
 
