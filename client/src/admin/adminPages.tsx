@@ -42,33 +42,6 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
 
     const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
 
-    const currentRoundPlayerOrder =
-        _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
-
-    const turnsFinishedThisActionPhase = events.reduce((acc, n) => {
-        if (n.type === 'ActionPhaseStarted') {
-            return [];
-        }
-        if (n.type === 'PlayerFinishedTurn') {
-            return [...acc, n];
-        }
-        return acc;
-    }, [] as PlayerFinishedTurnEvent[]);
-
-    const unpassedPlayersInOrder = currentRoundPlayerOrder.filter(
-        (f) =>
-            !turnsFinishedThisActionPhase.some((e) => e.faction === f && e.pass)
-    );
-
-    const latestPlanetControlledEventsByPlanet = events
-        .filter(isPlanetControlledEvent)
-        .reverse()
-        .reduce(
-            (acc: PlanetControlledEvent[], n) =>
-                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
-            []
-        );
-
     const publishNewEvents = async (newEvents: Event[]): Promise<boolean> => {
         const updatedEvents = [...events, ...newEvents];
 
@@ -181,23 +154,8 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         'Mallice',
     ];
 
-    const currentRoundNumber = () =>
-        events.filter(isRoundEndedEvent).length + 1;
-
-    const currentPlayerTurn = () => {
-        const lastPlayerToHaveATurn = _.last(turnsFinishedThisActionPhase);
-
-        const currentPlayerToHaveATurn = !lastPlayerToHaveATurn
-            ? 0
-            : (unpassedPlayersInOrder.indexOf(lastPlayerToHaveATurn.faction) +
-                  1) %
-              unpassedPlayersInOrder.length;
-
-        return unpassedPlayersInOrder[currentPlayerToHaveATurn];
-    };
-
     const factionCurrentlyControllingPlanet = (p: PlanetName) =>
-        latestPlanetControlledEventsByPlanet.find((e) => e.planet === p)
+        latestPlanetControlledEventsByPlanet(events).find((e) => e.planet === p)
             ?.faction;
 
     const planetNameWithControllingFaction = (p: PlanetName) =>
@@ -223,6 +181,8 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
 
     const adminPageProps = { events, publishNewEvents };
 
+    const activePlayer = currentPlayerTurn(events);
+
     return (
         <StyledAdminPage>
             {events.length === 0 ? (
@@ -232,16 +192,16 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
             ) : _.last(events)?.type === 'MapTileSelected' ||
               _.last(events)?.type === 'RoundEnded' ? (
                 <Button onClick={publishRoundStartedEvent}>
-                    {`Start Round ${currentRoundNumber()}`}
+                    {`Start Round ${currentRoundNumber(events)}`}
                 </Button>
             ) : _.last(events)?.type === 'RoundStarted' ? (
                 <PlayerOrderSelectionPage
                     {...adminPageProps}
-                    currentRoundNumber={currentRoundNumber()}
+                    currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : unpassedPlayersInOrder.length > 0 ? (
+            ) : activePlayer ? (
                 <PlayerTurnPage>
-                    <span>{`${currentPlayerTurn()} turn`}</span>
+                    <span>{`${currentPlayerTurn(events)} turn`}</span>
                     <StyledPlanetControlledRow>
                         <Select
                             onChange={(e) =>
@@ -262,7 +222,7 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                                 if (selectedPlanetToControl) {
                                     await publishPlanetControlledEvent(
                                         selectedPlanetToControl,
-                                        currentPlayerTurn()
+                                        activePlayer
                                     );
                                 }
                             }}
@@ -331,7 +291,7 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                             onClick={async () => {
                                 if (vpsToAdd) {
                                     await publishVpScoredEvent(
-                                        currentPlayerTurn(),
+                                        activePlayer,
                                         vpsToAdd
                                     );
                                 }
@@ -368,10 +328,7 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
-                                publishTurnFinishedEvent(
-                                    currentPlayerTurn(),
-                                    false
-                                )
+                                publishTurnFinishedEvent(activePlayer, false)
                             }
                         >
                             Turn finished
@@ -380,10 +337,7 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
-                                publishTurnFinishedEvent(
-                                    currentPlayerTurn(),
-                                    true
-                                )
+                                publishTurnFinishedEvent(activePlayer, true)
                             }
                         >
                             Pass
@@ -439,12 +393,85 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                         </ScoreVpsRow>
                     </FactionScoresVpsContainer>
                     <Button onClick={publishRoundEndedEvent}>
-                        {`End Round ${currentRoundNumber()}`}
+                        {`End Round ${currentRoundNumber(events)}`}
                     </Button>
                 </>
             )}
         </StyledAdminPage>
     );
+};
+
+const currentRoundPlayerOrder = (events: Event[]): Faction[] =>
+    _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
+
+const turnsFinishedThisActionPhase = (
+    events: Event[]
+): PlayerFinishedTurnEvent[] =>
+    events.reduce((acc, n) => {
+        if (n.type === 'ActionPhaseStarted') {
+            return [];
+        }
+        if (n.type === 'PlayerFinishedTurn') {
+            return [...acc, n];
+        }
+        return acc;
+    }, [] as PlayerFinishedTurnEvent[]);
+
+const unpassedPlayers = (events: Event[]): Faction[] =>
+    currentRoundPlayerOrder(events).filter(
+        (f) =>
+            !turnsFinishedThisActionPhase(events).some(
+                (e) => e.faction === f && e.pass
+            )
+    );
+
+const latestPlanetControlledEventsByPlanet = (
+    events: Event[]
+): PlanetControlledEvent[] =>
+    events
+        .filter(isPlanetControlledEvent)
+        .reverse()
+        .reduce(
+            (acc: PlanetControlledEvent[], n) =>
+                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
+            []
+        );
+
+const currentRoundNumber = (events: Event[]): number =>
+    events.filter(isRoundEndedEvent).length + 1;
+
+const currentPlayerTurn = (events: Event[]): Faction | undefined => {
+    const turnsFinished = turnsFinishedThisActionPhase(events);
+    const lastPlayerToHaveATurn = _.last(turnsFinished);
+    const playerOrder = currentRoundPlayerOrder(events);
+
+    const indexOfPlayerAfterLastToHaveATurn = !lastPlayerToHaveATurn
+        ? 0
+        : playerOrder.indexOf(lastPlayerToHaveATurn.faction) + 1;
+
+    return findNextUnpassedPlayer(
+        playerOrder,
+        unpassedPlayers(events),
+        indexOfPlayerAfterLastToHaveATurn
+    );
+};
+
+const findNextUnpassedPlayer = (
+    playerOrder: Faction[],
+    unpassedPlayers: Faction[],
+    fromIndex: number
+): Faction | undefined => {
+    if (unpassedPlayers.length === 0) {
+        return undefined;
+    }
+
+    const potentialNextPlayer = playerOrder[fromIndex % playerOrder.length];
+
+    if (unpassedPlayers.includes(potentialNextPlayer)) {
+        return potentialNextPlayer;
+    }
+
+    return findNextUnpassedPlayer(playerOrder, unpassedPlayers, fromIndex + 1);
 };
 
 const StyledAdminPage = styled.div`
@@ -530,4 +557,4 @@ const NumberInput = styled.input.attrs(() => ({ type: 'number' }))`
     font-size: 2.25rem;
 `;
 
-export { AdminPages };
+export { AdminPages, currentPlayerTurn };
