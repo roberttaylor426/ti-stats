@@ -19,6 +19,7 @@ import { PlanetName, planets } from '../planets';
 import { systemTiles } from '../systemTiles';
 import { Button, Select } from './components';
 import { FactionSelectionPage } from './factionSelectionPage';
+import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { TileSelectionPage } from './tileSelectionPage';
 
 type AdminPageProps = {
@@ -27,10 +28,6 @@ type AdminPageProps = {
 };
 
 const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
-    const [playerOrderByRound, setPlayerOrderByRound] = useState<
-        Record<number, Faction[]>
-    >({});
-
     const storedPlayerOrder = localStorage.getItem('playerOrder');
     const [currentRoundPlayerOrder, setCurrentRoundPlayerOrder] = useState<
         Faction[]
@@ -97,26 +94,6 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         };
 
         await publishNewEvents([newEvent]);
-    };
-
-    const publishActionPhaseStartedEvent = async (roundNumber: number) => {
-        if (
-            _.uniq(playerOrderByRound[roundNumber]).length ===
-            events.filter(isPlayerAssignedColorEvent).length
-        ) {
-            const newEvent: Event = {
-                type: 'ActionPhaseStarted',
-                time: new Date().getTime(),
-            };
-
-            if (await publishNewEvents([newEvent])) {
-                localStorage.setItem(
-                    'playerOrder',
-                    JSON.stringify(playerOrderByRound[roundNumber])
-                );
-                setCurrentRoundPlayerOrder(playerOrderByRound[roundNumber]);
-            }
-        }
     };
 
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
@@ -243,62 +220,28 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const planetNameWithResourcesAndInfluence = (p: PlanetName) =>
         `${p} (${currentPlanetResourcesAndInfluence(p).resources}R, ${currentPlanetResourcesAndInfluence(p).influence}I)`;
 
+    const adminPageProps = { events, publishNewEvents };
+
     return (
         <StyledAdminPage>
             {events.length === 0 ? (
-                <FactionSelectionPage {...{ publishNewEvents }} />
+                <FactionSelectionPage {...adminPageProps} />
             ) : events.filter(isMapTileSelectedEvent).length < 37 ? (
-                <TileSelectionPage {...{ events, publishNewEvents }} />
+                <TileSelectionPage {...adminPageProps} />
             ) : _.last(events)?.type === 'MapTileSelected' ||
               _.last(events)?.type === 'RoundEnded' ? (
                 <Button onClick={publishRoundStartedEvent}>
                     {`Start Round ${currentRoundNumber()}`}
                 </Button>
             ) : _.last(events)?.type === 'RoundStarted' ? (
-                <>
-                    <span>{`Round ${currentRoundNumber()} player order`}</span>
-                    {events
-                        .filter(isPlayerAssignedColorEvent)
-                        .map((_, index) => (
-                            <Select
-                                key={index}
-                                onChange={(e) =>
-                                    setPlayerOrderByRound({
-                                        ...playerOrderByRound,
-                                        [currentRoundNumber()]: Object.assign(
-                                            [],
-                                            playerOrderByRound[
-                                                currentRoundNumber()
-                                            ],
-                                            {
-                                                [index]: e.target
-                                                    .value as Faction,
-                                            }
-                                        ),
-                                    })
-                                }
-                            >
-                                <option value={''}>--Faction--</option>
-                                {events
-                                    .filter(isPlayerAssignedColorEvent)
-                                    .map((e) => (
-                                        <option
-                                            key={e.faction}
-                                            value={e.faction}
-                                        >
-                                            {e.faction}
-                                        </option>
-                                    ))}
-                            </Select>
-                        ))}
-                    <Button
-                        onClick={() =>
-                            publishActionPhaseStartedEvent(currentRoundNumber())
-                        }
-                    >
-                        Continue
-                    </Button>
-                </>
+                <PlayerOrderSelectionPage
+                    {...adminPageProps}
+                    currentRoundNumber={currentRoundNumber()}
+                    setCurrentRoundPlayerOrder={(fs: Faction[]) => {
+                        localStorage.setItem('playerOrder', JSON.stringify(fs));
+                        setCurrentRoundPlayerOrder(fs);
+                    }}
+                />
             ) : unpassedPlayersInOrder.length > 0 ? (
                 <PlayerTurnPage>
                     <span>{`${currentPlayerTurn()} turn`}</span>

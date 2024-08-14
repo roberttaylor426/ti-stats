@@ -9,11 +9,7 @@ import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, Select } from './components';
 
-type Props = {
-    events: Event[];
-};
-
-const TileSelectionPage: React.FC<Props & AdminPageProps> = ({
+const TileSelectionPage: React.FC<AdminPageProps> = ({
     events,
     publishNewEvents,
 }) => {
