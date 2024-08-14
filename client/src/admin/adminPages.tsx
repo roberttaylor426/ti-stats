@@ -368,21 +368,23 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                             onClick={() =>
                                 publishTurnFinishedEvent(
                                     currentPlayerTurn(),
-                                    true
-                                )
-                            }
-                        >
-                            Pass
-                        </Button>
-                        <Button
-                            onClick={() =>
-                                publishTurnFinishedEvent(
-                                    currentPlayerTurn(),
                                     false
                                 )
                             }
                         >
                             Turn finished
+                        </Button>
+                    </ButtonsContainer>
+                    <ButtonsContainer>
+                        <Button
+                            onClick={() =>
+                                publishTurnFinishedEvent(
+                                    currentPlayerTurn(),
+                                    true
+                                )
+                            }
+                        >
+                            Pass
                         </Button>
                     </ButtonsContainer>
                 </PlayerTurnPage>
