@@ -22,7 +22,8 @@ import { hexColor, notUndefined, range } from './util';
 /*
  Background of scoreboard titles
  Extract common scoreboard component
- Player order should be captured in ActionPhaseStartEvent? Or a new domain event?
+ Player order should be captured in ActionPhaseStartEvent instead of local storage? Or a new domain event?
+ Fix pass order bug
  */
 
 type Props = {
