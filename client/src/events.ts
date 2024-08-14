@@ -23,6 +23,7 @@ type RoundStartedEvent = {
 type ActionPhaseStartedEvent = {
     type: 'ActionPhaseStarted';
     time: number;
+    playerOrder: Faction[];
 };
 
 type PlayerFinishedTurnEvent = {
@@ -67,6 +68,9 @@ const isPlayerAssignedColorEvent = (e: Event): e is PlayerAssignedColorEvent =>
 const isMapTileSelectedEvent = (e: Event): e is MapTileSelectedEvent =>
     e.type === 'MapTileSelected';
 
+const isActionPhaseStartedEvent = (e: Event): e is ActionPhaseStartedEvent =>
+    e.type === 'ActionPhaseStarted';
+
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
 
@@ -102,6 +106,7 @@ type Event =
 
 export {
     Event,
+    isActionPhaseStartedEvent,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,

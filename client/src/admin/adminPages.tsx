@@ -4,6 +4,7 @@ import _, { identity } from 'underscore';
 
 import {
     Event,
+    isActionPhaseStartedEvent,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
@@ -28,11 +29,6 @@ type AdminPageProps = {
 };
 
 const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
-    const storedPlayerOrder = localStorage.getItem('playerOrder');
-    const [currentRoundPlayerOrder, setCurrentRoundPlayerOrder] = useState<
-        Faction[]
-    >(storedPlayerOrder ? JSON.parse(storedPlayerOrder) : []);
-
     const [selectedPlanetToControl, setSelectedPlanetToControl] =
         useState<PlanetName>();
 
@@ -45,6 +41,9 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
     const [vpsToAdd, setVpsToAdd] = useState<number>(0);
 
     const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
+
+    const currentRoundPlayerOrder =
+        _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
 
     const turnsFinishedThisActionPhase = events.reduce((acc, n) => {
         if (n.type === 'ActionPhaseStarted') {
@@ -237,10 +236,6 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 <PlayerOrderSelectionPage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber()}
-                    setCurrentRoundPlayerOrder={(fs: Faction[]) => {
-                        localStorage.setItem('playerOrder', JSON.stringify(fs));
-                        setCurrentRoundPlayerOrder(fs);
-                    }}
                 />
             ) : unpassedPlayersInOrder.length > 0 ? (
                 <PlayerTurnPage>

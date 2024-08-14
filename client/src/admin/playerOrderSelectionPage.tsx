@@ -8,32 +8,27 @@ import { Button, Select } from './components';
 
 type Props = {
     currentRoundNumber: number;
-    setCurrentRoundPlayerOrder: (fs: Faction[]) => void;
 };
 
 const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
     currentRoundNumber,
-    setCurrentRoundPlayerOrder,
     events,
     publishNewEvents,
 }) => {
-    const [playerOrderByRound, setPlayerOrderByRound] = useState<
-        Record<number, Faction[]>
-    >({});
+    const [playerOrder, setPlayerOrder] = useState<Faction[]>([]);
 
-    const publishActionPhaseStartedEvent = async (roundNumber: number) => {
+    const publishActionPhaseStartedEvent = async () => {
         if (
-            _.uniq(playerOrderByRound[roundNumber]).length ===
+            _.uniq(playerOrder).length ===
             events.filter(isPlayerAssignedColorEvent).length
         ) {
             const newEvent: Event = {
                 type: 'ActionPhaseStarted',
                 time: new Date().getTime(),
+                playerOrder,
             };
 
-            if (await publishNewEvents([newEvent])) {
-                setCurrentRoundPlayerOrder(playerOrderByRound[roundNumber]);
-            }
+            await publishNewEvents([newEvent]);
         }
     };
 
@@ -44,16 +39,11 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
                 <Select
                     key={index}
                     onChange={(e) =>
-                        setPlayerOrderByRound({
-                            ...playerOrderByRound,
-                            [currentRoundNumber]: Object.assign(
-                                [],
-                                playerOrderByRound[currentRoundNumber],
-                                {
-                                    [index]: e.target.value as Faction,
-                                }
-                            ),
-                        })
+                        setPlayerOrder(
+                            Object.assign([], playerOrder, {
+                                [index]: e.target.value as Faction,
+                            })
+                        )
                     }
                 >
                     <option value={''}>--Faction--</option>
@@ -61,12 +51,8 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
                         .filter(isPlayerAssignedColorEvent)
                         .filter(
                             (e) =>
-                                playerOrderByRound[currentRoundNumber]?.[
-                                    index
-                                ] === e.faction ||
-                                !Object.values(
-                                    playerOrderByRound[currentRoundNumber] || []
-                                ).includes(e.faction)
+                                playerOrder[index] === e.faction ||
+                                !Object.values(playerOrder).includes(e.faction)
                         )
                         .map((e) => (
                             <option key={e.faction} value={e.faction}>
@@ -75,13 +61,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
                         ))}
                 </Select>
             ))}
-            <Button
-                onClick={() =>
-                    publishActionPhaseStartedEvent(currentRoundNumber)
-                }
-            >
-                Continue
-            </Button>
+            <Button onClick={publishActionPhaseStartedEvent}>Continue</Button>
         </>
     );
 };

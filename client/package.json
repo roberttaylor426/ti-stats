@@ -4,6 +4,7 @@
     "description": "A set of tools for visualizing stats during a game of TI4",
     "main": "index.js",
     "scripts": {
+        "check:types": "tsc --noEmit",
         "start": "webpack serve --port 8888 --mode development",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
