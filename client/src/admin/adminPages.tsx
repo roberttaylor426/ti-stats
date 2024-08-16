@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
+import useAsyncEffect from 'use-async-effect';
 
 import {
     Event,
@@ -24,12 +25,21 @@ import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
 import { TileSelectionPage } from './tileSelectionPage';
 
-type AdminPageProps = {
-    events: Event[];
-    setEvents: (updatedEvents: Event[]) => void;
-};
+const AdminPages: React.FC = () => {
+    const [events, setEvents] = useState<Event[]>([]);
 
-const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
+    useAsyncEffect(async () => {
+        try {
+            const response = await fetch('/api');
+
+            if (response.status === 200) {
+                const responseJson = await response.json();
+
+                setEvents(responseJson);
+            }
+        } catch {}
+    }, []);
+
     const [selectedPlanetToControl, setSelectedPlanetToControl] =
         useState<PlanetName>();
 

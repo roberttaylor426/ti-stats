@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -6,98 +6,40 @@ import {
     RouterProvider,
 } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
-import _ from 'underscore';
-import useAsyncEffect from 'use-async-effect';
-import useInterval from 'use-interval';
 
 import { AdminPages } from './admin/adminPages';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
-import { Event, isPlayerAssignedColorEvent } from './events';
-import { Faction } from './factions';
 import { GalaxyPage } from './galaxyPage';
-import { PlayerColor } from './playerColor';
 import { StatsPage } from './statsPage';
 
-const App: React.FC = () => {
-    const [events, setEvents] = useState<Event[]>([]);
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-    useAsyncEffect(async () => {
-        try {
-            const response = await fetch('/api');
-
-            if (response.status === 200) {
-                const responseJson = await response.json();
-
-                if (responseJson.length > events.length) {
-                    setEvents(responseJson);
-                }
-            }
-        } catch {}
-    }, [refreshTrigger]);
-
-    useInterval(() => {
-        setRefreshTrigger(refreshTrigger + 1);
-    }, 15_000);
-
-    const playerColors = events
-        .filter(isPlayerAssignedColorEvent)
-        .reduce(
-            (acc, n) => ({ ...acc, [n.faction]: n.color }),
-            {} as Record<Faction, PlayerColor>
-        );
-
-    const factionsInGame = _.uniq(
-        events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
-    );
-
-    return (
-        <>
-            <GlobalStyle />
-            <FullScreenPage>
-                <RouterProvider
-                    router={createBrowserRouter(
-                        createRoutesFromElements([
-                            <Route
-                                key="galaxy"
-                                path={'/galaxy'}
-                                element={
-                                    <GalaxyPage
-                                        {...{
-                                            events,
-                                            playerColors,
-                                            factionsInGame,
-                                        }}
-                                    />
-                                }
-                            />,
-                            <Route
-                                key="stats"
-                                path={'/stats'}
-                                element={
-                                    <StatsPage
-                                        {...{
-                                            events,
-                                            playerColors,
-                                            factionsInGame,
-                                        }}
-                                    />
-                                }
-                            />,
-                            <Route
-                                key="admin"
-                                path={'/admin'}
-                                element={
-                                    <AdminPages {...{ events, setEvents }} />
-                                }
-                            />,
-                        ])
-                    )}
-                />
-            </FullScreenPage>
-        </>
-    );
-};
+const App: React.FC = () => (
+    <>
+        <GlobalStyle />
+        <FullScreenPage>
+            <RouterProvider
+                router={createBrowserRouter(
+                    createRoutesFromElements([
+                        <Route
+                            key="galaxy"
+                            path={'/galaxy'}
+                            element={<GalaxyPage />}
+                        />,
+                        <Route
+                            key="stats"
+                            path={'/stats'}
+                            element={<StatsPage />}
+                        />,
+                        <Route
+                            key="admin"
+                            path={'/admin'}
+                            element={<AdminPages />}
+                        />,
+                    ])
+                )}
+            />
+        </FullScreenPage>
+    </>
+);
 
 const GlobalStyle = createGlobalStyle`
     @font-face {

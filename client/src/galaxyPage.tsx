@@ -6,7 +6,6 @@ import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
 import {
-    Event,
     isMapTileSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
@@ -17,6 +16,7 @@ import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { PlayerColor } from './playerColor';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
+import { useEvents } from './useEvents';
 import { hexColor, notUndefined, range } from './util';
 
 /*
@@ -27,17 +27,9 @@ import { hexColor, notUndefined, range } from './util';
  Extract all pages into separate files
  */
 
-type Props = {
-    events: Event[];
-    factionsInGame: Faction[];
-    playerColors: Record<Faction, PlayerColor>;
-};
+const GalaxyPage: React.FC = () => {
+    const { events, factionsInGame, playerColors } = useEvents();
 
-const GalaxyPage: React.FC<Props> = ({
-    events,
-    factionsInGame,
-    playerColors,
-}) => {
     const mapTileSelectedEvents = events.filter(isMapTileSelectedEvent);
     const planetEnhancedEvents = events.filter(isPlanetEnhancedEvent);
     const planetDestroyedEvents = events.filter(isPlanetDestroyedEvent);

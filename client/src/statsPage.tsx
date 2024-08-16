@@ -14,30 +14,21 @@ import styled from 'styled-components';
 import _ from 'underscore';
 
 import {
-    Event,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
 } from './events';
 import { Faction } from './factions';
-import { PlayerColor } from './playerColor';
+import { useEvents } from './useEvents';
 import { hexColor } from './util';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
-type Props = {
-    events: Event[];
-    factionsInGame: Faction[];
-    playerColors: Record<Faction, PlayerColor>;
-};
-
 Chart.defaults.color = 'white';
 
-const StatsPage: React.FC<Props> = ({
-    events,
-    playerColors,
-    factionsInGame,
-}) => {
+const StatsPage: React.FC = () => {
+    const { events, factionsInGame, playerColors } = useEvents();
+
     const playerScores = factionsInGame.map((f) => ({
         faction: f,
         playerColor: playerColors[f],
