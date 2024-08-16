@@ -77,6 +77,9 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({
     );
 };
 
+const ghostsOfCreussHomeTileNumber = 51;
+const malliceTileNumber = 82;
+
 const systemTilesForGame = (selectedFactions: Faction[]): SystemTile[] => {
     const factionsNotSelected = factions.filter(
         (f) => !selectedFactions.includes(f)
@@ -89,7 +92,11 @@ const systemTilesForGame = (selectedFactions: Faction[]): SystemTile[] => {
                     _.isEqual(homeworlds(f), st.planets)
                 )
         )
-        .filter((st) => st.tileNumber !== 82);
+        .filter(
+            (st) =>
+                st.tileNumber !== ghostsOfCreussHomeTileNumber &&
+                st.tileNumber !== malliceTileNumber
+        );
 };
 
 const tileLabel = (tileNumber: SystemTileNumber): string => {
