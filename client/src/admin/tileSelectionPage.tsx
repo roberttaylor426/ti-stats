@@ -82,12 +82,14 @@ const systemTilesForGame = (selectedFactions: Faction[]): SystemTile[] => {
         (f) => !selectedFactions.includes(f)
     );
 
-    return systemTiles.filter(
-        (st) =>
-            !factionsNotSelected.find((f) =>
-                _.isEqual(homeworlds(f), st.planets)
-            )
-    );
+    return systemTiles
+        .filter(
+            (st) =>
+                !factionsNotSelected.find((f) =>
+                    _.isEqual(homeworlds(f), st.planets)
+                )
+        )
+        .filter((st) => st.tileNumber !== 82);
 };
 
 const tileLabel = (tileNumber: SystemTileNumber): string => {
