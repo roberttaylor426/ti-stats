@@ -21,6 +21,7 @@ import { systemTiles } from '../systemTiles';
 import { Button, PageTitle, Select } from './components';
 import { FactionSelectionPage } from './factionSelectionPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
+import { StartRoundPage } from './startRoundPage';
 import { TileSelectionPage } from './tileSelectionPage';
 
 type AdminPageProps = {
@@ -57,15 +58,6 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
         }
 
         return false;
-    };
-
-    const publishRoundStartedEvent = async () => {
-        const newEvent: Event = {
-            type: 'RoundStarted',
-            time: new Date().getTime(),
-        };
-
-        await publishNewEvents([newEvent]);
     };
 
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
@@ -191,12 +183,10 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 <TileSelectionPage {...adminPageProps} />
             ) : _.last(events)?.type === 'MapTileSelected' ||
               _.last(events)?.type === 'RoundEnded' ? (
-                <>
-                    <PageTitle title={'Start round'} />
-                    <Button onClick={publishRoundStartedEvent}>
-                        {`Start Round ${currentRoundNumber(events)}`}
-                    </Button>
-                </>
+                <StartRoundPage
+                    {...adminPageProps}
+                    currentRoundNumber={currentRoundNumber(events)}
+                />
             ) : _.last(events)?.type === 'RoundStarted' ? (
                 <PlayerOrderSelectionPage
                     {...adminPageProps}
