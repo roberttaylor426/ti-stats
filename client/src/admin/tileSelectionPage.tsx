@@ -9,10 +9,9 @@ import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
 
-const TileSelectionPage: React.FC<AdminPageProps> = ({
-    events,
-    publishNewEvents,
-}) => {
+const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
+    const { events, publishNewEvents } = props;
+
     const [tileSelections, setTileSelections] = useState<
         Record<number, SystemTileNumber>
     >({});
@@ -38,7 +37,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({
 
     return (
         <>
-            <PageTitle title={'Choose map tiles'} />
+            <PageTitle {...props} title={'Choose map tiles'} />
             {range(37).map((n) => (
                 <MapTileSelectionRow key={n}>
                     <span>{n + 1}</span>

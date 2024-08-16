@@ -8,9 +8,8 @@ import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
 
-const FactionAssignmentPage: React.FC<AdminPageProps> = ({
-    publishNewEvents,
-}) => {
+const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
+    const { publishNewEvents } = props;
     const [selectedFactions, setSelectedFactions] = useState<
         Record<number, Faction>
     >({});
@@ -54,7 +53,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = ({
 
     return (
         <>
-            <PageTitle title={'Choose factions'} />
+            <PageTitle {...props} title={'Choose factions'} />
             {range(6).map((n) => (
                 <FactionSelectionRow
                     key={n}

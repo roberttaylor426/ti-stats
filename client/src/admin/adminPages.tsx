@@ -24,9 +24,12 @@ import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
 import { TileSelectionPage } from './tileSelectionPage';
+import { UndoLastEventPage } from './undoLastEventPage';
 
 const AdminPages: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([]);
+    const [undoLastEventModeEnabled, setUndoLastEventModeEnabled] =
+        useState<boolean>(false);
 
     useAsyncEffect(async () => {
         try {
@@ -53,9 +56,7 @@ const AdminPages: React.FC = () => {
 
     const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
 
-    const publishNewEvents = async (newEvents: Event[]): Promise<boolean> => {
-        const updatedEvents = [...events, ...newEvents];
-
+    const updateEvents = async (updatedEvents: Event[]): Promise<boolean> => {
         const response = await fetch('/api', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -68,6 +69,18 @@ const AdminPages: React.FC = () => {
         }
 
         return false;
+    };
+
+    const publishNewEvents = async (newEvents: Event[]): Promise<boolean> => {
+        const updatedEvents = [...events, ...newEvents];
+
+        return await updateEvents(updatedEvents);
+    };
+
+    const undoLastEvent = async (): Promise<boolean> => {
+        const updatedEvents = events.slice(0, -1);
+
+        return await updateEvents(updatedEvents);
     };
 
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
@@ -181,13 +194,21 @@ const AdminPages: React.FC = () => {
     const planetNameWithResourcesAndInfluence = (p: PlanetName) =>
         `${p} (${planetResourcesAndInfluence(p).resources}R, ${planetResourcesAndInfluence(p).influence}I)`;
 
-    const adminPageProps = { events, publishNewEvents };
+    const adminPageProps = {
+        events,
+        publishNewEvents,
+        undoLastEvent,
+        toggleUndoLastEventMode: () =>
+            setUndoLastEventModeEnabled(!undoLastEventModeEnabled),
+    };
 
     const activePlayer = currentPlayerTurn(events);
 
     return (
         <StyledAdminPage>
-            {events.length === 0 ? (
+            {undoLastEventModeEnabled ? (
+                <UndoLastEventPage {...adminPageProps} />
+            ) : events.length === 0 ? (
                 <FactionAssignmentPage {...adminPageProps} />
             ) : !events.find(isMapTilesSelectedEvent) ? (
                 <TileSelectionPage {...adminPageProps} />
@@ -204,7 +225,10 @@ const AdminPages: React.FC = () => {
                 />
             ) : activePlayer ? (
                 <PlayerTurnPage>
-                    <PageTitle title={`${currentPlayerTurn(events)} turn`} />
+                    <PageTitle
+                        {...adminPageProps}
+                        title={`${currentPlayerTurn(events)} turn`}
+                    />
                     <StyledPlanetControlledRow>
                         <Select
                             onChange={(e) =>
@@ -349,7 +373,10 @@ const AdminPages: React.FC = () => {
                 </PlayerTurnPage>
             ) : (
                 <>
-                    <PageTitle title={'End of round scoring'} />
+                    <PageTitle
+                        {...adminPageProps}
+                        title={'End of round scoring'}
+                    />
                     <FactionScoresVpsContainer>
                         <Select
                             onChange={(e) =>

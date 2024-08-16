@@ -17,9 +17,7 @@ const useEvents = (): {
             if (response.status === 200) {
                 const responseJson = await response.json();
 
-                if (responseJson.length > events.length) {
-                    setEvents(responseJson);
-                }
+                setEvents(responseJson);
             }
         } catch {}
     }, [refreshTrigger]);

@@ -8,10 +8,9 @@ type Props = {
     currentRoundNumber: number;
 };
 
-const StartRoundPage: React.FC<Props & AdminPageProps> = ({
-    currentRoundNumber,
-    publishNewEvents,
-}) => {
+const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
+    const { currentRoundNumber, publishNewEvents } = props;
+
     const publishRoundStartedEvent = async () => {
         const newEvent: Event = {
             type: 'RoundStarted',
@@ -23,7 +22,7 @@ const StartRoundPage: React.FC<Props & AdminPageProps> = ({
 
     return (
         <>
-            <PageTitle title={'Start round'} />
+            <PageTitle {...props} title={'Start round'} />
             <Button onClick={publishRoundStartedEvent}>
                 {`Start Round ${currentRoundNumber}`}
             </Button>

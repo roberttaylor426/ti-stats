@@ -14,11 +14,8 @@ type Props = {
     currentRoundNumber: number;
 };
 
-const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
-    currentRoundNumber,
-    events,
-    publishNewEvents,
-}) => {
+const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
+    const { currentRoundNumber, events, publishNewEvents } = props;
     const [playerOrder, setPlayerOrder] = useState<Faction[]>([]);
 
     const publishActionPhaseStartedEvent = async () => {
@@ -38,7 +35,10 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
 
     return (
         <>
-            <PageTitle title={`Round ${currentRoundNumber} player order`} />
+            <PageTitle
+                {...props}
+                title={`Round ${currentRoundNumber} player order`}
+            />
             {factionsInGame(events).map((_, index) => (
                 <Select
                     key={index}
