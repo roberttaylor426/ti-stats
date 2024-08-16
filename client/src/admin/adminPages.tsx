@@ -5,12 +5,12 @@ import useAsyncEffect from 'use-async-effect';
 
 import {
     Event,
+    factionsInGame,
     isActionPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
-    isPlayerAssignedColorEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     PlanetControlledEvent,
@@ -20,7 +20,7 @@ import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { systemTiles } from '../systemTiles';
 import { Button, PageTitle, Select } from './components';
-import { FactionSelectionPage } from './factionSelectionPage';
+import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
 import { TileSelectionPage } from './tileSelectionPage';
@@ -188,7 +188,7 @@ const AdminPages: React.FC = () => {
     return (
         <StyledAdminPage>
             {events.length === 0 ? (
-                <FactionSelectionPage {...adminPageProps} />
+                <FactionAssignmentPage {...adminPageProps} />
             ) : !events.find(isMapTilesSelectedEvent) ? (
                 <TileSelectionPage {...adminPageProps} />
             ) : _.last(events)?.type === 'MapTilesSelected' ||
@@ -357,24 +357,17 @@ const AdminPages: React.FC = () => {
                             }
                         >
                             <option value={''}>--Faction--</option>
-                            {events
-                                .filter(isPlayerAssignedColorEvent)
-                                .map((e) => (
-                                    <option key={e.faction} value={e.faction}>
-                                        {`${e.faction} (${events
-                                            .filter(
-                                                isPlayerScoredVictoryPointEvent
-                                            )
-                                            .filter(
-                                                (vpe) =>
-                                                    vpe.faction === e.faction
-                                            )
-                                            .reduce(
-                                                (acc, n) => acc + n.delta,
-                                                0
-                                            )}vp)`}
-                                    </option>
-                                ))}
+                            {factionsInGame(events).map((f) => (
+                                <option key={f} value={f}>
+                                    {`${f} (${events
+                                        .filter(isPlayerScoredVictoryPointEvent)
+                                        .filter((vpe) => vpe.faction === f)
+                                        .reduce(
+                                            (acc, n) => acc + n.delta,
+                                            0
+                                        )}vp)`}
+                                </option>
+                            ))}
                         </Select>
                         <ScoreVpsRow>
                             <NumberInput

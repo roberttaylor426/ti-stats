@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import _ from 'underscore';
 import useAsyncEffect from 'use-async-effect';
 import useInterval from 'use-interval';
 
-import { Event, isPlayerAssignedColorEvent } from './events';
-import { Faction } from './factions';
-import { PlayerColor } from './playerColor';
+import { Event } from './events';
 
-const useEvents = () => {
+const useEvents = (): {
+    events: Event[];
+} => {
     const [events, setEvents] = useState<Event[]>([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -29,18 +28,7 @@ const useEvents = () => {
         setRefreshTrigger(refreshTrigger + 1);
     }, 15_000);
 
-    const factionsInGame = _.uniq(
-        events.filter(isPlayerAssignedColorEvent).map((e) => e.faction)
-    );
-
-    const playerColors = events
-        .filter(isPlayerAssignedColorEvent)
-        .reduce(
-            (acc, n) => ({ ...acc, [n.faction]: n.color }),
-            {} as Record<Faction, PlayerColor>
-        );
-
-    return { events, factionsInGame, playerColors };
+    return { events };
 };
 
 export { useEvents };

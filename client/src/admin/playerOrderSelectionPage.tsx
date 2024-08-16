@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import _ from 'underscore';
 
-import { Event, isPlayerAssignedColorEvent } from '../events';
+import {
+    Event,
+    factionsInGame,
+    isPlayersAssignedFactionsAndColorsEvent,
+} from '../events';
 import { Faction } from '../factions';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
@@ -20,7 +24,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
     const publishActionPhaseStartedEvent = async () => {
         if (
             _.uniq(playerOrder).length ===
-            events.filter(isPlayerAssignedColorEvent).length
+            events.filter(isPlayersAssignedFactionsAndColorsEvent).length
         ) {
             const newEvent: Event = {
                 type: 'ActionPhaseStarted',
@@ -35,7 +39,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
     return (
         <>
             <PageTitle title={`Round ${currentRoundNumber} player order`} />
-            {events.filter(isPlayerAssignedColorEvent).map((_, index) => (
+            {factionsInGame(events).map((_, index) => (
                 <Select
                     key={index}
                     onChange={(e) =>
@@ -47,16 +51,15 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
                     }
                 >
                     <option value={''}>--Faction--</option>
-                    {events
-                        .filter(isPlayerAssignedColorEvent)
+                    {factionsInGame(events)
                         .filter(
-                            (e) =>
-                                playerOrder[index] === e.faction ||
-                                !Object.values(playerOrder).includes(e.faction)
+                            (f) =>
+                                playerOrder[index] === f ||
+                                !Object.values(playerOrder).includes(f)
                         )
-                        .map((e) => (
-                            <option key={e.faction} value={e.faction}>
-                                {e.faction}
+                        .map((f) => (
+                            <option key={f} value={f}>
+                                {f}
                             </option>
                         ))}
                 </Select>

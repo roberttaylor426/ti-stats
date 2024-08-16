@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { Event, isPlayerAssignedColorEvent } from '../events';
+import { Event, factionsInGame } from '../events';
 import { Faction, factions, homeworlds } from '../factions';
 import { SystemTile, SystemTileNumber, systemTiles } from '../systemTiles';
 import { range } from '../util';
@@ -53,11 +53,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({
                         }
                     >
                         <option value={''}>--Tile--</option>
-                        {systemTilesForGame(
-                            events
-                                .filter(isPlayerAssignedColorEvent)
-                                .map((e) => e.faction)
-                        )
+                        {systemTilesForGame(factionsInGame(events))
                             .filter(
                                 (st) =>
                                     tileSelections[n + 1] === st.tileNumber ||

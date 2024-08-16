@@ -8,7 +8,7 @@ import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
 
-const FactionSelectionPage: React.FC<AdminPageProps> = ({
+const FactionAssignmentPage: React.FC<AdminPageProps> = ({
     publishNewEvents,
 }) => {
     const [selectedFactions, setSelectedFactions] = useState<
@@ -19,20 +19,23 @@ const FactionSelectionPage: React.FC<AdminPageProps> = ({
         Record<number, PlayerColor>
     >({});
 
-    const publishPlayerColorAssignmentEvents = async () => {
+    const publishPlayerFactionAndColorAssignmentEvents = async () => {
         if (
             Object.keys(selectedFactions).length === 6 &&
             Object.keys(selectedPlayerColors).length === 6
         ) {
             const newEvents: Event[] = [
-                ...range(6).map(
-                    (n) =>
-                        ({
-                            type: 'PlayerAssignedColor',
-                            faction: selectedFactions[n + 1],
-                            color: selectedPlayerColors[n + 1],
-                        }) as const
-                ),
+                {
+                    type: 'PlayersAssignedFactionsAndColors',
+                    assignments: range(6).reduce(
+                        (acc, n) => ({
+                            ...acc,
+                            [selectedFactions[n + 1]]:
+                                selectedPlayerColors[n + 1],
+                        }),
+                        {} as Record<Faction, PlayerColor>
+                    ),
+                },
                 ...Object.values(selectedFactions).flatMap((f) =>
                     homeworlds(f).map(
                         (p) =>
@@ -69,7 +72,7 @@ const FactionSelectionPage: React.FC<AdminPageProps> = ({
                     }
                 />
             ))}
-            <Button onClick={publishPlayerColorAssignmentEvents}>
+            <Button onClick={publishPlayerFactionAndColorAssignmentEvents}>
                 Continue
             </Button>
         </>
@@ -146,4 +149,4 @@ const StyledFactionSelectionRow = styled.div`
     }
 `;
 
-export { FactionSelectionPage };
+export { FactionAssignmentPage };

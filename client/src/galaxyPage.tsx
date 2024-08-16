@@ -6,11 +6,13 @@ import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
 import {
+    factionsInGame,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     PlanetControlledEvent,
+    playerFactionsAndColors,
 } from './events';
 import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
@@ -28,7 +30,7 @@ import { hexColor, notUndefined, range } from './util';
  */
 
 const GalaxyPage: React.FC = () => {
-    const { events, factionsInGame, playerColors } = useEvents();
+    const { events } = useEvents();
 
     const mapTilesSelectedEvent = _.last(
         events.filter(isMapTilesSelectedEvent)
@@ -58,9 +60,9 @@ const GalaxyPage: React.FC = () => {
             .map((e) => e.planet);
 
     const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =
-        factionsInGame.map((f) => ({
+        factionsInGame(events).map((f) => ({
             faction: f,
-            playerColor: playerColors[f],
+            playerColor: playerFactionsAndColors(events)[f],
             resourcesAndInfluence: planetsControlledByFaction(f)
                 .map((p) => ({
                     resources:
@@ -125,9 +127,9 @@ const GalaxyPage: React.FC = () => {
                                                         .filter(notUndefined)
                                                         .map(
                                                             (e) =>
-                                                                playerColors[
-                                                                    e.faction
-                                                                ]
+                                                                playerFactionsAndColors(
+                                                                    events
+                                                                )[e.faction]
                                                         ) || []
                                                 }
                                             />
@@ -144,7 +146,10 @@ const GalaxyPage: React.FC = () => {
                     controllingPlayerColor={
                         latestPlanetControlledEventsByPlanet
                             .filter((e) => e.planet === 'Mallice')
-                            .map((e) => playerColors[e.faction])[0]
+                            .map(
+                                (e) =>
+                                    playerFactionsAndColors(events)[e.faction]
+                            )[0]
                     }
                 />
                 {Object.values(

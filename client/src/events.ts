@@ -1,12 +1,13 @@
+import _ from 'underscore';
+
 import { Faction } from './factions';
 import { PlanetName } from './planets';
 import { PlayerColor } from './playerColor';
 import { SystemTileNumber } from './systemTiles';
 
-type PlayerAssignedColorEvent = {
-    type: 'PlayerAssignedColor';
-    faction: Faction;
-    color: PlayerColor;
+type PlayersAssignedFactionsAndColorsEvent = {
+    type: 'PlayersAssignedFactionsAndColors';
+    assignments: Record<Faction, PlayerColor>;
 };
 
 type MapTilesSelectedEvent = {
@@ -61,8 +62,10 @@ type RoundEndedEvent = {
     time: number;
 };
 
-const isPlayerAssignedColorEvent = (e: Event): e is PlayerAssignedColorEvent =>
-    e.type === 'PlayerAssignedColor';
+const isPlayersAssignedFactionsAndColorsEvent = (
+    e: Event
+): e is PlayersAssignedFactionsAndColorsEvent =>
+    e.type === 'PlayersAssignedFactionsAndColors';
 
 const isMapTilesSelectedEvent = (e: Event): e is MapTilesSelectedEvent =>
     e.type === 'MapTilesSelected';
@@ -97,24 +100,33 @@ type Event =
     | PlanetControlledEvent
     | PlanetDestroyedEvent
     | PlanetEnhancedEvent
-    | PlayerAssignedColorEvent
+    | PlayersAssignedFactionsAndColorsEvent
     | PlayerFinishedTurnEvent
     | PlayerScoredVictoryPointEvent
     | RoundEndedEvent
     | RoundStartedEvent;
 
+const playerFactionsAndColors = (events: Event[]) =>
+    _.last(events.filter(isPlayersAssignedFactionsAndColorsEvent))
+        ?.assignments || ({} as Record<Faction, PlayerColor>);
+
+const factionsInGame = (events: Event[]) =>
+    Object.keys(playerFactionsAndColors(events)) as Faction[];
+
 export {
     Event,
+    factionsInGame,
     isActionPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
-    isPlayerAssignedColorEvent,
+    isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
+    playerFactionsAndColors,
     PlayerFinishedTurnEvent,
 };

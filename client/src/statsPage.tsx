@@ -14,9 +14,11 @@ import styled from 'styled-components';
 import _ from 'underscore';
 
 import {
+    factionsInGame,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
+    playerFactionsAndColors,
 } from './events';
 import { Faction } from './factions';
 import { useEvents } from './useEvents';
@@ -27,11 +29,11 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 Chart.defaults.color = 'white';
 
 const StatsPage: React.FC = () => {
-    const { events, factionsInGame, playerColors } = useEvents();
+    const { events } = useEvents();
 
-    const playerScores = factionsInGame.map((f) => ({
+    const playerScores = factionsInGame(events).map((f) => ({
         faction: f,
-        playerColor: playerColors[f],
+        playerColor: playerFactionsAndColors(events)[f],
         score: events
             .filter(isPlayerScoredVictoryPointEvent)
             .filter((e) => e.faction === f)
@@ -59,7 +61,7 @@ const StatsPage: React.FC = () => {
             return acc;
         },
         [
-            factionsInGame.reduce(
+            factionsInGame(events).reduce(
                 (acc, n) => ({ ...acc, [n]: 0 }),
                 {} as Record<Faction, number>
             ),
@@ -91,16 +93,16 @@ const StatsPage: React.FC = () => {
         },
         {
             playerTurnStartedTime: 0,
-            playerTurnTimes: factionsInGame.reduce(
+            playerTurnTimes: factionsInGame(events).reduce(
                 (acc, n) => ({ ...acc, [n]: [] }),
                 {} as Record<Faction, number[]>
             ),
         }
     );
 
-    const averageTimesTakenPerPlayer = factionsInGame.map((f) => ({
+    const averageTimesTakenPerPlayer = factionsInGame(events).map((f) => ({
         faction: f,
-        playerColor: playerColors[f],
+        playerColor: playerFactionsAndColors(events)[f],
         maxTimeTakenInMillis: timesTakenPerPlayerPerTurn.playerTurnTimes[
             f
         ].reduce((acc, n) => Math.max(acc, n), 0),
@@ -156,9 +158,13 @@ const StatsPage: React.FC = () => {
                 {playerScoresByRound.length > 2 && (
                     <Line
                         data={{
-                            datasets: factionsInGame.map((f) => ({
-                                borderColor: hexColor(playerColors[f]),
-                                pointBackgroundColor: hexColor(playerColors[f]),
+                            datasets: factionsInGame(events).map((f) => ({
+                                borderColor: hexColor(
+                                    playerFactionsAndColors(events)[f]
+                                ),
+                                pointBackgroundColor: hexColor(
+                                    playerFactionsAndColors(events)[f]
+                                ),
                                 data: [
                                     0,
                                     ...playerScoresByRound.map((sbr) => sbr[f]),
