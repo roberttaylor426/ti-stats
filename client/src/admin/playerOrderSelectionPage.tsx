@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import _ from 'underscore';
 
-import {
-    Event,
-    factionsInGame,
-    isPlayersAssignedFactionsAndColorsEvent,
-} from '../events';
+import { Event, factionsInGame } from '../events';
 import { Faction } from '../factions';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
@@ -20,8 +16,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const publishActionPhaseStartedEvent = async () => {
         if (
-            _.uniq(playerOrder).length ===
-            events.filter(isPlayersAssignedFactionsAndColorsEvent).length
+            _.uniq(playerOrder).length === factionsInGame(props.events).length
         ) {
             const newEvent: Event = {
                 type: 'ActionPhaseStarted',
