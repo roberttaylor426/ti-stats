@@ -7,7 +7,7 @@ import { Faction, factions, homeworlds } from '../factions';
 import { SystemTile, SystemTileNumber, systemTiles } from '../systemTiles';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
-import { Button, Select } from './components';
+import { Button, PageTitle, Select } from './components';
 
 const TileSelectionPage: React.FC<AdminPageProps> = ({
     events,
@@ -36,6 +36,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({
 
     return (
         <>
+            <PageTitle title={'Choose map tiles'} />
             {range(37).map((n) => (
                 <MapTileSelectionRow key={n}>
                     <span>{n + 1}</span>

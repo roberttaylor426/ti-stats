@@ -6,7 +6,7 @@ import { Faction, factions, homeworlds } from '../factions';
 import { PlayerColor, playerColors } from '../playerColor';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
-import { Button, Select } from './components';
+import { Button, PageTitle, Select } from './components';
 
 const FactionSelectionPage: React.FC<AdminPageProps> = ({
     publishNewEvents,
@@ -51,6 +51,7 @@ const FactionSelectionPage: React.FC<AdminPageProps> = ({
 
     return (
         <>
+            <PageTitle title={'Choose factions'} />
             {range(6).map((n) => (
                 <FactionSelectionRow
                     key={n}

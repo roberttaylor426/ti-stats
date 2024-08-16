@@ -4,7 +4,7 @@ import _ from 'underscore';
 import { Event, isPlayerAssignedColorEvent } from '../events';
 import { Faction } from '../factions';
 import { AdminPageProps } from './adminPageProps';
-import { Button, Select } from './components';
+import { Button, PageTitle, Select } from './components';
 
 type Props = {
     currentRoundNumber: number;
@@ -34,7 +34,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = ({
 
     return (
         <>
-            <span>{`Round ${currentRoundNumber} player order`}</span>
+            <PageTitle title={`Round ${currentRoundNumber} player order`} />
             {events.filter(isPlayerAssignedColorEvent).map((_, index) => (
                 <Select
                     key={index}

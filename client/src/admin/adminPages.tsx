@@ -18,7 +18,7 @@ import {
 import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { systemTiles } from '../systemTiles';
-import { Button, Select } from './components';
+import { Button, PageTitle, Select } from './components';
 import { FactionSelectionPage } from './factionSelectionPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { TileSelectionPage } from './tileSelectionPage';
@@ -191,9 +191,12 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 <TileSelectionPage {...adminPageProps} />
             ) : _.last(events)?.type === 'MapTileSelected' ||
               _.last(events)?.type === 'RoundEnded' ? (
-                <Button onClick={publishRoundStartedEvent}>
-                    {`Start Round ${currentRoundNumber(events)}`}
-                </Button>
+                <>
+                    <PageTitle title={'Start round'} />
+                    <Button onClick={publishRoundStartedEvent}>
+                        {`Start Round ${currentRoundNumber(events)}`}
+                    </Button>
+                </>
             ) : _.last(events)?.type === 'RoundStarted' ? (
                 <PlayerOrderSelectionPage
                     {...adminPageProps}
@@ -201,7 +204,7 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 />
             ) : activePlayer ? (
                 <PlayerTurnPage>
-                    <span>{`${currentPlayerTurn(events)} turn`}</span>
+                    <PageTitle title={`${currentPlayerTurn(events)} turn`} />
                     <StyledPlanetControlledRow>
                         <Select
                             onChange={(e) =>
@@ -346,6 +349,7 @@ const AdminPages: React.FC<AdminPageProps> = ({ events, setEvents }) => {
                 </PlayerTurnPage>
             ) : (
                 <>
+                    <PageTitle title={'End of round scoring'} />
                     <FactionScoresVpsContainer>
                         <Select
                             onChange={(e) =>
