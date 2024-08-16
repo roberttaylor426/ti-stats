@@ -1,6 +1,6 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import _, { identity, random } from 'underscore';
+import styled from 'styled-components';
+import _, { identity } from 'underscore';
 
 import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
@@ -17,6 +17,7 @@ import {
 import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { PlayerColor } from './playerColor';
+import { Stars } from './stars';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { useEvents } from './useEvents';
 import { hexColor, notUndefined, range } from './util';
@@ -90,9 +91,7 @@ const GalaxyPage: React.FC = () => {
 
     return (
         <StyledGalaxy>
-            <SmallStars />
-            <MediumStars />
-            <LargeStars />
+            <Stars />
             <GalaxyContainer>
                 <StandardGalaxy>
                     <TileColumnRow>
@@ -191,50 +190,6 @@ const GalaxyPage: React.FC = () => {
     );
 };
 
-const starCoordinatesCss = (n: number) =>
-    range(n)
-        .map((_) => [random(10_000), random(10_000)])
-        .map(([x, y]) => `${x / 50}vw ${y / 50}vh #fff`)
-        .join(', ');
-
-const starsCss = css`
-    z-index: -1;
-    background: transparent;
-
-    @keyframes animateStar {
-        from {
-            transform: translateY(0px);
-        }
-        to {
-            transform: translateY(-100vh);
-        }
-    }
-`;
-
-const SmallStars = styled.div`
-    ${starsCss};
-    width: 1px;
-    height: 1px;
-    box-shadow: ${starCoordinatesCss(5_000)};
-    animation: animateStar 200s linear infinite;
-`;
-
-const MediumStars = styled.div`
-    ${starsCss};
-    width: 2px;
-    height: 2px;
-    box-shadow: ${starCoordinatesCss(500)};
-    animation: animateStar 150s linear infinite;
-`;
-
-const LargeStars = styled.div`
-    ${starsCss};
-    width: 3px;
-    height: 3px;
-    box-shadow: ${starCoordinatesCss(50)};
-    animation: animateStar 100s linear infinite;
-`;
-
 type FactionResourcesAndInfluence = {
     faction: Faction;
     playerColor: PlayerColor;
@@ -256,10 +211,14 @@ const Scoreboard = styled.section`
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    font-size: 2.25rem;
+    font-size: 1.25rem;
     margin-top: 8rem;
     margin-left: 4rem;
     margin-right: 4rem;
+
+    @media (min-width: 1024px) {
+        font-size: 2.25rem;
+    }
 `;
 
 type ResourcesInfluenceScoreboardRowProps = {

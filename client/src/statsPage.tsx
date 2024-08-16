@@ -21,6 +21,7 @@ import {
     playerFactionsAndColors,
 } from './events';
 import { Faction } from './factions';
+import { Stars } from './stars';
 import { useEvents } from './useEvents';
 import { hexColor } from './util';
 
@@ -136,156 +137,167 @@ const StatsPage: React.FC = () => {
         }, [] as number[]);
 
     return (
-        <StyledStats>
-            <VpScores>
-                <Scoreboard>
-                    <ScoreboardRow
-                        title={'Scores'}
-                        color={'white'}
-                        value={''}
-                    />
-                    {_.sortBy(playerScores, (ps) => ps.score)
-                        .reverse()
-                        .map((ps) => (
-                            <ScoreboardRow
-                                key={ps.faction}
-                                title={ps.faction}
-                                color={hexColor(ps.playerColor)}
-                                value={`${ps.score}VP`}
-                            />
-                        ))}
-                </Scoreboard>
-                {playerScoresByRound.length > 2 && (
-                    <Line
-                        data={{
-                            datasets: factionsInGame(events).map((f) => ({
-                                borderColor: hexColor(
-                                    playerFactionsAndColors(events)[f]
-                                ),
-                                pointBackgroundColor: hexColor(
-                                    playerFactionsAndColors(events)[f]
-                                ),
-                                data: [
-                                    0,
-                                    ...playerScoresByRound.map((sbr) => sbr[f]),
+        <div>
+            <Stars />
+            <StyledStats>
+                <VpScores>
+                    <Scoreboard>
+                        <ScoreboardRow
+                            title={'Scores'}
+                            color={'white'}
+                            value={''}
+                        />
+                        {_.sortBy(playerScores, (ps) => ps.score)
+                            .reverse()
+                            .map((ps) => (
+                                <ScoreboardRow
+                                    key={ps.faction}
+                                    title={ps.faction}
+                                    color={hexColor(ps.playerColor)}
+                                    value={`${ps.score}VP`}
+                                />
+                            ))}
+                    </Scoreboard>
+                    {playerScoresByRound.length > 2 && (
+                        <Line
+                            data={{
+                                datasets: factionsInGame(events).map((f) => ({
+                                    borderColor: hexColor(
+                                        playerFactionsAndColors(events)[f]
+                                    ),
+                                    pointBackgroundColor: hexColor(
+                                        playerFactionsAndColors(events)[f]
+                                    ),
+                                    data: [
+                                        0,
+                                        ...playerScoresByRound.map(
+                                            (sbr) => sbr[f]
+                                        ),
+                                    ],
+                                })),
+                                labels: [
+                                    '',
+                                    ..._.tail(playerScoresByRound).map(
+                                        (_, index) => `Round ${index + 1}`
+                                    ),
                                 ],
-                            })),
-                            labels: [
-                                '',
-                                ..._.tail(playerScoresByRound).map(
-                                    (_, index) => `Round ${index + 1}`
-                                ),
-                            ],
-                        }}
-                        options={{
-                            animation: { duration: 0 },
-                            elements: {
-                                point: {
-                                    radius: 10,
+                            }}
+                            options={{
+                                animation: { duration: 0 },
+                                elements: {
+                                    point: {
+                                        radius: 10,
+                                    },
                                 },
-                            },
-                            scales: {
-                                x: {
-                                    ticks: {
-                                        font: {
-                                            family: 'Handel Gothic',
-                                            size: 16,
+                                scales: {
+                                    x: {
+                                        ticks: {
+                                            font: {
+                                                family: 'Handel Gothic',
+                                                size: 16,
+                                            },
+                                        },
+                                    },
+                                    y: {
+                                        ticks: {
+                                            stepSize: 1,
+                                            font: {
+                                                family: 'Handel Gothic',
+                                                size: 16,
+                                            },
                                         },
                                     },
                                 },
-                                y: {
-                                    ticks: {
-                                        stepSize: 1,
-                                        font: {
-                                            family: 'Handel Gothic',
-                                            size: 16,
-                                        },
-                                    },
-                                },
-                            },
-                            plugins: { legend: { display: false } },
-                        }}
-                    />
-                )}
-            </VpScores>
-            {roundEndedEvents.length > 0 && (
-                <>
-                    <Scoreboard>
-                        <ScoreboardRow
-                            title={'Average time taken per turn'}
-                            color={'white'}
-                            value={''}
+                                plugins: { legend: { display: false } },
+                            }}
                         />
-                        {_.sortBy(
-                            averageTimesTakenPerPlayer,
-                            (ps) => ps.avTimeTakenInMillis
-                        )
-                            .reverse()
-                            .map((ps) => (
-                                <ScoreboardRow
-                                    key={ps.faction}
-                                    title={ps.faction}
-                                    color={hexColor(ps.playerColor)}
-                                    value={`${formatDuration(
-                                        intervalToDuration({
-                                            start: 0,
-                                            end: ps.avTimeTakenInMillis,
-                                        }),
-                                        { format: ['minutes', 'seconds'] }
-                                    )}`}
-                                />
-                            ))}
-                    </Scoreboard>
-                    <Scoreboard>
-                        <ScoreboardRow
-                            title={'Max time taken on a turn'}
-                            color={'white'}
-                            value={''}
-                        />
-                        {_.sortBy(
-                            averageTimesTakenPerPlayer,
-                            (ps) => ps.maxTimeTakenInMillis
-                        )
-                            .reverse()
-                            .map((ps) => (
-                                <ScoreboardRow
-                                    key={ps.faction}
-                                    title={ps.faction}
-                                    color={hexColor(ps.playerColor)}
-                                    value={`${formatDuration(
-                                        intervalToDuration({
-                                            start: 0,
-                                            end: ps.maxTimeTakenInMillis,
-                                        }),
-                                        { format: ['minutes', 'seconds'] }
-                                    )}`}
-                                />
-                            ))}
-                    </Scoreboard>
-                    <Scoreboard>
-                        <ScoreboardRow
-                            title={'Time taken per round'}
-                            color={'white'}
-                            value={''}
-                        />
-                        {timeTakenPerRound.map((ps, index) => (
+                    )}
+                </VpScores>
+                {roundEndedEvents.length > 0 && (
+                    <>
+                        <Scoreboard>
                             <ScoreboardRow
-                                key={index}
-                                title={`Round ${index + 1}`}
+                                title={'Average time taken per turn'}
                                 color={'white'}
-                                value={`${formatDuration(
-                                    intervalToDuration({
-                                        start: 0,
-                                        end: ps,
-                                    }),
-                                    { format: ['hours', 'minutes', 'seconds'] }
-                                )}`}
+                                value={''}
                             />
-                        ))}
-                    </Scoreboard>
-                </>
-            )}
-        </StyledStats>
+                            {_.sortBy(
+                                averageTimesTakenPerPlayer,
+                                (ps) => ps.avTimeTakenInMillis
+                            )
+                                .reverse()
+                                .map((ps) => (
+                                    <ScoreboardRow
+                                        key={ps.faction}
+                                        title={ps.faction}
+                                        color={hexColor(ps.playerColor)}
+                                        value={`${formatDuration(
+                                            intervalToDuration({
+                                                start: 0,
+                                                end: ps.avTimeTakenInMillis,
+                                            }),
+                                            { format: ['minutes', 'seconds'] }
+                                        )}`}
+                                    />
+                                ))}
+                        </Scoreboard>
+                        <Scoreboard>
+                            <ScoreboardRow
+                                title={'Max time taken on a turn'}
+                                color={'white'}
+                                value={''}
+                            />
+                            {_.sortBy(
+                                averageTimesTakenPerPlayer,
+                                (ps) => ps.maxTimeTakenInMillis
+                            )
+                                .reverse()
+                                .map((ps) => (
+                                    <ScoreboardRow
+                                        key={ps.faction}
+                                        title={ps.faction}
+                                        color={hexColor(ps.playerColor)}
+                                        value={`${formatDuration(
+                                            intervalToDuration({
+                                                start: 0,
+                                                end: ps.maxTimeTakenInMillis,
+                                            }),
+                                            { format: ['minutes', 'seconds'] }
+                                        )}`}
+                                    />
+                                ))}
+                        </Scoreboard>
+                        <Scoreboard>
+                            <ScoreboardRow
+                                title={'Time taken per round'}
+                                color={'white'}
+                                value={''}
+                            />
+                            {timeTakenPerRound.map((ps, index) => (
+                                <ScoreboardRow
+                                    key={index}
+                                    title={`Round ${index + 1}`}
+                                    color={'white'}
+                                    value={`${formatDuration(
+                                        intervalToDuration({
+                                            start: 0,
+                                            end: ps,
+                                        }),
+                                        {
+                                            format: [
+                                                'hours',
+                                                'minutes',
+                                                'seconds',
+                                            ],
+                                        }
+                                    )}`}
+                                />
+                            ))}
+                        </Scoreboard>
+                    </>
+                )}
+            </StyledStats>
+        </div>
     );
 };
 
