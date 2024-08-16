@@ -20,14 +20,16 @@ const TileSelectionPage: React.FC<AdminPageProps> = ({
     const publishMapTileSelectionEvents = async () => {
         if (_.uniq(Object.keys(tileSelections)).length === 37) {
             const newEvents: Event[] = [
-                ...range(37).map(
-                    (n) =>
-                        ({
-                            type: 'MapTileSelected',
-                            systemTileNumber: tileSelections[n + 1],
-                            position: n,
-                        }) as const
-                ),
+                {
+                    type: 'MapTilesSelected',
+                    selections: range(37).reduce(
+                        (acc, n) => ({
+                            ...acc,
+                            [n]: tileSelections[n + 1],
+                        }),
+                        {}
+                    ),
+                },
             ];
 
             await publishNewEvents(newEvents);

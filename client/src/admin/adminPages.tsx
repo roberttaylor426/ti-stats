@@ -6,7 +6,7 @@ import useAsyncEffect from 'use-async-effect';
 import {
     Event,
     isActionPhaseStartedEvent,
-    isMapTileSelectedEvent,
+    isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
@@ -140,12 +140,12 @@ const AdminPages: React.FC = () => {
     };
 
     const planetsOnTheBoard: PlanetName[] = [
-        ...events
-            .filter(isMapTileSelectedEvent)
+        ...Object.values(
+            _.last(events.filter(isMapTilesSelectedEvent))?.selections || {}
+        )
             .flatMap(
-                (e) =>
-                    systemTiles.find((t) => t.tileNumber === e.systemTileNumber)
-                        ?.planets || []
+                (stn) =>
+                    systemTiles.find((t) => t.tileNumber === stn)?.planets || []
             )
             .filter(
                 (p) =>
@@ -189,9 +189,9 @@ const AdminPages: React.FC = () => {
         <StyledAdminPage>
             {events.length === 0 ? (
                 <FactionSelectionPage {...adminPageProps} />
-            ) : events.filter(isMapTileSelectedEvent).length < 37 ? (
+            ) : !events.find(isMapTilesSelectedEvent) ? (
                 <TileSelectionPage {...adminPageProps} />
-            ) : _.last(events)?.type === 'MapTileSelected' ||
+            ) : _.last(events)?.type === 'MapTilesSelected' ||
               _.last(events)?.type === 'RoundEnded' ? (
                 <StartRoundPage
                     {...adminPageProps}

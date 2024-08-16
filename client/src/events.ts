@@ -9,10 +9,9 @@ type PlayerAssignedColorEvent = {
     color: PlayerColor;
 };
 
-type MapTileSelectedEvent = {
-    type: 'MapTileSelected';
-    systemTileNumber: SystemTileNumber;
-    position: number;
+type MapTilesSelectedEvent = {
+    type: 'MapTilesSelected';
+    selections: Record<number, SystemTileNumber>;
 };
 
 type RoundStartedEvent = {
@@ -65,8 +64,8 @@ type RoundEndedEvent = {
 const isPlayerAssignedColorEvent = (e: Event): e is PlayerAssignedColorEvent =>
     e.type === 'PlayerAssignedColor';
 
-const isMapTileSelectedEvent = (e: Event): e is MapTileSelectedEvent =>
-    e.type === 'MapTileSelected';
+const isMapTilesSelectedEvent = (e: Event): e is MapTilesSelectedEvent =>
+    e.type === 'MapTilesSelected';
 
 const isActionPhaseStartedEvent = (e: Event): e is ActionPhaseStartedEvent =>
     e.type === 'ActionPhaseStarted';
@@ -94,7 +93,7 @@ const isPlanetDestroyedEvent = (e: Event): e is PlanetDestroyedEvent =>
 
 type Event =
     | ActionPhaseStartedEvent
-    | MapTileSelectedEvent
+    | MapTilesSelectedEvent
     | PlanetControlledEvent
     | PlanetDestroyedEvent
     | PlanetEnhancedEvent
@@ -107,7 +106,7 @@ type Event =
 export {
     Event,
     isActionPhaseStartedEvent,
-    isMapTileSelectedEvent,
+    isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
@@ -115,7 +114,7 @@ export {
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
-    MapTileSelectedEvent,
+    MapTilesSelectedEvent,
     PlanetControlledEvent,
     PlayerFinishedTurnEvent,
 };

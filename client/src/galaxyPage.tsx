@@ -6,7 +6,7 @@ import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
 import {
-    isMapTileSelectedEvent,
+    isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
@@ -30,7 +30,9 @@ import { hexColor, notUndefined, range } from './util';
 const GalaxyPage: React.FC = () => {
     const { events, factionsInGame, playerColors } = useEvents();
 
-    const mapTileSelectedEvents = events.filter(isMapTileSelectedEvent);
+    const mapTilesSelectedEvent = _.last(
+        events.filter(isMapTilesSelectedEvent)
+    );
     const planetEnhancedEvents = events.filter(isPlanetEnhancedEvent);
     const planetDestroyedEvents = events.filter(isPlanetDestroyedEvent);
 
@@ -97,15 +99,9 @@ const GalaxyPage: React.FC = () => {
                                 {range(tilesPerColumn(columnIndex)).map(
                                     (rowIndex) => {
                                         const systemTileNumber =
-                                            mapTileSelectedEvents.find(
-                                                (e) =>
-                                                    e.position ===
-                                                    tileIndex(
-                                                        columnIndex,
-                                                        rowIndex
-                                                    )
-                                            )?.systemTileNumber;
-
+                                            mapTilesSelectedEvent?.selections[
+                                                tileIndex(columnIndex, rowIndex)
+                                            ];
                                         return (
                                             <HighlightableSystemTile
                                                 key={`tile ${tileIndex(columnIndex, rowIndex)}`}
@@ -151,9 +147,9 @@ const GalaxyPage: React.FC = () => {
                             .map((e) => playerColors[e.faction])[0]
                     }
                 />
-                {mapTileSelectedEvents.some(
-                    (e) => e.systemTileNumber === 51
-                ) ? (
+                {Object.values(
+                    mapTilesSelectedEvent?.selections || {}
+                ).includes(51) ? (
                     <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
                 ) : (
                     <div />
