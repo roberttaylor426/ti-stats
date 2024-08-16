@@ -37,7 +37,7 @@ const SmallStars = styled.div`
     width: 1px;
     height: 1px;
     box-shadow: ${starCoordinatesCss(5_000)};
-    animation: animateStar 200s linear infinite;
+    animation: animateStar 250s linear infinite;
 `;
 
 const MediumStars = styled.div`
