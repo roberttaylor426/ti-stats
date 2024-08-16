@@ -25,8 +25,6 @@ import { hexColor, notUndefined, range } from './util';
 /*
  Background of scoreboard titles
  Extract common scoreboard component
- Background animation
- All events should be undoable
  Extract all pages into separate files
  */
 
