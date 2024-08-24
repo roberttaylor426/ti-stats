@@ -390,11 +390,11 @@ const StatsContainer = styled.div`
     border: ${accentColor}88 solid 1px;
     padding: 1rem 2rem;
 
-    > :nth-child(odd) {
+    > :nth-child(even) {
         background-color: ${accentColor}00;
     }
 
-    > :nth-child(even) {
+    > :nth-child(odd) {
         background-color: ${accentColor}22;
     }
 
