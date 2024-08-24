@@ -13,6 +13,7 @@ import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import _ from 'underscore';
 
+import { accentColor } from './colors';
 import {
     factionsInGame,
     isPlayerScoredVictoryPointEvent,
@@ -22,14 +23,13 @@ import {
 } from './events';
 import { Faction } from './factions';
 import { Stars } from './stars';
+import { StatsContainer } from './stats';
 import { useEvents } from './useEvents';
 import { hexColor } from './util';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
 Chart.defaults.color = 'white';
-
-const accentColor = '#00bfff';
 
 const StatsPage: React.FC = () => {
     const { events } = useEvents();
@@ -384,23 +384,6 @@ const Title = styled.span<TitleProps>`
 const Value = styled.span`
     color: white;
     text-align: end;
-`;
-
-const StatsContainer = styled.div`
-    border: ${accentColor}88 solid 1px;
-    padding: 1rem 2rem;
-
-    > :nth-child(even) {
-        background-color: ${accentColor}00;
-    }
-
-    > :nth-child(odd) {
-        background-color: ${accentColor}22;
-    }
-
-    > * + canvas {
-        margin-top: 2rem;
-    }
 `;
 
 export { StatsPage };

@@ -18,6 +18,7 @@ import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { PlayerColor } from './playerColor';
 import { Stars } from './stars';
+import { StatsContainer } from './stats';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { useEvents } from './useEvents';
 import { hexColor, notUndefined, range } from './util';
@@ -167,22 +168,24 @@ const GalaxyPage: React.FC = () => {
                     resources={'Resources'}
                     influence={'Influence'}
                 />
-                {_.sortBy(
-                    factionResourcesAndInfluence,
-                    (fsi) =>
-                        fsi.resourcesAndInfluence.influence +
-                        fsi.resourcesAndInfluence.resources
-                )
-                    .reverse()
-                    .map((fsi) => (
-                        <ResourcesInfluenceScoreboardRow
-                            key={fsi.faction}
-                            title={fsi.faction}
-                            color={hexColor(fsi.playerColor)}
-                            resources={`${fsi.resourcesAndInfluence.resources}`}
-                            influence={`${fsi.resourcesAndInfluence.influence}`}
-                        />
-                    ))}
+                <StatsContainer>
+                    {_.sortBy(
+                        factionResourcesAndInfluence,
+                        (fsi) =>
+                            fsi.resourcesAndInfluence.influence +
+                            fsi.resourcesAndInfluence.resources
+                    )
+                        .reverse()
+                        .map((fsi) => (
+                            <ResourcesInfluenceScoreboardRow
+                                key={fsi.faction}
+                                title={fsi.faction}
+                                color={hexColor(fsi.playerColor)}
+                                resources={`${fsi.resourcesAndInfluence.resources}`}
+                                influence={`${fsi.resourcesAndInfluence.influence}`}
+                            />
+                        ))}
+                </StatsContainer>
             </Scoreboard>
         </StyledGalaxy>
     );
