@@ -18,7 +18,7 @@ import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { PlayerColor } from './playerColor';
 import { Stars } from './stars';
-import { StatsContainer } from './stats';
+import { StatsContainer, statsTitleCss } from './stats';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { useEvents } from './useEvents';
 import { hexColor, notUndefined, range } from './util';
@@ -241,6 +241,7 @@ const ResourcesInfluenceScoreboardRow: React.FC<
 
 const StyledResourcesInfluenceScoreboardRow = styled.div`
     display: flex;
+    ${statsTitleCss};
 `;
 
 type TitleProps = {
@@ -252,15 +253,15 @@ const Title = styled.span<TitleProps>`
     width: 60%;
 `;
 
-const Resources = styled.span`
+const Resources = styled.h4`
     color: yellow;
-    width: 20%;
+    width: 25%;
     text-align: end;
 `;
 
-const Influence = styled.span`
+const Influence = styled.h4`
     color: deepskyblue;
-    width: 20%;
+    width: 25%;
     text-align: end;
 `;
 

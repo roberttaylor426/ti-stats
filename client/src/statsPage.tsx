@@ -13,7 +13,6 @@ import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { accentColor } from './colors';
 import {
     factionsInGame,
     isPlayerScoredVictoryPointEvent,
@@ -23,7 +22,7 @@ import {
 } from './events';
 import { Faction } from './factions';
 import { Stars } from './stars';
-import { StatsContainer } from './stats';
+import { StatsContainer, StatsTitle } from './stats';
 import { useEvents } from './useEvents';
 import { hexColor } from './util';
 
@@ -144,7 +143,7 @@ const StatsPage: React.FC = () => {
             <StyledStats>
                 <VpScores>
                     <Scoreboard>
-                        <ScoreboardTitle>Scores</ScoreboardTitle>
+                        <StatsTitle>Scores</StatsTitle>
                         <StatsContainer>
                             {_.sortBy(playerScores, (ps) => ps.score)
                                 .reverse()
@@ -225,9 +224,7 @@ const StatsPage: React.FC = () => {
                 {roundEndedEvents.length > 0 && (
                     <>
                         <Scoreboard>
-                            <ScoreboardTitle>
-                                Average time taken per turn
-                            </ScoreboardTitle>
+                            <StatsTitle>Average time taken per turn</StatsTitle>
                             <StatsContainer>
                                 {_.sortBy(
                                     averageTimesTakenPerPlayer,
@@ -256,9 +253,7 @@ const StatsPage: React.FC = () => {
                             </StatsContainer>
                         </Scoreboard>
                         <Scoreboard>
-                            <ScoreboardTitle>
-                                Max time taken on a turn
-                            </ScoreboardTitle>
+                            <StatsTitle>Max time taken on a turn</StatsTitle>
                             <StatsContainer>
                                 {_.sortBy(
                                     averageTimesTakenPerPlayer,
@@ -287,9 +282,7 @@ const StatsPage: React.FC = () => {
                             </StatsContainer>
                         </Scoreboard>
                         <Scoreboard>
-                            <ScoreboardTitle>
-                                Time taken per round
-                            </ScoreboardTitle>
+                            <StatsTitle>Time taken per round</StatsTitle>
                             <StatsContainer>
                                 {timeTakenPerRound.map((ps, index) => (
                                     <ScoreboardRow
@@ -339,13 +332,6 @@ const Scoreboard = styled.section`
     flex-direction: column;
     gap: 0.5rem;
     font-size: 2.25rem;
-`;
-
-const ScoreboardTitle = styled.h4`
-    color: white;
-    background-color: ${accentColor}44;
-    text-transform: uppercase;
-    padding: 0 1rem;
 `;
 
 type ScoreboardRowProps = {
