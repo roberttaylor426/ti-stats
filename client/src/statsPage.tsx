@@ -29,6 +29,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
 Chart.defaults.color = 'white';
 
+const accentColor = '#00bfff';
+
 const StatsPage: React.FC = () => {
     const { events } = useEvents();
 
@@ -142,157 +144,174 @@ const StatsPage: React.FC = () => {
             <StyledStats>
                 <VpScores>
                     <Scoreboard>
-                        <ScoreboardRow
-                            title={'Scores'}
-                            color={'white'}
-                            value={''}
-                        />
-                        {_.sortBy(playerScores, (ps) => ps.score)
-                            .reverse()
-                            .map((ps) => (
-                                <ScoreboardRow
-                                    key={ps.faction}
-                                    title={ps.faction}
-                                    color={hexColor(ps.playerColor)}
-                                    value={`${ps.score}VP`}
-                                />
-                            ))}
-                    </Scoreboard>
-                    {playerScoresByRound.length > 2 && (
-                        <Line
-                            data={{
-                                datasets: factionsInGame(events).map((f) => ({
-                                    borderColor: hexColor(
-                                        playerFactionsAndColors(events)[f]
-                                    ),
-                                    pointBackgroundColor: hexColor(
-                                        playerFactionsAndColors(events)[f]
-                                    ),
-                                    data: [
-                                        0,
-                                        ...playerScoresByRound.map(
-                                            (sbr) => sbr[f]
+                        <ScoreboardTitle>Scores</ScoreboardTitle>
+                        <StatsContainer>
+                            {_.sortBy(playerScores, (ps) => ps.score)
+                                .reverse()
+                                .map((ps) => (
+                                    <ScoreboardRow
+                                        key={ps.faction}
+                                        title={ps.faction}
+                                        color={hexColor(ps.playerColor)}
+                                        value={`${ps.score}VP`}
+                                    />
+                                ))}
+                            {playerScoresByRound.length > 2 && (
+                                <Line
+                                    data={{
+                                        datasets: factionsInGame(events).map(
+                                            (f) => ({
+                                                borderColor: hexColor(
+                                                    playerFactionsAndColors(
+                                                        events
+                                                    )[f]
+                                                ),
+                                                pointBackgroundColor: hexColor(
+                                                    playerFactionsAndColors(
+                                                        events
+                                                    )[f]
+                                                ),
+                                                data: [
+                                                    0,
+                                                    ...playerScoresByRound.map(
+                                                        (sbr) => sbr[f]
+                                                    ),
+                                                ],
+                                            })
                                         ),
-                                    ],
-                                })),
-                                labels: [
-                                    '',
-                                    ..._.tail(playerScoresByRound).map(
-                                        (_, index) => `Round ${index + 1}`
-                                    ),
-                                ],
-                            }}
-                            options={{
-                                animation: { duration: 0 },
-                                elements: {
-                                    point: {
-                                        radius: 10,
-                                    },
-                                },
-                                scales: {
-                                    x: {
-                                        ticks: {
-                                            font: {
-                                                family: 'Handel Gothic',
-                                                size: 16,
+                                        labels: [
+                                            '',
+                                            ..._.tail(playerScoresByRound).map(
+                                                (_, index) =>
+                                                    `ROUND ${index + 1}`
+                                            ),
+                                        ],
+                                    }}
+                                    options={{
+                                        animation: { duration: 0 },
+                                        elements: {
+                                            point: {
+                                                radius: 10,
                                             },
                                         },
-                                    },
-                                    y: {
-                                        ticks: {
-                                            stepSize: 1,
-                                            font: {
-                                                family: 'Handel Gothic',
-                                                size: 16,
+                                        scales: {
+                                            x: {
+                                                ticks: {
+                                                    font: {
+                                                        family: 'Handel Gothic',
+                                                        size: 16,
+                                                    },
+                                                    color: 'white',
+                                                },
+                                            },
+                                            y: {
+                                                ticks: {
+                                                    stepSize: 1,
+                                                    font: {
+                                                        family: 'Handel Gothic',
+                                                        size: 24,
+                                                    },
+                                                    color: 'white',
+                                                },
                                             },
                                         },
-                                    },
-                                },
-                                plugins: { legend: { display: false } },
-                            }}
-                        />
-                    )}
+                                        plugins: { legend: { display: false } },
+                                    }}
+                                />
+                            )}
+                        </StatsContainer>
+                    </Scoreboard>
                 </VpScores>
                 {roundEndedEvents.length > 0 && (
                     <>
                         <Scoreboard>
-                            <ScoreboardRow
-                                title={'Average time taken per turn'}
-                                color={'white'}
-                                value={''}
-                            />
-                            {_.sortBy(
-                                averageTimesTakenPerPlayer,
-                                (ps) => ps.avTimeTakenInMillis
-                            )
-                                .reverse()
-                                .map((ps) => (
+                            <ScoreboardTitle>
+                                Average time taken per turn
+                            </ScoreboardTitle>
+                            <StatsContainer>
+                                {_.sortBy(
+                                    averageTimesTakenPerPlayer,
+                                    (ps) => ps.avTimeTakenInMillis
+                                )
+                                    .reverse()
+                                    .map((ps) => (
+                                        <ScoreboardRow
+                                            key={ps.faction}
+                                            title={ps.faction}
+                                            color={hexColor(ps.playerColor)}
+                                            value={`${formatDuration(
+                                                intervalToDuration({
+                                                    start: 0,
+                                                    end: ps.avTimeTakenInMillis,
+                                                }),
+                                                {
+                                                    format: [
+                                                        'minutes',
+                                                        'seconds',
+                                                    ],
+                                                }
+                                            )}`}
+                                        />
+                                    ))}
+                            </StatsContainer>
+                        </Scoreboard>
+                        <Scoreboard>
+                            <ScoreboardTitle>
+                                Max time taken on a turn
+                            </ScoreboardTitle>
+                            <StatsContainer>
+                                {_.sortBy(
+                                    averageTimesTakenPerPlayer,
+                                    (ps) => ps.maxTimeTakenInMillis
+                                )
+                                    .reverse()
+                                    .map((ps) => (
+                                        <ScoreboardRow
+                                            key={ps.faction}
+                                            title={ps.faction}
+                                            color={hexColor(ps.playerColor)}
+                                            value={`${formatDuration(
+                                                intervalToDuration({
+                                                    start: 0,
+                                                    end: ps.maxTimeTakenInMillis,
+                                                }),
+                                                {
+                                                    format: [
+                                                        'minutes',
+                                                        'seconds',
+                                                    ],
+                                                }
+                                            )}`}
+                                        />
+                                    ))}
+                            </StatsContainer>
+                        </Scoreboard>
+                        <Scoreboard>
+                            <ScoreboardTitle>
+                                Time taken per round
+                            </ScoreboardTitle>
+                            <StatsContainer>
+                                {timeTakenPerRound.map((ps, index) => (
                                     <ScoreboardRow
-                                        key={ps.faction}
-                                        title={ps.faction}
-                                        color={hexColor(ps.playerColor)}
+                                        key={index}
+                                        title={`Round ${index + 1}`}
+                                        color={'white'}
                                         value={`${formatDuration(
                                             intervalToDuration({
                                                 start: 0,
-                                                end: ps.avTimeTakenInMillis,
+                                                end: ps,
                                             }),
-                                            { format: ['minutes', 'seconds'] }
+                                            {
+                                                format: [
+                                                    'hours',
+                                                    'minutes',
+                                                    'seconds',
+                                                ],
+                                            }
                                         )}`}
                                     />
                                 ))}
-                        </Scoreboard>
-                        <Scoreboard>
-                            <ScoreboardRow
-                                title={'Max time taken on a turn'}
-                                color={'white'}
-                                value={''}
-                            />
-                            {_.sortBy(
-                                averageTimesTakenPerPlayer,
-                                (ps) => ps.maxTimeTakenInMillis
-                            )
-                                .reverse()
-                                .map((ps) => (
-                                    <ScoreboardRow
-                                        key={ps.faction}
-                                        title={ps.faction}
-                                        color={hexColor(ps.playerColor)}
-                                        value={`${formatDuration(
-                                            intervalToDuration({
-                                                start: 0,
-                                                end: ps.maxTimeTakenInMillis,
-                                            }),
-                                            { format: ['minutes', 'seconds'] }
-                                        )}`}
-                                    />
-                                ))}
-                        </Scoreboard>
-                        <Scoreboard>
-                            <ScoreboardRow
-                                title={'Time taken per round'}
-                                color={'white'}
-                                value={''}
-                            />
-                            {timeTakenPerRound.map((ps, index) => (
-                                <ScoreboardRow
-                                    key={index}
-                                    title={`Round ${index + 1}`}
-                                    color={'white'}
-                                    value={`${formatDuration(
-                                        intervalToDuration({
-                                            start: 0,
-                                            end: ps,
-                                        }),
-                                        {
-                                            format: [
-                                                'hours',
-                                                'minutes',
-                                                'seconds',
-                                            ],
-                                        }
-                                    )}`}
-                                />
-                            ))}
+                            </StatsContainer>
                         </Scoreboard>
                     </>
                 )}
@@ -320,6 +339,13 @@ const Scoreboard = styled.section`
     flex-direction: column;
     gap: 0.5rem;
     font-size: 2.25rem;
+`;
+
+const ScoreboardTitle = styled.h4`
+    color: white;
+    background-color: ${accentColor}44;
+    text-transform: uppercase;
+    padding: 0 1rem;
 `;
 
 type ScoreboardRowProps = {
@@ -358,6 +384,23 @@ const Title = styled.span<TitleProps>`
 const Value = styled.span`
     color: white;
     text-align: end;
+`;
+
+const StatsContainer = styled.div`
+    border: ${accentColor}88 solid 1px;
+    padding: 1rem 2rem;
+
+    > :nth-child(odd) {
+        background-color: ${accentColor}00;
+    }
+
+    > :nth-child(even) {
+        background-color: ${accentColor}22;
+    }
+
+    > * + canvas {
+        margin-top: 2rem;
+    }
 `;
 
 export { StatsPage };
