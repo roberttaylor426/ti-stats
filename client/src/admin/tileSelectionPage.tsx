@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { Event, factionsInGame } from '../events';
-import { Faction, factions, homeworlds } from '../factions';
+import { Event, factionSelections } from '../events';
+import {
+    FactionSelection,
+    factionsWithFixedHomeworlds,
+    homeworlds,
+    isFactionSelectionWithCustomHomeworlds,
+} from '../factions';
 import { SystemTile, SystemTileNumber, systemTiles } from '../systemTiles';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
@@ -52,7 +57,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
                         }
                     >
                         <option value={''}>--Tile--</option>
-                        {systemTilesForGame(factionsInGame(events))
+                        {systemTilesForGame(factionSelections(events))
                             .filter(
                                 (st) =>
                                     tileSelections[n + 1] === st.tileNumber ||
@@ -79,15 +84,22 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
 const ghostsOfCreussHomeTileNumber = 51;
 const malliceTileNumber = 82;
 
-const systemTilesForGame = (selectedFactions: Faction[]): SystemTile[] => {
-    const factionsNotSelected = factions.filter(
-        (f) => !selectedFactions.includes(f)
+const systemTilesForGame = (
+    factionSelections: FactionSelection[]
+): SystemTile[] => {
+    const factionSystemTilesNotInPlay = factionsWithFixedHomeworlds.filter(
+        (f) =>
+            !factionSelections.some((fs) =>
+                isFactionSelectionWithCustomHomeworlds(fs)
+                    ? fs.homeworldsOf === f
+                    : fs === f
+            )
     );
 
     return systemTiles
         .filter(
             (st) =>
-                !factionsNotSelected.find((f) =>
+                !factionSystemTilesNotInPlay.find((f) =>
                     _.isEqual(homeworlds(f), st.planets)
                 )
         )

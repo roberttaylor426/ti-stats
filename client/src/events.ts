@@ -1,13 +1,18 @@
 import _ from 'underscore';
 
-import { Faction } from './factions';
+import {
+    Faction,
+    FactionSelection,
+    isFactionSelectionWithCustomHomeworlds,
+} from './factions';
 import { PlanetName } from './planets';
 import { PlayerColor } from './playerColor';
 import { SystemTileNumber } from './systemTiles';
 
 type PlayersAssignedFactionsAndColorsEvent = {
     type: 'PlayersAssignedFactionsAndColors';
-    assignments: Record<Faction, PlayerColor>;
+    colorAssignments: Record<Faction, PlayerColor>;
+    factionSelections: FactionSelection[];
 };
 
 type MapTilesSelectedEvent = {
@@ -106,15 +111,24 @@ type Event =
     | RoundEndedEvent
     | RoundStartedEvent;
 
-const playerFactionsAndColors = (events: Event[]) =>
+const playerFactionsAndColors = (
+    events: Event[]
+): Record<Faction, PlayerColor> =>
     _.last(events.filter(isPlayersAssignedFactionsAndColorsEvent))
-        ?.assignments || ({} as Record<Faction, PlayerColor>);
+        ?.colorAssignments || ({} as Record<Faction, PlayerColor>);
 
-const factionsInGame = (events: Event[]) =>
-    Object.keys(playerFactionsAndColors(events)) as Faction[];
+const factionSelections = (events: Event[]): FactionSelection[] =>
+    _.last(events.filter(isPlayersAssignedFactionsAndColorsEvent))
+        ?.factionSelections || [];
+
+const factionsInGame = (events: Event[]): Faction[] =>
+    factionSelections(events).map((fs) =>
+        isFactionSelectionWithCustomHomeworlds(fs) ? fs.faction : fs
+    );
 
 export {
     Event,
+    factionSelections,
     factionsInGame,
     isActionPhaseStartedEvent,
     isMapTilesSelectedEvent,

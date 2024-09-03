@@ -1,6 +1,8 @@
+import _ from 'underscore';
+
 import { PlanetName } from './planets';
 
-const factions = [
+const factionsWithFixedHomeworlds = [
     'Sardakk N’orr',
     'The Arborec',
     'The Argent Flight',
@@ -27,9 +29,26 @@ const factions = [
     'The Yssaril Tribes',
 ] as const;
 
-type Faction = (typeof factions)[number];
+type FactionWithFixedHomeworlds = (typeof factionsWithFixedHomeworlds)[number];
 
-const homeworlds = (f: Faction): PlanetName[] => {
+const factionsWithDynamicHomeworlds = ['The Council Keleres'] as const;
+
+type FactionWithDynamicHomeworlds =
+    (typeof factionsWithDynamicHomeworlds)[number];
+
+type Faction = FactionWithFixedHomeworlds | FactionWithDynamicHomeworlds;
+
+const isFactionWithDynamicHomeworlds = (
+    f: string
+): f is FactionWithDynamicHomeworlds =>
+    factionsWithDynamicHomeworlds.some((fwdh) => fwdh === f);
+
+const factions = _.sortBy([
+    ...factionsWithFixedHomeworlds,
+    ...factionsWithDynamicHomeworlds,
+]);
+
+const homeworlds = (f: FactionWithFixedHomeworlds): PlanetName[] => {
     switch (f) {
         case 'Sardakk N’orr':
             return ["Tren'lak", 'Quinarra'];
@@ -82,4 +101,39 @@ const homeworlds = (f: Faction): PlanetName[] => {
     }
 };
 
-export { Faction, factions, homeworlds };
+type FactionSelectionWithCustomHomeworlds = {
+    faction: FactionWithDynamicHomeworlds;
+    homeworldsOf: FactionWithFixedHomeworlds;
+};
+
+type FactionSelection =
+    | FactionWithFixedHomeworlds
+    | FactionSelectionWithCustomHomeworlds;
+
+const isFactionSelectionWithCustomHomeworlds = (
+    fs: FactionSelection
+): fs is FactionSelectionWithCustomHomeworlds =>
+    !!(fs as FactionSelectionWithCustomHomeworlds).homeworldsOf;
+
+const selectedFaction = (fs: FactionSelection): Faction =>
+    isFactionSelectionWithCustomHomeworlds(fs) ? fs.faction : fs;
+
+const homeworldsForFactionSelection = (fs: FactionSelection): PlanetName[] =>
+    isFactionSelectionWithCustomHomeworlds(fs)
+        ? homeworlds(fs.homeworldsOf)
+        : homeworlds(fs);
+
+export {
+    Faction,
+    factions,
+    FactionSelection,
+    factionsWithDynamicHomeworlds,
+    factionsWithFixedHomeworlds,
+    FactionWithDynamicHomeworlds,
+    FactionWithFixedHomeworlds,
+    homeworlds,
+    homeworldsForFactionSelection,
+    isFactionSelectionWithCustomHomeworlds,
+    isFactionWithDynamicHomeworlds,
+    selectedFaction,
+};
