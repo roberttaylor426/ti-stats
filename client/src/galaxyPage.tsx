@@ -163,12 +163,7 @@ const GalaxyPage: React.FC = () => {
                 )}
             </ExtraTiles>
             <Scoreboard>
-                <ResourcesInfluenceScoreboardRow
-                    title={''}
-                    color={'white'}
-                    resources={'Resources'}
-                    influence={'Influence'}
-                />
+                <ResourcesInfluenceScoreboardTitle />
                 <StatsContainer>
                     {_.sortBy(
                         factionResourcesAndInfluence,
@@ -223,6 +218,19 @@ const Scoreboard = styled.section`
     }
 `;
 
+const ResourcesInfluenceScoreboardTitle: React.FC = () => (
+    <StyledResourcesInfluenceScoreboardTitle>
+        <Title $color={'white'}>&nbsp;</Title>
+        <Resources>Resources</Resources>
+        <Influence>Influence</Influence>
+    </StyledResourcesInfluenceScoreboardTitle>
+);
+
+const StyledResourcesInfluenceScoreboardTitle = styled.div`
+    display: flex;
+    ${statsTitleCss};
+`;
+
 type ResourcesInfluenceScoreboardRowProps = {
     title: string;
     color: string;
@@ -242,7 +250,6 @@ const ResourcesInfluenceScoreboardRow: React.FC<
 
 const StyledResourcesInfluenceScoreboardRow = styled.div`
     display: flex;
-    ${statsTitleCss};
 `;
 
 type TitleProps = {
