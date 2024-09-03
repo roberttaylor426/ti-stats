@@ -19,6 +19,7 @@ import {
 import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { systemTiles } from '../systemTiles';
+import { Technology } from '../technologies';
 import { Button, PageTitle, Select } from './components';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
@@ -194,6 +195,11 @@ const AdminPages: React.FC = () => {
     const planetNameWithResourcesAndInfluence = (p: PlanetName) =>
         `${p} (${planetResourcesAndInfluence(p).resources}R, ${planetResourcesAndInfluence(p).influence}I)`;
 
+    const techsAvailableToResearch = (
+        _f: Faction,
+        _events: Event[]
+    ): Technology[] => [];
+
     const adminPageProps = {
         events,
         publishNewEvents,
@@ -308,6 +314,36 @@ const AdminPages: React.FC = () => {
                             Enhance
                         </Button>
                     </StyledPlanetEnhancedRow>
+                    <StyledTechResearchedRow>
+                        <Select
+                        // onChange={(e) =>
+                        //     setSelectedPlanetToControl(
+                        //         e.target.value as PlanetName
+                        //     )
+                        // }
+                        >
+                            <option value={''}>--Tech--</option>
+                            {_.sortBy(
+                                techsAvailableToResearch(activePlayer, events)
+                            ).map(({ name }) => (
+                                <option key={name} value={name}>
+                                    {name}
+                                </option>
+                            ))}
+                        </Select>
+                        <Button
+                            onClick={async () => {
+                                // if (selectedPlanetToControl) {
+                                //     await publishPlanetControlledEvent(
+                                //         selectedPlanetToControl,
+                                //         activePlayer
+                                //     );
+                                // }
+                            }}
+                        >
+                            Take control
+                        </Button>
+                    </StyledTechResearchedRow>
                     <ScoreVpsRow>
                         <NumberInput
                             onChange={(e) =>
@@ -524,6 +560,17 @@ const StyledPlanetControlledRow = styled.div`
 `;
 
 const StyledPlanetEnhancedRow = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+    row-gap: 1rem;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const StyledTechResearchedRow = styled.div`
     display: flex;
     flex-wrap: wrap;
     column-gap: 2rem;

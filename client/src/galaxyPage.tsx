@@ -16,7 +16,7 @@ import {
 } from './events';
 import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
-import { PlayerColor } from './playerColor';
+import { PlayerColor } from './playerColors';
 import { Stars } from './stars';
 import { StatsContainer, statsTitleCss } from './stats';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';

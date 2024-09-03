@@ -12,7 +12,7 @@ import {
     isFactionWithDynamicHomeworlds,
     selectedFaction,
 } from '../factions';
-import { PlayerColor, playerColors } from '../playerColor';
+import { PlayerColor, playerColors } from '../playerColors';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';

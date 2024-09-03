@@ -6,7 +6,7 @@ import {
     isFactionSelectionWithCustomHomeworlds,
 } from './factions';
 import { PlanetName } from './planets';
-import { PlayerColor } from './playerColor';
+import { PlayerColor } from './playerColors';
 import { SystemTileNumber } from './systemTiles';
 
 type PlayersAssignedFactionsAndColorsEvent = {

@@ -1,4 +1,4 @@
-import { PlayerColor } from './playerColor';
+import { PlayerColor } from './playerColors';
 
 const hexColor = (pc: PlayerColor): string => {
     switch (pc) {
@@ -25,4 +25,4 @@ const notUndefined = <T>(x: T | undefined): x is T => x !== undefined;
 
 const range = (n: number) => [...Array(n).keys()];
 
-export { hexColor, notUndefined,range };
+export { hexColor, notUndefined, range };
