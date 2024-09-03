@@ -27,6 +27,7 @@ import { hexColor, notUndefined, range } from './util';
  Background of scoreboard titles and scoreboards
  Extract common scoreboard component
  Extract all pages into separate files
+ Support Council Keleres
  */
 
 const GalaxyPage: React.FC = () => {
