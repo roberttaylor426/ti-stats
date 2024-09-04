@@ -11,6 +11,7 @@ import { AdminPages } from './admin/adminPages';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { GalaxyPage } from './galaxyPage';
 import { StatsPage } from './statsPage';
+import { TechPage } from './techPage';
 
 const App: React.FC = () => (
     <>
@@ -28,6 +29,11 @@ const App: React.FC = () => (
                             key="stats"
                             path={'/stats'}
                             element={<StatsPage />}
+                        />,
+                        <Route
+                            key="tech"
+                            path={'/tech'}
+                            element={<TechPage />}
                         />,
                         <Route
                             key="admin"

@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components';
 import { accentColor } from './colors';
 
 const StatsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
     border: ${accentColor}88 solid 1px;
     padding: 1rem 2rem;
 
