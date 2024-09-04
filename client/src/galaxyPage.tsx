@@ -17,8 +17,9 @@ import {
 import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { hexPlayerColor, PlayerColor } from './playerColors';
+import { Scoreboard, ScoreboardRow } from './scoreboard';
 import { Stars } from './stars';
-import { StatsContainer, statsTitleCss } from './stats';
+import { StatsContainer, StatsTitle } from './stats';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
@@ -161,27 +162,46 @@ const GalaxyPage: React.FC = () => {
                     <div />
                 )}
             </ExtraTiles>
-            <Scoreboard>
-                <ResourcesInfluenceScoreboardTitle />
-                <StatsContainer>
-                    {_.sortBy(
-                        factionResourcesAndInfluence,
-                        (fsi) =>
-                            fsi.resourcesAndInfluence.influence +
-                            fsi.resourcesAndInfluence.resources
-                    )
-                        .reverse()
-                        .map((fsi) => (
-                            <ResourcesInfluenceScoreboardRow
-                                key={fsi.faction}
-                                title={fsi.faction}
-                                color={hexPlayerColor(fsi.playerColor)}
-                                resources={`${fsi.resourcesAndInfluence.resources}`}
-                                influence={`${fsi.resourcesAndInfluence.influence}`}
-                            />
-                        ))}
-                </StatsContainer>
-            </Scoreboard>
+            <ResourcesAndInfluenceStats>
+                <Scoreboard>
+                    <StatsTitle>Resources</StatsTitle>
+                    <StatsContainer>
+                        {_.sortBy(
+                            factionResourcesAndInfluence,
+                            (fsi) => fsi.resourcesAndInfluence.resources
+                        )
+                            .reverse()
+                            .map((fsi) => (
+                                <ScoreboardRow
+                                    key={fsi.faction}
+                                    title={fsi.faction}
+                                    titleColor={hexPlayerColor(fsi.playerColor)}
+                                    value={`${fsi.resourcesAndInfluence.resources}`}
+                                    valueColor={'yellow'}
+                                />
+                            ))}
+                    </StatsContainer>
+                </Scoreboard>
+                <Scoreboard>
+                    <StatsTitle>Influence</StatsTitle>
+                    <StatsContainer>
+                        {_.sortBy(
+                            factionResourcesAndInfluence,
+                            (fsi) => fsi.resourcesAndInfluence.influence
+                        )
+                            .reverse()
+                            .map((fsi) => (
+                                <ScoreboardRow
+                                    key={fsi.faction}
+                                    title={fsi.faction}
+                                    titleColor={hexPlayerColor(fsi.playerColor)}
+                                    value={`${fsi.resourcesAndInfluence.influence}`}
+                                    valueColor={'deepskyblue'}
+                                />
+                            ))}
+                    </StatsContainer>
+                </Scoreboard>
+            </ResourcesAndInfluenceStats>
         </StyledGalaxy>
     );
 };
@@ -203,73 +223,17 @@ const tileIndex = (columnIndex: number, rowIndex: number): number =>
     range(columnIndex).reduce((acc, n) => acc + tilesPerColumn(n), 0) +
     rowIndex;
 
-const Scoreboard = styled.section`
+const ResourcesAndInfluenceStats = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 1.25rem;
-    margin-top: 8rem;
+    flex-direction: row;
+    margin-top: 4rem;
     margin-left: 4rem;
     margin-right: 4rem;
+    gap: 2rem;
 
-    @media (min-width: 1024px) {
-        font-size: 2.25rem;
+    > * {
+        flex: 1 1 0;
     }
-`;
-
-const ResourcesInfluenceScoreboardTitle: React.FC = () => (
-    <StyledResourcesInfluenceScoreboardTitle>
-        <Title $color={'white'}>&nbsp;</Title>
-        <Resources>Resources</Resources>
-        <Influence>Influence</Influence>
-    </StyledResourcesInfluenceScoreboardTitle>
-);
-
-const StyledResourcesInfluenceScoreboardTitle = styled.div`
-    display: flex;
-    ${statsTitleCss};
-`;
-
-type ResourcesInfluenceScoreboardRowProps = {
-    title: string;
-    color: string;
-    resources: string;
-    influence: string;
-};
-
-const ResourcesInfluenceScoreboardRow: React.FC<
-    ResourcesInfluenceScoreboardRowProps
-> = ({ title, color, resources, influence }) => (
-    <StyledResourcesInfluenceScoreboardRow>
-        <Title $color={color}>{title}</Title>
-        <Resources>{resources}</Resources>
-        <Influence>{influence}</Influence>
-    </StyledResourcesInfluenceScoreboardRow>
-);
-
-const StyledResourcesInfluenceScoreboardRow = styled.div`
-    display: flex;
-`;
-
-type TitleProps = {
-    $color: string;
-};
-
-const Title = styled.span<TitleProps>`
-    color: ${(props) => props.$color};
-    width: 60%;
-`;
-
-const Resources = styled.h4`
-    color: yellow;
-    width: 25%;
-    text-align: end;
-`;
-
-const Influence = styled.h4`
-    color: deepskyblue;
-    width: 25%;
-    text-align: end;
 `;
 
 const hexagonWidthToHeightRatio = 1.1547005;

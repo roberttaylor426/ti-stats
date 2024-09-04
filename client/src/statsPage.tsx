@@ -22,6 +22,7 @@ import {
 } from './events';
 import { Faction } from './factions';
 import { hexPlayerColor } from './playerColors';
+import { Scoreboard, ScoreboardRow } from './scoreboard';
 import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import { useEvents } from './useEvents';
@@ -151,7 +152,9 @@ const StatsPage: React.FC = () => {
                                     <ScoreboardRow
                                         key={ps.faction}
                                         title={ps.faction}
-                                        color={hexPlayerColor(ps.playerColor)}
+                                        titleColor={hexPlayerColor(
+                                            ps.playerColor
+                                        )}
                                         value={`${ps.score}VP`}
                                     />
                                 ))}
@@ -236,7 +239,7 @@ const StatsPage: React.FC = () => {
                                         <ScoreboardRow
                                             key={ps.faction}
                                             title={ps.faction}
-                                            color={hexPlayerColor(
+                                            titleColor={hexPlayerColor(
                                                 ps.playerColor
                                             )}
                                             value={`${formatDuration(
@@ -267,7 +270,7 @@ const StatsPage: React.FC = () => {
                                         <ScoreboardRow
                                             key={ps.faction}
                                             title={ps.faction}
-                                            color={hexPlayerColor(
+                                            titleColor={hexPlayerColor(
                                                 ps.playerColor
                                             )}
                                             value={`${formatDuration(
@@ -293,7 +296,7 @@ const StatsPage: React.FC = () => {
                                     <ScoreboardRow
                                         key={index}
                                         title={`Round ${index + 1}`}
-                                        color={'white'}
+                                        titleColor={'white'}
                                         value={`${formatDuration(
                                             intervalToDuration({
                                                 start: 0,
@@ -330,51 +333,6 @@ const VpScores = styled.section`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-`;
-
-const Scoreboard = styled.section`
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 2.25rem;
-`;
-
-type ScoreboardRowProps = {
-    title: string;
-    color: string;
-    value: string;
-};
-
-const ScoreboardRow: React.FC<ScoreboardRowProps> = ({
-    title,
-    color,
-    value,
-}) => (
-    <StyledScoreboardRow>
-        <Title $color={color}>{title}</Title>
-        <Value>{value}</Value>
-    </StyledScoreboardRow>
-);
-
-const StyledScoreboardRow = styled.div`
-    display: flex;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-type TitleProps = {
-    $color: string;
-};
-
-const Title = styled.span<TitleProps>`
-    color: ${(props) => props.$color};
-`;
-
-const Value = styled.span`
-    color: white;
-    text-align: end;
 `;
 
 export { StatsPage };
