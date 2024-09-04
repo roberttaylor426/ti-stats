@@ -388,4 +388,19 @@ const technologies: Technology[] = [
     },
 ];
 
-export { technologies, Technology };
+const hexColorForTechnologyType = (t: TechnologyType): string => {
+    switch (t) {
+        case 'Biotic':
+            return '#00a958';
+        case 'Propulsion':
+            return '#00b0dd';
+        case 'Cybernetic':
+            return '#f3e736';
+        case 'Warfare':
+            return '#ff606f';
+        case 'Unit':
+            return 'white';
+    }
+};
+
+export { hexColorForTechnologyType, technologies, Technology };

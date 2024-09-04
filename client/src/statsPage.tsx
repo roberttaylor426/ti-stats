@@ -21,10 +21,10 @@ import {
     playerFactionsAndColors,
 } from './events';
 import { Faction } from './factions';
+import { hexPlayerColor } from './playerColors';
 import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import { useEvents } from './useEvents';
-import { hexColor } from './util';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
@@ -151,7 +151,7 @@ const StatsPage: React.FC = () => {
                                     <ScoreboardRow
                                         key={ps.faction}
                                         title={ps.faction}
-                                        color={hexColor(ps.playerColor)}
+                                        color={hexPlayerColor(ps.playerColor)}
                                         value={`${ps.score}VP`}
                                     />
                                 ))}
@@ -160,16 +160,17 @@ const StatsPage: React.FC = () => {
                                     data={{
                                         datasets: factionsInGame(events).map(
                                             (f) => ({
-                                                borderColor: hexColor(
+                                                borderColor: hexPlayerColor(
                                                     playerFactionsAndColors(
                                                         events
                                                     )[f]
                                                 ),
-                                                pointBackgroundColor: hexColor(
-                                                    playerFactionsAndColors(
-                                                        events
-                                                    )[f]
-                                                ),
+                                                pointBackgroundColor:
+                                                    hexPlayerColor(
+                                                        playerFactionsAndColors(
+                                                            events
+                                                        )[f]
+                                                    ),
                                                 data: [
                                                     0,
                                                     ...playerScoresByRound.map(
@@ -235,7 +236,9 @@ const StatsPage: React.FC = () => {
                                         <ScoreboardRow
                                             key={ps.faction}
                                             title={ps.faction}
-                                            color={hexColor(ps.playerColor)}
+                                            color={hexPlayerColor(
+                                                ps.playerColor
+                                            )}
                                             value={`${formatDuration(
                                                 intervalToDuration({
                                                     start: 0,
@@ -264,7 +267,9 @@ const StatsPage: React.FC = () => {
                                         <ScoreboardRow
                                             key={ps.faction}
                                             title={ps.faction}
-                                            color={hexColor(ps.playerColor)}
+                                            color={hexPlayerColor(
+                                                ps.playerColor
+                                            )}
                                             value={`${formatDuration(
                                                 intervalToDuration({
                                                     start: 0,

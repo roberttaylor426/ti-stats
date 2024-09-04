@@ -16,12 +16,12 @@ import {
 } from './events';
 import { Faction } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
-import { PlayerColor } from './playerColors';
+import { hexPlayerColor, PlayerColor } from './playerColors';
 import { Stars } from './stars';
 import { StatsContainer, statsTitleCss } from './stats';
 import { systemTileImages, systemTiles, tile0 } from './systemTiles';
 import { useEvents } from './useEvents';
-import { hexColor, notUndefined, range } from './util';
+import { notUndefined, range } from './util';
 
 /*
  Extract common scoreboard component
@@ -175,7 +175,7 @@ const GalaxyPage: React.FC = () => {
                             <ResourcesInfluenceScoreboardRow
                                 key={fsi.faction}
                                 title={fsi.faction}
-                                color={hexColor(fsi.playerColor)}
+                                color={hexPlayerColor(fsi.playerColor)}
                                 resources={`${fsi.resourcesAndInfluence.resources}`}
                                 influence={`${fsi.resourcesAndInfluence.influence}`}
                             />
@@ -416,7 +416,7 @@ const HexHighlight: React.FC<HexHighlightProps> = ({
                 <HexHighlightSegment
                     key={rotation}
                     $rotation={rotation}
-                    $color={hexColor(
+                    $color={hexPlayerColor(
                         _.sortBy(controllingPlayerColors, identity)[
                             Math.floor(
                                 controllingPlayerColors.length * (index / 6)
@@ -460,7 +460,7 @@ const MalliceTile: React.FC<MalliceTileProps> = ({
         src={controllingPlayerColor ? tile82Back : tile82}
         alt={`Wormhole nexus tile`}
         $highlightColor={
-            controllingPlayerColor && hexColor(controllingPlayerColor)
+            controllingPlayerColor && hexPlayerColor(controllingPlayerColor)
         }
     />
 );
@@ -475,7 +475,7 @@ const GhostsOfCreussHomeTile: React.FC<GhostsOfCresussHomeTileProps> = ({
     <ExtraTile
         src={tile51}
         alt={`Ghosts of Creuss homeworld tile`}
-        $highlightColor={hexColor(controllingPlayerColor)}
+        $highlightColor={hexPlayerColor(controllingPlayerColor)}
     />
 );
 
