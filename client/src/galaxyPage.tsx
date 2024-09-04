@@ -27,7 +27,6 @@ import { notUndefined, range } from './util';
 /*
  Extract common scoreboard component
  Extract all pages into separate files
- Split resources and influence into separate tables?
  */
 
 const GalaxyPage: React.FC = () => {
