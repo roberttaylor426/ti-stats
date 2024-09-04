@@ -15,11 +15,12 @@ import {
     isRoundEndedEvent,
     PlanetControlledEvent,
     PlayerFinishedTurnEvent,
+    technologiesResearchedByFaction,
 } from '../events';
 import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { systemTiles } from '../systemTiles';
-import { Technology } from '../technologies';
+import { technologies, Technology } from '../technologies';
 import { Button, PageTitle, Select } from './components';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
@@ -51,6 +52,10 @@ const AdminPages: React.FC = () => {
         useState<PlanetName>();
     const [resourcesToEnhance, setResourcesToEnhance] = useState(0);
     const [influenceToEnhance, setInfluenceToEnhance] = useState(0);
+
+    const [techToResearch, setTechToResearch] = useState<Technology>();
+    const [factionToResearchTech, setFactionToResearchTech] =
+        useState<Faction>();
 
     const [playerToScoreVps, setPlayerToScoreVps] = useState<Faction>();
     const [vpsToAdd, setVpsToAdd] = useState<number>(0);
@@ -104,6 +109,19 @@ const AdminPages: React.FC = () => {
             planet: p,
             extraResources,
             extraInfluence,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishTechnologyResearchedEvent = async (
+        t: Technology,
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'TechnologyResearched',
+            technology: t,
+            faction: f,
         };
 
         await publishNewEvents([newEvent]);
@@ -196,9 +214,22 @@ const AdminPages: React.FC = () => {
         `${p} (${planetResourcesAndInfluence(p).resources}R, ${planetResourcesAndInfluence(p).influence}I)`;
 
     const techsAvailableToResearch = (
-        _f: Faction,
-        _events: Event[]
-    ): Technology[] => [];
+        f: Faction | undefined,
+        events: Event[]
+    ): Technology[] =>
+        f
+            ? _.sortBy(
+                  technologies
+                      .filter((t) => t.faction === f || !t.faction)
+                      .filter(
+                          (t) =>
+                              !technologiesResearchedByFaction(f, events).some(
+                                  (trbf) => t.name === trbf.name
+                              )
+                      ),
+                  (t) => t.name
+              )
+            : [];
 
     const adminPageProps = {
         events,
@@ -316,15 +347,34 @@ const AdminPages: React.FC = () => {
                     </StyledPlanetEnhancedRow>
                     <StyledTechResearchedRow>
                         <Select
-                        // onChange={(e) =>
-                        //     setSelectedPlanetToControl(
-                        //         e.target.value as PlanetName
-                        //     )
-                        // }
+                            onChange={(e) =>
+                                setFactionToResearchTech(
+                                    e.target.value as Faction
+                                )
+                            }
+                        >
+                            <option value={''}>--Faction--</option>
+                            {_.sortBy(factionsInGame(events)).map((f) => (
+                                <option key={f} value={f}>
+                                    {f}
+                                </option>
+                            ))}
+                        </Select>
+                        <Select
+                            onChange={(e) =>
+                                setTechToResearch(
+                                    technologies.find(
+                                        (t) => e.target.value === t.name
+                                    )
+                                )
+                            }
                         >
                             <option value={''}>--Tech--</option>
                             {_.sortBy(
-                                techsAvailableToResearch(activePlayer, events)
+                                techsAvailableToResearch(
+                                    factionToResearchTech,
+                                    events
+                                )
                             ).map(({ name }) => (
                                 <option key={name} value={name}>
                                     {name}
@@ -333,15 +383,15 @@ const AdminPages: React.FC = () => {
                         </Select>
                         <Button
                             onClick={async () => {
-                                // if (selectedPlanetToControl) {
-                                //     await publishPlanetControlledEvent(
-                                //         selectedPlanetToControl,
-                                //         activePlayer
-                                //     );
-                                // }
+                                if (factionToResearchTech && techToResearch) {
+                                    await publishTechnologyResearchedEvent(
+                                        techToResearch,
+                                        factionToResearchTech
+                                    );
+                                }
                             }}
                         >
-                            Take control
+                            Research
                         </Button>
                     </StyledTechResearchedRow>
                     <ScoreVpsRow>

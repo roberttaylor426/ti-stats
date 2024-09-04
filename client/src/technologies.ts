@@ -13,7 +13,7 @@ type Technology = {
     faction?: Faction;
 };
 
-const standardTechnologies: Technology[] = [
+const technologies: Technology[] = [
     {
         name: 'Neural Motivator',
         type: 'Biotic',
@@ -388,4 +388,4 @@ const standardTechnologies: Technology[] = [
     },
 ];
 
-export { standardTechnologies, Technology };
+export { technologies, Technology };

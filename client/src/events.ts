@@ -8,6 +8,7 @@ import {
 import { PlanetName } from './planets';
 import { PlayerColor } from './playerColors';
 import { SystemTileNumber } from './systemTiles';
+import { Technology } from './technologies';
 
 type PlayersAssignedFactionsAndColorsEvent = {
     type: 'PlayersAssignedFactionsAndColors';
@@ -29,6 +30,12 @@ type ActionPhaseStartedEvent = {
     type: 'ActionPhaseStarted';
     time: number;
     playerOrder: Faction[];
+};
+
+type TechnologyResearchedEvent = {
+    type: 'TechnologyResearched';
+    technology: Technology;
+    faction: Faction;
 };
 
 type PlayerFinishedTurnEvent = {
@@ -81,6 +88,10 @@ const isActionPhaseStartedEvent = (e: Event): e is ActionPhaseStartedEvent =>
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
 
+const isTechnologyResearchedEvent = (
+    e: Event
+): e is TechnologyResearchedEvent => e.type === 'TechnologyResearched';
+
 const isPlayerScoredVictoryPointEvent = (
     e: Event
 ): e is PlayerScoredVictoryPointEvent => e.type === 'PlayerScoredVictoryPoint';
@@ -109,7 +120,8 @@ type Event =
     | PlayerFinishedTurnEvent
     | PlayerScoredVictoryPointEvent
     | RoundEndedEvent
-    | RoundStartedEvent;
+    | RoundStartedEvent
+    | TechnologyResearchedEvent;
 
 const playerFactionsAndColors = (
     events: Event[]
@@ -126,6 +138,15 @@ const factionsInGame = (events: Event[]): Faction[] =>
         isFactionSelectionWithCustomHomeworlds(fs) ? fs.faction : fs
     );
 
+const technologiesResearchedByFaction = (
+    faction: Faction,
+    events: Event[]
+): Technology[] =>
+    events
+        .filter(isTechnologyResearchedEvent)
+        .filter((e) => e.faction === faction)
+        .map((e) => e.technology);
+
 export {
     Event,
     factionSelections,
@@ -139,8 +160,10 @@ export {
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
+    isTechnologyResearchedEvent,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
+    technologiesResearchedByFaction,
 };

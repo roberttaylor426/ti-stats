@@ -34,7 +34,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
                 {...props}
                 title={`Round ${currentRoundNumber} player order`}
             />
-            {factionsInGame(events).map((_, index) => (
+            {factionsInGame(events).map((_f, index) => (
                 <Select
                     key={index}
                     onChange={(e) =>
@@ -46,7 +46,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
                     }
                 >
                     <option value={''}>--Faction--</option>
-                    {factionsInGame(events)
+                    {_.sortBy(factionsInGame(events))
                         .filter(
                             (f) =>
                                 playerOrder[index] === f ||
