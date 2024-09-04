@@ -11,6 +11,7 @@ import {
     homeworldsForFactionSelection,
     isFactionWithDynamicHomeworlds,
     selectedFaction,
+    startingTechsForFaction,
 } from '../factions';
 import { PlayerColor, playerColors } from '../playerColors';
 import { range } from '../util';
@@ -55,6 +56,18 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                             }) as const
                     )
                 ),
+                ...Object.values(factionSelections)
+                    .map((fs) => selectedFaction(fs))
+                    .flatMap((f) =>
+                        startingTechsForFaction(f).map(
+                            (t) =>
+                                ({
+                                    type: 'TechnologyResearched',
+                                    technology: t,
+                                    faction: f,
+                                }) as const
+                        )
+                    ),
             ];
 
             await publishNewEvents(newEvents);

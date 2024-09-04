@@ -13,23 +13,91 @@ type Technology = {
     faction?: Faction;
 };
 
+const sarweenTools: Technology = {
+    name: 'Sarween Tools',
+    type: 'Cybernetic',
+};
+
+const predictiveIntelligence: Technology = {
+    name: 'Predictive Intelligence',
+    type: 'Cybernetic',
+};
+
+const gravitonLaserSystem: Technology = {
+    name: 'Graviton Laser System',
+    type: 'Cybernetic',
+};
+
+const scanlinkDroneNetwork: Technology = {
+    name: 'Scanlink Drone Network',
+    type: 'Cybernetic',
+};
+
+const neuralMotivator: Technology = {
+    name: 'Neural Motivator',
+    type: 'Biotic',
+};
+
+const psychoArchaeology: Technology = {
+    name: 'Psychoarchaeology',
+    type: 'Biotic',
+};
+
+const daxciveAnimators: Technology = {
+    name: 'Daxcive Animators',
+    type: 'Biotic',
+};
+
+const bioStims: Technology = {
+    name: 'Bio Stims',
+    type: 'Biotic',
+};
+
+const plasmaScoring: Technology = {
+    name: 'Plasma Scoring',
+    type: 'Warfare',
+};
+
+const aiDevelopmentAlgorithm: Technology = {
+    name: 'AI Development Algorithm',
+    type: 'Warfare',
+};
+
+const selfAssemblyRoutines: Technology = {
+    name: 'Self Assembly Routines',
+    type: 'Warfare',
+};
+
+const magenDefenseGrid: Technology = {
+    name: 'Magen Defense Grid',
+    type: 'Warfare',
+};
+
+const antimassDeflectors: Technology = {
+    name: 'Antimass Deflectors',
+    type: 'Propulsion',
+};
+
+const darkEnergyTap: Technology = {
+    name: 'Dark Energy Tap',
+    type: 'Propulsion',
+};
+
+const gravityDrive: Technology = {
+    name: 'Gravity Drive',
+    type: 'Propulsion',
+};
+
+const slingRelay: Technology = {
+    name: 'Sling Relay',
+    type: 'Propulsion',
+};
+
 const technologies: Technology[] = [
-    {
-        name: 'Neural Motivator',
-        type: 'Biotic',
-    },
-    {
-        name: 'Psychoarchaeology',
-        type: 'Biotic',
-    },
-    {
-        name: 'Daxcive Animators',
-        type: 'Biotic',
-    },
-    {
-        name: 'Bio Stims',
-        type: 'Biotic',
-    },
+    neuralMotivator,
+    psychoArchaeology,
+    daxciveAnimators,
+    bioStims,
     {
         name: 'Hyper Metabolism',
         type: 'Biotic',
@@ -88,22 +156,10 @@ const technologies: Technology[] = [
         type: 'Biotic',
         faction: 'The Naaz-Rokha Alliance',
     },
-    {
-        name: 'Sarween Tools',
-        type: 'Cybernetic',
-    },
-    {
-        name: 'Scanlink Drone Network',
-        type: 'Cybernetic',
-    },
-    {
-        name: 'Graviton Laser System',
-        type: 'Cybernetic',
-    },
-    {
-        name: 'Predictive Intelligence',
-        type: 'Cybernetic',
-    },
+    sarweenTools,
+    scanlinkDroneNetwork,
+    gravitonLaserSystem,
+    predictiveIntelligence,
     {
         name: 'Transit Diodes',
         type: 'Cybernetic',
@@ -177,22 +233,10 @@ const technologies: Technology[] = [
         type: 'Cybernetic',
         faction: 'The Yin Brotherhood',
     },
-    {
-        name: 'Antimass Deflectors',
-        type: 'Propulsion',
-    },
-    {
-        name: 'Dark Energy Tap',
-        type: 'Propulsion',
-    },
-    {
-        name: 'Gravity Drive',
-        type: 'Propulsion',
-    },
-    {
-        name: 'Sling Relay',
-        type: 'Propulsion',
-    },
+    antimassDeflectors,
+    darkEnergyTap,
+    gravityDrive,
+    slingRelay,
     {
         name: 'Fleet Logistics',
         type: 'Propulsion',
@@ -226,22 +270,10 @@ const technologies: Technology[] = [
         type: 'Propulsion',
         faction: 'The Empyrean',
     },
-    {
-        name: 'Plasma Scoring',
-        type: 'Warfare',
-    },
-    {
-        name: 'AI Development Algorithm',
-        type: 'Warfare',
-    },
-    {
-        name: 'Magen Defense Grid',
-        type: 'Warfare',
-    },
-    {
-        name: 'Self Assembly Routines',
-        type: 'Warfare',
-    },
+    plasmaScoring,
+    aiDevelopmentAlgorithm,
+    magenDefenseGrid,
+    selfAssemblyRoutines,
     {
         name: 'Duranium Armor',
         type: 'Warfare',
@@ -403,4 +435,24 @@ const hexColorForTechnologyType = (t: TechnologyType): string => {
     }
 };
 
-export { hexColorForTechnologyType, technologies, Technology };
+export {
+    aiDevelopmentAlgorithm,
+    antimassDeflectors,
+    bioStims,
+    darkEnergyTap,
+    daxciveAnimators,
+    gravitonLaserSystem,
+    gravityDrive,
+    hexColorForTechnologyType,
+    magenDefenseGrid,
+    neuralMotivator,
+    plasmaScoring,
+    predictiveIntelligence,
+    psychoArchaeology,
+    sarweenTools,
+    scanlinkDroneNetwork,
+    selfAssemblyRoutines,
+    slingRelay,
+    technologies,
+    Technology,
+};

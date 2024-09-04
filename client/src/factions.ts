@@ -1,6 +1,25 @@
 import _ from 'underscore';
 
 import { PlanetName } from './planets';
+import {
+    aiDevelopmentAlgorithm,
+    antimassDeflectors,
+    bioStims,
+    darkEnergyTap,
+    daxciveAnimators,
+    gravitonLaserSystem,
+    gravityDrive,
+    magenDefenseGrid,
+    neuralMotivator,
+    plasmaScoring,
+    predictiveIntelligence,
+    psychoArchaeology,
+    sarweenTools,
+    scanlinkDroneNetwork,
+    selfAssemblyRoutines,
+    slingRelay,
+    Technology,
+} from './technologies';
 
 const factionsWithFixedHomeworlds = [
     'Sardakk N’orr',
@@ -123,6 +142,66 @@ const homeworldsForFactionSelection = (fs: FactionSelection): PlanetName[] =>
         ? homeworlds(fs.homeworldsOf)
         : homeworlds(fs);
 
+const startingTechsForFaction = (f: Faction): Technology[] => {
+    switch (f) {
+        case 'Sardakk N’orr':
+            return [];
+        case 'The Arborec':
+            return [magenDefenseGrid];
+        case 'The Argent Flight':
+            return [];
+        case 'The Barony of Letnev':
+            return [antimassDeflectors, plasmaScoring];
+        case 'The Clan of Saar':
+            return [antimassDeflectors];
+        case 'The Embers of Muaat':
+            return [plasmaScoring];
+        case 'The Emirates of Hacan':
+            return [antimassDeflectors, sarweenTools];
+        case 'The Empyrean':
+            return [darkEnergyTap];
+        case 'The Federation of Sol':
+            return [neuralMotivator, antimassDeflectors];
+        case 'The Ghosts of Creuss':
+            return [gravityDrive];
+        case 'The L1Z1X Mindnet':
+            return [neuralMotivator, plasmaScoring];
+        case 'The Mahact Gene-Sorcerers':
+            return [bioStims, predictiveIntelligence];
+        case 'The Mentak Coalition':
+            return [sarweenTools, plasmaScoring];
+        case 'The Naalu Collective':
+            return [neuralMotivator, sarweenTools];
+        case 'The Naaz-Rokha Alliance':
+            return [psychoArchaeology, aiDevelopmentAlgorithm];
+        case 'The Nekro Virus':
+            return [daxciveAnimators];
+        case 'The Nomad':
+            return [slingRelay];
+        case 'The Titans of Ul':
+            return [antimassDeflectors, scanlinkDroneNetwork];
+        case 'The Universities of Jol-Nar':
+            return [
+                neuralMotivator,
+                antimassDeflectors,
+                sarweenTools,
+                plasmaScoring,
+            ];
+        case "The Vuil'Raith Cabal":
+            return [selfAssemblyRoutines];
+        case 'The Winnu':
+            return [];
+        case 'The Xxcha Kingdom':
+            return [gravitonLaserSystem];
+        case 'The Yin Brotherhood':
+            return [sarweenTools];
+        case 'The Yssaril Tribes':
+            return [neuralMotivator];
+        case 'The Council Keleres':
+            return [];
+    }
+};
+
 export {
     Faction,
     factions,
@@ -136,4 +215,5 @@ export {
     isFactionSelectionWithCustomHomeworlds,
     isFactionWithDynamicHomeworlds,
     selectedFaction,
+    startingTechsForFaction,
 };
