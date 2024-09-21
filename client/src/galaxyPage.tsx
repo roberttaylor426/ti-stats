@@ -27,7 +27,13 @@ import { notUndefined, range } from './util';
 /*
  Extract common scoreboard component
  Extract all pages into separate files
- */
+ Pre-select the Mecatol Rex tile
+ Introduce status page:
+  * [Round] Strategy phase screen
+  * Player turn screen
+  * Status phase screen
+  * Agenda phase screen
+*/
 
 const GalaxyPage: React.FC = () => {
     const { events } = useEvents();
