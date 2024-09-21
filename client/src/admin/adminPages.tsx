@@ -388,6 +388,16 @@ const AdminPages: React.FC = () => {
                                         techToResearch,
                                         factionToResearchTech
                                     );
+
+                                    if (
+                                        techToResearch.name ===
+                                        'I.I.H.Q Modernization'
+                                    ) {
+                                        await publishPlanetControlledEvent(
+                                            'Custodia Vigilia',
+                                            factionToResearchTech
+                                        );
+                                    }
                                 }
                             }}
                         >

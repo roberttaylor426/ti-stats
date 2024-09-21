@@ -97,6 +97,7 @@ const planetNames = [
     'Rigel III',
     'Rigel I',
     'Mallice',
+    'Custodia Vigilia',
 ] as const;
 
 type PlanetName = (typeof planetNames)[number];
@@ -497,6 +498,10 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     },
     Mallice: {
         resources: 0,
+        influence: 3,
+    },
+    'Custodia Vigilia': {
+        resources: 2,
         influence: 3,
     },
 };
