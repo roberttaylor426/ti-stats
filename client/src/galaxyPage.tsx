@@ -27,7 +27,6 @@ import { notUndefined, range } from './util';
 /*
  Extract common scoreboard component
  Extract all pages into separate files
- Pre-select the Mecatol Rex tile
  Introduce status page (with timer):
   * [Round] Strategy phase screen
   * Player turn screen

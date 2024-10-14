@@ -259,6 +259,8 @@ type SystemTileNumber =
     | 81
     | 82;
 
+const mecatolRexTileNumber = 18;
+
 const systemTiles: SystemTile[] = [
     {
         tileNumber: 1,
@@ -346,7 +348,7 @@ const systemTiles: SystemTile[] = [
         planets: [],
     },
     {
-        tileNumber: 18,
+        tileNumber: mecatolRexTileNumber,
         image: tile18,
         planets: ['Mecatol Rex'],
     },
@@ -672,4 +674,11 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
-export { SystemTile,systemTileImages, SystemTileNumber, systemTiles, tile0 };
+export {
+    mecatolRexTileNumber,
+    SystemTile,
+    systemTileImages,
+    SystemTileNumber,
+    systemTiles,
+    tile0,
+};

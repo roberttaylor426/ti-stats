@@ -9,7 +9,12 @@ import {
     homeworlds,
     isFactionSelectionWithCustomHomeworlds,
 } from '../factions';
-import { SystemTile, SystemTileNumber, systemTiles } from '../systemTiles';
+import {
+    mecatolRexTileNumber,
+    SystemTile,
+    SystemTileNumber,
+    systemTiles,
+} from '../systemTiles';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
@@ -19,7 +24,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
 
     const [tileSelections, setTileSelections] = useState<
         Record<number, SystemTileNumber>
-    >({});
+    >({ 19: mecatolRexTileNumber });
 
     const publishMapTileSelectionEvents = async () => {
         if (_.uniq(Object.keys(tileSelections)).length === 37) {
@@ -47,6 +52,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
                 <MapTileSelectionRow key={n}>
                     <span>{n + 1}</span>
                     <Select
+                        value={tileSelections[n + 1]}
                         onChange={(e) =>
                             setTileSelections({
                                 ...tileSelections,
