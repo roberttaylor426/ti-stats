@@ -137,6 +137,7 @@ const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
                     if (isFactionWithDynamicHomeworlds(selection)) {
                         setSelectedFactionWithDynamicHomeworlds(selection);
                     } else {
+                        setSelectedFactionWithDynamicHomeworlds(undefined);
                         onFactionSelected(
                             selection as FactionWithFixedHomeworlds
                         );
