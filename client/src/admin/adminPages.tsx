@@ -6,6 +6,7 @@ import useAsyncEffect from 'use-async-effect';
 import {
     Event,
     factionsInGame,
+    hasMecatolRexBeenCaptured,
     isActionPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
@@ -21,6 +22,7 @@ import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { systemTiles } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
+import { AgendaPhasePage } from './agendaPhasePage';
 import { Button, PageTitle, Select } from './components';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
@@ -147,6 +149,15 @@ const AdminPages: React.FC = () => {
         await publishNewEvents([newEvent]);
     };
 
+    const publishAgendaPhaseStartedEvent = async () => {
+        const newEvent: Event = {
+            type: 'AgendaPhaseStarted',
+            time: new Date().getTime(),
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
     const publishVpScoredEvent = async (
         f: Faction,
         delta: number
@@ -257,6 +268,11 @@ const AdminPages: React.FC = () => {
                 />
             ) : _.last(events)?.type === 'RoundStarted' ? (
                 <PlayerOrderSelectionPage
+                    {...adminPageProps}
+                    currentRoundNumber={currentRoundNumber(events)}
+                />
+            ) : _.last(events)?.type === 'AgendaPhaseStarted' ? (
+                <AgendaPhasePage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
@@ -512,9 +528,15 @@ const AdminPages: React.FC = () => {
                             </Button>
                         </ScoreVpsRow>
                     </FactionScoresVpsContainer>
-                    <Button onClick={publishRoundEndedEvent}>
-                        {`End Round ${currentRoundNumber(events)}`}
-                    </Button>
+                    {hasMecatolRexBeenCaptured(events) ? (
+                        <Button onClick={publishAgendaPhaseStartedEvent}>
+                            {`Start Agenda Phase`}
+                        </Button>
+                    ) : (
+                        <Button onClick={publishRoundEndedEvent}>
+                            {`End Round ${currentRoundNumber(events)}`}
+                        </Button>
+                    )}
                 </>
             )}
         </StyledAdminPage>

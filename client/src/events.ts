@@ -69,6 +69,11 @@ type PlanetDestroyedEvent = {
     planet: PlanetName;
 };
 
+type AgendaPhaseStartedEvent = {
+    type: 'AgendaPhaseStarted';
+    time: number;
+};
+
 type RoundEndedEvent = {
     type: 'RoundEnded';
     time: number;
@@ -112,6 +117,7 @@ const isPlanetDestroyedEvent = (e: Event): e is PlanetDestroyedEvent =>
 
 type Event =
     | ActionPhaseStartedEvent
+    | AgendaPhaseStartedEvent
     | MapTilesSelectedEvent
     | PlanetControlledEvent
     | PlanetDestroyedEvent
@@ -147,10 +153,16 @@ const technologiesResearchedByFaction = (
         .filter((e) => e.faction === faction)
         .map((e) => e.technology);
 
+const hasMecatolRexBeenCaptured = (events: Event[]): boolean =>
+    events.some(
+        (e) => e.type === 'PlanetControlled' && e.planet === 'Mecatol Rex'
+    );
+
 export {
     Event,
     factionSelections,
     factionsInGame,
+    hasMecatolRexBeenCaptured,
     isActionPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
