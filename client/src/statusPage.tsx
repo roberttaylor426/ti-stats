@@ -13,6 +13,7 @@ import {
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
     isPlayerFinishedTurnEvent,
+    isRoundEndedEvent,
     isRoundStartedEvent,
     isUnion,
     playerScore,
@@ -53,9 +54,36 @@ const StatusPage: React.FC = () => {
                             <Title>{`Round ${currentRoundNumber(events)}`}</Title>
                             <SubTitle>Strategy Phase</SubTitle>
                         </TitleContainer>
-                        <TimeSpan>
-                            {timeElapsedLabel(lastEvent, currentTime)}
-                        </TimeSpan>
+                        <BottomContainer>
+                            <TimeSpan>
+                                {timeElapsedLabel(lastEvent, currentTime)}
+                            </TimeSpan>
+                            <TotalTime
+                                events={events}
+                                currentTime={currentTime}
+                            />
+                        </BottomContainer>
+                    </SpreadColumnContainer>
+                ) : isRoundEndedEvent(lastEvent) ? (
+                    <SpreadColumnContainer>
+                        <TitleContainer>
+                            <Title>{`Round ${currentRoundNumber(events)} complete`}</Title>
+                        </TitleContainer>
+                        <CentralContainer>
+                            <Title>Time taken:</Title>
+                            <TimeSpan>
+                                {timeElapsedBetweenEvents(
+                                    _.last(events.filter(isRoundStartedEvent))!,
+                                    lastEvent
+                                )}
+                            </TimeSpan>
+                        </CentralContainer>
+                        <TotalTimeSpan>
+                            {timeElapsedLabel(
+                                _.first(events.filter(isRoundStartedEvent))!,
+                                currentTime
+                            )}
+                        </TotalTimeSpan>
                     </SpreadColumnContainer>
                 ) : activePlayer ? (
                     <SpreadColumnContainer>
@@ -64,7 +92,7 @@ const StatusPage: React.FC = () => {
                             <SubTitle>Action Phase</SubTitle>
                         </TitleContainer>
                         <CentralContainer>
-                            <PlayerTurn>{`${activePlayer}`}</PlayerTurn>
+                            <PlayerTurn>{`${activePlayer} turn`}</PlayerTurn>
                             <ScoresRow>
                                 <ScoreComponent>(</ScoreComponent>
                                 <ScoresContent>
@@ -76,12 +104,18 @@ const StatusPage: React.FC = () => {
                             </ScoresRow>
                         </CentralContainer>
                         {lastEventWhenPlayerTurnStarted && (
-                            <TimeSpan>
-                                {timeElapsedLabel(
-                                    lastEventWhenPlayerTurnStarted,
-                                    currentTime
-                                )}
-                            </TimeSpan>
+                            <BottomContainer>
+                                <TimeSpan>
+                                    {timeElapsedLabel(
+                                        lastEventWhenPlayerTurnStarted,
+                                        currentTime
+                                    )}
+                                </TimeSpan>
+                                <TotalTime
+                                    events={events}
+                                    currentTime={currentTime}
+                                />
+                            </BottomContainer>
                         )}
                     </SpreadColumnContainer>
                 ) : (
@@ -104,14 +138,23 @@ const StatusPage: React.FC = () => {
                                 />
                             </AgendaCardContainer>
                         )}
-                        <TimeSpan>
-                            {timeElapsedLabel(lastEvent, currentTime)}
-                        </TimeSpan>
+                        <BottomContainer>
+                            <TimeSpan>
+                                {timeElapsedLabel(lastEvent, currentTime)}
+                            </TimeSpan>
+                            <TotalTime
+                                events={events}
+                                currentTime={currentTime}
+                            />
+                        </BottomContainer>
                     </SpreadColumnContainer>
                 ))}
         </StyledStatusPage>
     );
 };
+
+const timeElapsedBetweenEvents = (e1: Event, e2: Event): string =>
+    timeElapsedLabel(e1, e2.time);
 
 const timeElapsedLabel = (e: Event, currentTime: number): string =>
     `${timeComponent(
@@ -177,7 +220,12 @@ const CentralContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+`;
+
+const BottomContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 const PlayerTurn = styled.h1`
@@ -220,6 +268,24 @@ const TimeSpan = styled.span`
     text-align: center;
 `;
 
+type TotalTimeProps = {
+    events: Event[];
+    currentTime: number;
+};
+
+const TotalTime: React.FC<TotalTimeProps> = ({ events, currentTime }) => (
+    <TotalTimeSpan>
+        {timeElapsedLabel(
+            _.first(events.filter(isRoundStartedEvent))!,
+            currentTime
+        )}
+    </TotalTimeSpan>
+);
+
+const TotalTimeSpan = styled(TimeSpan)`
+    color: yellow;
+`;
+
 const AgendaCardContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -230,6 +296,7 @@ const AgendaCardContainer = styled.div`
         flex: 1 1 0;
     }
 `;
+
 const AgendaCard = styled.img`
     min-width: 0;
     min-height: 0;
