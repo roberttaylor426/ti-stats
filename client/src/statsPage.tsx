@@ -68,7 +68,7 @@ const StatsPage: React.FC = () => {
         ]
     );
 
-    const timesTakenPerPlayerPerTurn = events.reduce(
+    const timesTakenPerPlayerPerTurn: Record<Faction, number[]> = events.reduce(
         (acc, n) => {
             if (n.type === 'ActionPhaseStarted') {
                 return {
@@ -98,19 +98,18 @@ const StatsPage: React.FC = () => {
                 {} as Record<Faction, number[]>
             ),
         }
-    );
+    ).playerTurnTimes;
 
     const averageTimesTakenPerPlayer = factionsInGame(events).map((f) => ({
         faction: f,
         playerColor: playerFactionsAndColors(events)[f],
-        maxTimeTakenInMillis: timesTakenPerPlayerPerTurn.playerTurnTimes[
-            f
-        ].reduce((acc, n) => Math.max(acc, n), 0),
+        maxTimeTakenInMillis: timesTakenPerPlayerPerTurn[f].reduce(
+            (acc, n) => Math.max(acc, n),
+            0
+        ),
         avTimeTakenInMillis:
-            timesTakenPerPlayerPerTurn.playerTurnTimes[f].reduce(
-                (acc, n) => acc + n,
-                0
-            ) / timesTakenPerPlayerPerTurn.playerTurnTimes[f].length,
+            timesTakenPerPlayerPerTurn[f].reduce((acc, n) => acc + n, 0) /
+            timesTakenPerPlayerPerTurn[f].length,
     }));
 
     const roundEndedEvents = events.filter(isRoundEndedEvent);
