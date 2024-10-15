@@ -15,10 +15,10 @@ import _ from 'underscore';
 
 import {
     factionsInGame,
-    isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
     playerFactionsAndColors,
+    playerScore,
 } from './events';
 import { Faction } from './factions';
 import { hexPlayerColor } from './playerColors';
@@ -37,10 +37,7 @@ const StatsPage: React.FC = () => {
     const playerScores = factionsInGame(events).map((f) => ({
         faction: f,
         playerColor: playerFactionsAndColors(events)[f],
-        score: events
-            .filter(isPlayerScoredVictoryPointEvent)
-            .filter((e) => e.faction === f)
-            .reduce((acc, n) => acc + n.delta, 0),
+        score: playerScore(events, f),
     }));
 
     const playerScoresByRound: Record<Faction, number>[] = events.reduce(

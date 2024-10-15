@@ -1,4 +1,4 @@
-import { currentPlayerTurn } from '../../src/admin/adminPages';
+import { currentPlayerTurn } from '../../src/events';
 
 describe('player turn page', () => {
     describe('determines next player', () => {

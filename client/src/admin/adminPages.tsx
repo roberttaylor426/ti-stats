@@ -4,18 +4,17 @@ import _, { identity } from 'underscore';
 import useAsyncEffect from 'use-async-effect';
 
 import {
+    currentPlayerTurn,
+    currentRoundNumber,
     Event,
     factionsInGame,
     hasMecatolRexBeenCaptured,
-    isActionPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     isPlayerScoredVictoryPointEvent,
-    isRoundEndedEvent,
     PlanetControlledEvent,
-    PlayerFinishedTurnEvent,
     technologiesResearchedByFaction,
 } from '../events';
 import { Faction } from '../factions';
@@ -543,30 +542,6 @@ const AdminPages: React.FC = () => {
     );
 };
 
-const currentRoundPlayerOrder = (events: Event[]): Faction[] =>
-    _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
-
-const turnsFinishedThisActionPhase = (
-    events: Event[]
-): PlayerFinishedTurnEvent[] =>
-    events.reduce((acc, n) => {
-        if (n.type === 'ActionPhaseStarted') {
-            return [];
-        }
-        if (n.type === 'PlayerFinishedTurn') {
-            return [...acc, n];
-        }
-        return acc;
-    }, [] as PlayerFinishedTurnEvent[]);
-
-const unpassedPlayers = (events: Event[]): Faction[] =>
-    currentRoundPlayerOrder(events).filter(
-        (f) =>
-            !turnsFinishedThisActionPhase(events).some(
-                (e) => e.faction === f && e.pass
-            )
-    );
-
 const latestPlanetControlledEventsByPlanet = (
     events: Event[]
 ): PlanetControlledEvent[] =>
@@ -578,43 +553,6 @@ const latestPlanetControlledEventsByPlanet = (
                 acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
             []
         );
-
-const currentRoundNumber = (events: Event[]): number =>
-    events.filter(isRoundEndedEvent).length + 1;
-
-const currentPlayerTurn = (events: Event[]): Faction | undefined => {
-    const turnsFinished = turnsFinishedThisActionPhase(events);
-    const lastPlayerToHaveATurn = _.last(turnsFinished);
-    const playerOrder = currentRoundPlayerOrder(events);
-
-    const indexOfPlayerAfterLastToHaveATurn = !lastPlayerToHaveATurn
-        ? 0
-        : playerOrder.indexOf(lastPlayerToHaveATurn.faction) + 1;
-
-    return findNextUnpassedPlayer(
-        playerOrder,
-        unpassedPlayers(events),
-        indexOfPlayerAfterLastToHaveATurn
-    );
-};
-
-const findNextUnpassedPlayer = (
-    playerOrder: Faction[],
-    unpassedPlayers: Faction[],
-    fromIndex: number
-): Faction | undefined => {
-    if (unpassedPlayers.length === 0) {
-        return undefined;
-    }
-
-    const potentialNextPlayer = playerOrder[fromIndex % playerOrder.length];
-
-    if (unpassedPlayers.includes(potentialNextPlayer)) {
-        return potentialNextPlayer;
-    }
-
-    return findNextUnpassedPlayer(playerOrder, unpassedPlayers, fromIndex + 1);
-};
 
 const StyledAdminPage = styled.div`
     display: flex;
@@ -710,4 +648,4 @@ const NumberInput = styled.input.attrs(() => ({ type: 'number' }))`
     font-size: 2.25rem;
 `;
 
-export { AdminPages, currentPlayerTurn };
+export { AdminPages };

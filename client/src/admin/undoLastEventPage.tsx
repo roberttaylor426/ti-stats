@@ -32,6 +32,8 @@ const humanReadableEventLabel = (e: Event): string => {
     switch (e.type) {
         case 'ActionPhaseStarted':
             return 'Action phase started';
+        case 'AgendaPhaseStarted':
+            return 'Agenda phase started';
         case 'MapTilesSelected':
             return 'Map tiles selected';
         case 'PlanetControlled':

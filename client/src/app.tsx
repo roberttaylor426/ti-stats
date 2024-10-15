@@ -8,9 +8,11 @@ import {
 import styled, { createGlobalStyle } from 'styled-components';
 
 import { AdminPages } from './admin/adminPages';
+import AlarmClock from './assets/fonts/AlarmClock.ttf';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { GalaxyPage } from './galaxyPage';
 import { StatsPage } from './statsPage';
+import { StatusPage } from './statusPage';
 import { TechPage } from './techPage';
 
 const App: React.FC = () => (
@@ -29,6 +31,11 @@ const App: React.FC = () => (
                             key="stats"
                             path={'/stats'}
                             element={<StatsPage />}
+                        />,
+                        <Route
+                            key="status"
+                            path={'/status'}
+                            element={<StatusPage />}
                         />,
                         <Route
                             key="tech"
@@ -52,6 +59,12 @@ const GlobalStyle = createGlobalStyle`
         font-family: 'Handel Gothic';
         src: url(${HandelGothic}) format('woff');
         font-weight: 300;
+    }
+
+    @font-face {
+        font-family: 'Alarm Clock';
+        src: url(${AlarmClock}) format('truetype');
+        font-weight: 400;
     }
 
     * {

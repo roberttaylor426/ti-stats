@@ -8,14 +8,12 @@ import tile82Back from './assets/tiles/ST_82_Back.png';
 import {
     factionsInGame,
     isMapTilesSelectedEvent,
-    isPlanetControlledEvent,
-    isPlanetDestroyedEvent,
-    isPlanetEnhancedEvent,
-    PlanetControlledEvent,
+    latestPlanetControlledEventsByPlanet,
     playerFactionsAndColors,
+    resourcesAndInfluenceForFaction,
 } from './events';
 import { Faction } from './factions';
-import { PlanetName, planets, ResourcesAndInfluence } from './planets';
+import { ResourcesAndInfluence } from './planets';
 import { hexPlayerColor, PlayerColor } from './playerColors';
 import { Scoreboard, ScoreboardRow } from './scoreboard';
 import { Stars } from './stars';
@@ -40,57 +38,12 @@ const GalaxyPage: React.FC = () => {
     const mapTilesSelectedEvent = _.last(
         events.filter(isMapTilesSelectedEvent)
     );
-    const planetEnhancedEvents = events.filter(isPlanetEnhancedEvent);
-    const planetDestroyedEvents = events.filter(isPlanetDestroyedEvent);
-
-    const latestPlanetControlledEventsByPlanet = events
-        .filter(isPlanetControlledEvent)
-        .reverse()
-        .reduce(
-            (acc: PlanetControlledEvent[], n) =>
-                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
-            []
-        )
-        .filter(
-            (e) => !planetDestroyedEvents.some((de) => de.planet === e.planet)
-        );
-
-    const planetsControlledByFaction = (faction: Faction): PlanetName[] =>
-        latestPlanetControlledEventsByPlanet
-            .filter((e) => e.faction === faction)
-            .filter(
-                (e) =>
-                    !planetDestroyedEvents.some((de) => de.planet === e.planet)
-            )
-            .map((e) => e.planet);
 
     const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =
         factionsInGame(events).map((f) => ({
             faction: f,
             playerColor: playerFactionsAndColors(events)[f],
-            resourcesAndInfluence: planetsControlledByFaction(f)
-                .map((p) => ({
-                    resources:
-                        planets[p].resources +
-                        planetEnhancedEvents
-                            .filter((e) => e.planet === p)
-                            .reduce((acc, n) => acc + n.extraResources, 0),
-                    influence:
-                        planets[p].influence +
-                        planetEnhancedEvents
-                            .filter((e) => e.planet === p)
-                            .reduce((acc, n) => acc + n.extraInfluence, 0),
-                }))
-                .reduce(
-                    (acc, n) => ({
-                        resources: acc.resources + n.resources,
-                        influence: acc.influence + n.influence,
-                    }),
-                    {
-                        resources: 0,
-                        influence: 0,
-                    }
-                ),
+            resourcesAndInfluence: resourcesAndInfluenceForFaction(events, f),
         }));
 
     return (
@@ -124,7 +77,9 @@ const GalaxyPage: React.FC = () => {
                                                                 systemTileNumber
                                                         )
                                                         ?.planets.map((p) =>
-                                                            latestPlanetControlledEventsByPlanet.find(
+                                                            latestPlanetControlledEventsByPlanet(
+                                                                events
+                                                            ).find(
                                                                 (e) =>
                                                                     e.planet ===
                                                                     p
@@ -150,7 +105,7 @@ const GalaxyPage: React.FC = () => {
             <ExtraTiles>
                 <MalliceTile
                     controllingPlayerColor={
-                        latestPlanetControlledEventsByPlanet
+                        latestPlanetControlledEventsByPlanet(events)
                             .filter((e) => e.planet === 'Mallice')
                             .map(
                                 (e) =>

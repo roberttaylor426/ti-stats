@@ -5,7 +5,7 @@ import {
     FactionSelection,
     isFactionSelectionWithCustomHomeworlds,
 } from './factions';
-import { PlanetName } from './planets';
+import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { PlayerColor } from './playerColors';
 import { SystemTileNumber } from './systemTiles';
 import { Technology } from './technologies';
@@ -158,7 +158,141 @@ const hasMecatolRexBeenCaptured = (events: Event[]): boolean =>
         (e) => e.type === 'PlanetControlled' && e.planet === 'Mecatol Rex'
     );
 
+const currentRoundPlayerOrder = (events: Event[]): Faction[] =>
+    _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
+
+const turnsFinishedThisActionPhase = (
+    events: Event[]
+): PlayerFinishedTurnEvent[] =>
+    events.reduce((acc, n) => {
+        if (n.type === 'ActionPhaseStarted') {
+            return [];
+        }
+        if (n.type === 'PlayerFinishedTurn') {
+            return [...acc, n];
+        }
+        return acc;
+    }, [] as PlayerFinishedTurnEvent[]);
+
+const unpassedPlayers = (events: Event[]): Faction[] =>
+    currentRoundPlayerOrder(events).filter(
+        (f) =>
+            !turnsFinishedThisActionPhase(events).some(
+                (e) => e.faction === f && e.pass
+            )
+    );
+
+const currentPlayerTurn = (events: Event[]): Faction | undefined => {
+    const turnsFinished = turnsFinishedThisActionPhase(events);
+    const lastPlayerToHaveATurn = _.last(turnsFinished);
+    const playerOrder = currentRoundPlayerOrder(events);
+
+    const indexOfPlayerAfterLastToHaveATurn = !lastPlayerToHaveATurn
+        ? 0
+        : playerOrder.indexOf(lastPlayerToHaveATurn.faction) + 1;
+
+    return findNextUnpassedPlayer(
+        playerOrder,
+        unpassedPlayers(events),
+        indexOfPlayerAfterLastToHaveATurn
+    );
+};
+
+const findNextUnpassedPlayer = (
+    playerOrder: Faction[],
+    unpassedPlayers: Faction[],
+    fromIndex: number
+): Faction | undefined => {
+    if (unpassedPlayers.length === 0) {
+        return undefined;
+    }
+
+    const potentialNextPlayer = playerOrder[fromIndex % playerOrder.length];
+
+    if (unpassedPlayers.includes(potentialNextPlayer)) {
+        return potentialNextPlayer;
+    }
+
+    return findNextUnpassedPlayer(playerOrder, unpassedPlayers, fromIndex + 1);
+};
+
+const currentRoundNumber = (events: Event[]): number =>
+    events.filter(isRoundEndedEvent).length + 1;
+
+const planetDestroyedEvents = (events: Event[]) =>
+    events.filter(isPlanetDestroyedEvent);
+
+const latestPlanetControlledEventsByPlanet = (events: Event[]) =>
+    events
+        .filter(isPlanetControlledEvent)
+        .reverse()
+        .reduce(
+            (acc: PlanetControlledEvent[], n) =>
+                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
+            []
+        )
+        .filter(
+            (e) =>
+                !planetDestroyedEvents(events).some(
+                    (de) => de.planet === e.planet
+                )
+        );
+
+const planetsControlledByFaction = (
+    events: Event[],
+    faction: Faction
+): PlanetName[] =>
+    latestPlanetControlledEventsByPlanet(events)
+        .filter((e) => e.faction === faction)
+        .filter(
+            (e) =>
+                !planetDestroyedEvents(events).some(
+                    (de) => de.planet === e.planet
+                )
+        )
+        .map((e) => e.planet);
+
+const resourcesAndInfluenceForFaction = (
+    events: Event[],
+    f: Faction
+): ResourcesAndInfluence => {
+    const planetEnhancedEvents = events.filter(isPlanetEnhancedEvent);
+
+    return planetsControlledByFaction(events, f)
+        .map((p) => ({
+            resources:
+                planets[p].resources +
+                planetEnhancedEvents
+                    .filter((e) => e.planet === p)
+                    .reduce((acc, n) => acc + n.extraResources, 0),
+            influence:
+                planets[p].influence +
+                planetEnhancedEvents
+                    .filter((e) => e.planet === p)
+                    .reduce((acc, n) => acc + n.extraInfluence, 0),
+        }))
+        .reduce(
+            (acc, n) => ({
+                resources: acc.resources + n.resources,
+                influence: acc.influence + n.influence,
+            }),
+            {
+                resources: 0,
+                influence: 0,
+            }
+        );
+};
+
+const playerScore = (events: Event[], f: Faction) =>
+    events
+        .filter(isPlayerScoredVictoryPointEvent)
+        .filter((e) => e.faction === f)
+        .reduce((acc, n) => acc + n.delta, 0);
+
 export {
+    ActionPhaseStartedEvent,
+    currentPlayerTurn,
+    currentRoundNumber,
     Event,
     factionSelections,
     factionsInGame,
@@ -173,9 +307,12 @@ export {
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
     isTechnologyResearchedEvent,
+    latestPlanetControlledEventsByPlanet,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
+    playerScore,
+    resourcesAndInfluenceForFaction,
     technologiesResearchedByFaction,
 };
