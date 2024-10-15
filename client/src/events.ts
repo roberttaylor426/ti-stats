@@ -1,5 +1,6 @@
 import _ from 'underscore';
 
+import { AgendaCard } from './agendaCards';
 import {
     Faction,
     FactionSelection,
@@ -81,6 +82,12 @@ type AgendaPhaseStartedEvent = {
     time: number;
 };
 
+type AgendaCardRevealedEvent = {
+    type: 'AgendaCardRevealed';
+    time: number;
+    name: AgendaCard;
+};
+
 type RoundEndedEvent = {
     type: 'RoundEnded';
     time: number;
@@ -138,6 +145,7 @@ const isPlanetDestroyedEvent = (e: Event): e is PlanetDestroyedEvent =>
 
 type Event =
     | ActionPhaseStartedEvent
+    | AgendaCardRevealedEvent
     | AgendaPhaseStartedEvent
     | MapTilesSelectedEvent
     | PlanetControlledEvent

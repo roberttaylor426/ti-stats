@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import prophecyOfIxth from './assets/agendaCards/prophecy-of-ixth.webp';
+import { agendaCardFaces } from './agendaCards';
 import { accentColor } from './colors';
 import {
     currentPlayerTurn,
@@ -90,7 +90,9 @@ const StatusPage: React.FC = () => {
                             <SubTitle>{`${isAgendaPhaseStartedEvent(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
                         </TitleContainer>
                         <AgendaCardContainer>
-                            <AgendaCard src={prophecyOfIxth} />
+                            <AgendaCard
+                                src={agendaCardFaces['Judicial Abolishment']}
+                            />
                         </AgendaCardContainer>
                         <TimeSpan>
                             {timeElapsedLabel(lastEvent, currentTime)}
