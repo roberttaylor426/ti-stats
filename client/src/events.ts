@@ -12,12 +12,14 @@ import { Technology } from './technologies';
 
 type PlayersAssignedFactionsAndColorsEvent = {
     type: 'PlayersAssignedFactionsAndColors';
+    time: number;
     colorAssignments: Record<Faction, PlayerColor>;
     factionSelections: FactionSelection[];
 };
 
 type MapTilesSelectedEvent = {
     type: 'MapTilesSelected';
+    time: number;
     selections: Record<number, SystemTileNumber>;
 };
 
@@ -34,6 +36,7 @@ type ActionPhaseStartedEvent = {
 
 type TechnologyResearchedEvent = {
     type: 'TechnologyResearched';
+    time: number;
     technology: Technology;
     faction: Faction;
 };
@@ -47,12 +50,14 @@ type PlayerFinishedTurnEvent = {
 
 type PlayerScoredVictoryPointEvent = {
     type: 'PlayerScoredVictoryPoint';
+    time: number;
     faction: Faction;
     delta: number;
 };
 
 type PlanetEnhancedEvent = {
     type: 'PlanetEnhanced';
+    time: number;
     planet: PlanetName;
     extraResources: number;
     extraInfluence: number;
@@ -60,12 +65,14 @@ type PlanetEnhancedEvent = {
 
 type PlanetControlledEvent = {
     type: 'PlanetControlled';
+    time: number;
     planet: PlanetName;
     faction: Faction;
 };
 
 type PlanetDestroyedEvent = {
     type: 'PlanetDestroyed';
+    time: number;
     planet: PlanetName;
 };
 
@@ -99,6 +106,9 @@ const isMapTilesSelectedEvent = (e: Event): e is MapTilesSelectedEvent =>
 
 const isActionPhaseStartedEvent = (e: Event): e is ActionPhaseStartedEvent =>
     e.type === 'ActionPhaseStarted';
+
+const isAgendaPhaseStartedEvent = (e: Event): e is AgendaPhaseStartedEvent =>
+    e.type === 'AgendaPhaseStarted';
 
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
@@ -309,6 +319,7 @@ export {
     factionsInGame,
     hasMecatolRexBeenCaptured,
     isActionPhaseStartedEvent,
+    isAgendaPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,

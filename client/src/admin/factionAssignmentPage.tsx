@@ -36,6 +36,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
             const newEvents: Event[] = [
                 {
                     type: 'PlayersAssignedFactionsAndColors',
+                    time: new Date().getTime(),
                     colorAssignments: range(6).reduce(
                         (acc, n) => ({
                             ...acc,
@@ -51,6 +52,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                         (p) =>
                             ({
                                 type: 'PlanetControlled',
+                                time: new Date().getTime(),
                                 planet: p,
                                 faction: selectedFaction(fs),
                             }) as const
@@ -63,6 +65,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                             (t) =>
                                 ({
                                     type: 'TechnologyResearched',
+                                    time: new Date().getTime(),
                                     technology: t,
                                     faction: f,
                                 }) as const

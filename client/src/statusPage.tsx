@@ -5,17 +5,16 @@ import _ from 'underscore';
 
 import { accentColor } from './colors';
 import {
-    ActionPhaseStartedEvent,
     currentPlayerTurn,
     currentRoundNumber,
+    Event,
     isActionPhaseStartedEvent,
+    isAgendaPhaseStartedEvent,
     isPlayerFinishedTurnEvent,
     isRoundStartedEvent,
     isUnion,
-    PlayerFinishedTurnEvent,
     playerScore,
     resourcesAndInfluenceForFaction,
-    RoundStartedEvent,
 } from './events';
 import { Stars } from './stars';
 import { useEvents } from './useEvents';
@@ -45,53 +44,60 @@ const StatusPage: React.FC = () => {
     return (
         <StyledStatusPage>
             <Stars />
-            {lastEvent && isRoundStartedEvent(lastEvent) && (
-                <SpreadColumnContainer>
-                    <TitleContainer>
-                        <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                        <SubTitle>Strategy Phase</SubTitle>
-                    </TitleContainer>
-                    <TimeSpan>
-                        {timeElapsedLabel(lastEvent, currentTime)}
-                    </TimeSpan>
-                </SpreadColumnContainer>
-            )}
-            {activePlayer && (
-                <SpreadColumnContainer>
-                    <TitleContainer>
-                        <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                        <SubTitle>Action Phase</SubTitle>
-                    </TitleContainer>
-                    <CentralContainer>
-                        <PlayerTurn>{`${activePlayer}`}</PlayerTurn>
-                        <ScoresRow>
-                            <ScoreComponent>(</ScoreComponent>
-                            <ScoresContent>
-                                <VpScore>{`${playerScore(events, activePlayer)}VP`}</VpScore>
-                                <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}R`}</ResourcesScore>
-                                <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}I`}</InfluenceScore>
-                            </ScoresContent>
-                            <ScoreComponent>)</ScoreComponent>
-                        </ScoresRow>
-                    </CentralContainer>
-                    {lastEventWhenPlayerTurnStarted && (
+            {lastEvent &&
+                (isRoundStartedEvent(lastEvent) ? (
+                    <SpreadColumnContainer>
+                        <TitleContainer>
+                            <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                            <SubTitle>Strategy Phase</SubTitle>
+                        </TitleContainer>
                         <TimeSpan>
-                            {timeElapsedLabel(
-                                lastEventWhenPlayerTurnStarted,
-                                currentTime
-                            )}
+                            {timeElapsedLabel(lastEvent, currentTime)}
                         </TimeSpan>
-                    )}
-                </SpreadColumnContainer>
-            )}
+                    </SpreadColumnContainer>
+                ) : activePlayer ? (
+                    <SpreadColumnContainer>
+                        <TitleContainer>
+                            <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                            <SubTitle>Action Phase</SubTitle>
+                        </TitleContainer>
+                        <CentralContainer>
+                            <PlayerTurn>{`${activePlayer}`}</PlayerTurn>
+                            <ScoresRow>
+                                <ScoreComponent>(</ScoreComponent>
+                                <ScoresContent>
+                                    <VpScore>{`${playerScore(events, activePlayer)}VP`}</VpScore>
+                                    <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}R`}</ResourcesScore>
+                                    <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}I`}</InfluenceScore>
+                                </ScoresContent>
+                                <ScoreComponent>)</ScoreComponent>
+                            </ScoresRow>
+                        </CentralContainer>
+                        {lastEventWhenPlayerTurnStarted && (
+                            <TimeSpan>
+                                {timeElapsedLabel(
+                                    lastEventWhenPlayerTurnStarted,
+                                    currentTime
+                                )}
+                            </TimeSpan>
+                        )}
+                    </SpreadColumnContainer>
+                ) : (
+                    <SpreadColumnContainer>
+                        <TitleContainer>
+                            <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                            <SubTitle>{`${isAgendaPhaseStartedEvent(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
+                        </TitleContainer>
+                        <TimeSpan>
+                            {timeElapsedLabel(lastEvent, currentTime)}
+                        </TimeSpan>
+                    </SpreadColumnContainer>
+                ))}
         </StyledStatusPage>
     );
 };
 
-const timeElapsedLabel = (
-    e: ActionPhaseStartedEvent | PlayerFinishedTurnEvent | RoundStartedEvent,
-    currentTime: number
-): string =>
+const timeElapsedLabel = (e: Event, currentTime: number): string =>
     `${timeComponent(
         intervalToDuration({
             start: e.time,

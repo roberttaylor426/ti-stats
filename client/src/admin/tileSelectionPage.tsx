@@ -31,6 +31,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
             const newEvents: Event[] = [
                 {
                     type: 'MapTilesSelected',
+                    time: new Date().getTime(),
                     selections: range(37).reduce(
                         (acc, n) => ({
                             ...acc,

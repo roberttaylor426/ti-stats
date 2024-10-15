@@ -93,6 +93,7 @@ const AdminPages: React.FC = () => {
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
         const newEvent: Event = {
             type: 'PlanetControlled',
+            time: new Date().getTime(),
             planet: p,
             faction: f,
         };
@@ -107,6 +108,7 @@ const AdminPages: React.FC = () => {
     ) => {
         const newEvent: Event = {
             type: 'PlanetEnhanced',
+            time: new Date().getTime(),
             planet: p,
             extraResources,
             extraInfluence,
@@ -121,6 +123,7 @@ const AdminPages: React.FC = () => {
     ) => {
         const newEvent: Event = {
             type: 'TechnologyResearched',
+            time: new Date().getTime(),
             technology: t,
             faction: f,
         };
@@ -131,8 +134,8 @@ const AdminPages: React.FC = () => {
     const publishTurnFinishedEvent = async (f: Faction, pass: boolean) => {
         const newEvent: Event = {
             type: 'PlayerFinishedTurn',
-            faction: f,
             time: new Date().getTime(),
+            faction: f,
             pass,
         };
 
@@ -163,6 +166,7 @@ const AdminPages: React.FC = () => {
     ): Promise<boolean> => {
         const newEvent: Event = {
             type: 'PlayerScoredVictoryPoint',
+            time: new Date().getTime(),
             faction: f,
             delta,
         };
@@ -175,6 +179,7 @@ const AdminPages: React.FC = () => {
     ): Promise<boolean> => {
         const newEvent: Event = {
             type: 'PlanetDestroyed',
+            time: new Date().getTime(),
             planet: p,
         };
 
