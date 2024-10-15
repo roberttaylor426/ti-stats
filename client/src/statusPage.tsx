@@ -10,10 +10,12 @@ import {
     currentRoundNumber,
     isActionPhaseStartedEvent,
     isPlayerFinishedTurnEvent,
+    isRoundStartedEvent,
     isUnion,
     PlayerFinishedTurnEvent,
     playerScore,
     resourcesAndInfluenceForFaction,
+    RoundStartedEvent,
 } from './events';
 import { Stars } from './stars';
 import { useEvents } from './useEvents';
@@ -21,6 +23,8 @@ import { useEvents } from './useEvents';
 const StatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
     const [currentTime, setCurrentTime] = useState(new Date().getTime());
+
+    const lastEvent = _.last(events);
 
     const lastEventWhenPlayerTurnStarted = _.last(
         events.filter(
@@ -41,6 +45,17 @@ const StatusPage: React.FC = () => {
     return (
         <StyledStatusPage>
             <Stars />
+            {lastEvent && isRoundStartedEvent(lastEvent) && (
+                <SpreadColumnContainer>
+                    <TitleContainer>
+                        <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                        <SubTitle>Strategy Phase</SubTitle>
+                    </TitleContainer>
+                    <TimeSpan>
+                        {timeElapsedLabel(lastEvent, currentTime)}
+                    </TimeSpan>
+                </SpreadColumnContainer>
+            )}
             {activePlayer && (
                 <SpreadColumnContainer>
                     <TitleContainer>
@@ -74,7 +89,7 @@ const StatusPage: React.FC = () => {
 };
 
 const timeElapsedLabel = (
-    e: ActionPhaseStartedEvent | PlayerFinishedTurnEvent,
+    e: ActionPhaseStartedEvent | PlayerFinishedTurnEvent | RoundStartedEvent,
     currentTime: number
 ): string =>
     `${timeComponent(

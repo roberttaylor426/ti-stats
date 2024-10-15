@@ -114,10 +114,8 @@ const isPlayerScoredVictoryPointEvent = (
 const isPlayerFinishedTurnEvent = (e: Event): e is PlayerFinishedTurnEvent =>
     e.type === 'PlayerFinishedTurn';
 
-const isRoundStartedOrEndedEvent = (
-    e: Event
-): e is RoundStartedEvent | RoundEndedEvent =>
-    e.type === 'RoundStarted' || e.type === 'RoundEnded';
+const isRoundStartedEvent = (e: Event): e is RoundStartedEvent =>
+    e.type === 'RoundStarted';
 
 const isRoundEndedEvent = (e: Event): e is RoundEndedEvent =>
     e.type === 'RoundEnded';
@@ -319,7 +317,7 @@ export {
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
-    isRoundStartedOrEndedEvent,
+    isRoundStartedEvent,
     isTechnologyResearchedEvent,
     isUnion,
     latestPlanetControlledEventsByPlanet,
@@ -329,5 +327,6 @@ export {
     PlayerFinishedTurnEvent,
     playerScore,
     resourcesAndInfluenceForFaction,
+    RoundStartedEvent,
     technologiesResearchedByFaction,
 };

@@ -16,7 +16,8 @@ import _ from 'underscore';
 import {
     factionsInGame,
     isRoundEndedEvent,
-    isRoundStartedOrEndedEvent,
+    isRoundStartedEvent,
+    isUnion,
     playerFactionsAndColors,
     playerScore,
 } from './events';
@@ -115,7 +116,7 @@ const StatsPage: React.FC = () => {
     const roundEndedEvents = events.filter(isRoundEndedEvent);
 
     const roundStartedAndEndedEvents = events.filter(
-        isRoundStartedOrEndedEvent
+        isUnion(isRoundStartedEvent, isRoundEndedEvent)
     );
 
     const timeTakenPerRound = roundStartedAndEndedEvents
