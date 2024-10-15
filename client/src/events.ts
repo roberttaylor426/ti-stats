@@ -79,6 +79,16 @@ type RoundEndedEvent = {
     time: number;
 };
 
+type EventGuard<T extends Event> = (x: Event) => x is T;
+
+const isUnion =
+    <T1 extends Event, T2 extends Event>(
+        isT1: EventGuard<T1>,
+        isT2: EventGuard<T2>
+    ) =>
+    (x: Event): x is T1 | T2 =>
+        isT1(x) || isT2(x);
+
 const isPlayersAssignedFactionsAndColorsEvent = (
     e: Event
 ): e is PlayersAssignedFactionsAndColorsEvent =>
@@ -100,6 +110,9 @@ const isTechnologyResearchedEvent = (
 const isPlayerScoredVictoryPointEvent = (
     e: Event
 ): e is PlayerScoredVictoryPointEvent => e.type === 'PlayerScoredVictoryPoint';
+
+const isPlayerFinishedTurnEvent = (e: Event): e is PlayerFinishedTurnEvent =>
+    e.type === 'PlayerFinishedTurn';
 
 const isRoundStartedOrEndedEvent = (
     e: Event
@@ -302,11 +315,13 @@ export {
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
+    isPlayerFinishedTurnEvent,
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedOrEndedEvent,
     isTechnologyResearchedEvent,
+    isUnion,
     latestPlanetControlledEventsByPlanet,
     MapTilesSelectedEvent,
     PlanetControlledEvent,

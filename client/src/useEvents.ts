@@ -4,7 +4,9 @@ import useInterval from 'use-interval';
 
 import { Event } from './events';
 
-const useEvents = (): {
+const useEvents = (
+    refreshIntervalInMillis?: number
+): {
     events: Event[];
 } => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -24,7 +26,7 @@ const useEvents = (): {
 
     useInterval(() => {
         setRefreshTrigger(refreshTrigger + 1);
-    }, 15_000);
+    }, refreshIntervalInMillis || 15_000);
 
     return { events };
 };

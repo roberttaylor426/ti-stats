@@ -9,6 +9,9 @@ import {
     currentPlayerTurn,
     currentRoundNumber,
     isActionPhaseStartedEvent,
+    isPlayerFinishedTurnEvent,
+    isUnion,
+    PlayerFinishedTurnEvent,
     playerScore,
     resourcesAndInfluenceForFaction,
 } from './events';
@@ -16,11 +19,13 @@ import { Stars } from './stars';
 import { useEvents } from './useEvents';
 
 const StatusPage: React.FC = () => {
-    const { events } = useEvents();
+    const { events } = useEvents(3_000);
     const [currentTime, setCurrentTime] = useState(new Date().getTime());
 
-    const actionPhaseStartedEvent = _.last(
-        events.filter(isActionPhaseStartedEvent)
+    const lastEventWhenPlayerTurnStarted = _.last(
+        events.filter(
+            isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
+        )
     );
 
     useEffect(() => {
@@ -54,10 +59,10 @@ const StatusPage: React.FC = () => {
                             <ScoreComponent>)</ScoreComponent>
                         </ScoresRow>
                     </CentralContainer>
-                    {actionPhaseStartedEvent && (
+                    {lastEventWhenPlayerTurnStarted && (
                         <TimeSpan>
                             {timeElapsedLabel(
-                                actionPhaseStartedEvent,
+                                lastEventWhenPlayerTurnStarted,
                                 currentTime
                             )}
                         </TimeSpan>
@@ -69,7 +74,7 @@ const StatusPage: React.FC = () => {
 };
 
 const timeElapsedLabel = (
-    e: ActionPhaseStartedEvent,
+    e: ActionPhaseStartedEvent | PlayerFinishedTurnEvent,
     currentTime: number
 ): string =>
     `${timeComponent(
@@ -156,6 +161,7 @@ const ScoresContent = styled.div`
 
 const ScoreComponent = styled.h3`
     font-size: 10vw;
+    text-transform: uppercase;
 `;
 
 const VpScore = styled(ScoreComponent)`
