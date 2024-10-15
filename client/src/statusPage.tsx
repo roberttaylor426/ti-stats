@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { agendaCardFaces } from './agendaCards';
+import { agendaCardBack, agendaCardFaces } from './agendaCards';
 import { accentColor } from './colors';
 import {
     currentPlayerTurn,
     currentRoundNumber,
     Event,
     isActionPhaseStartedEvent,
+    isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
     isPlayerFinishedTurnEvent,
     isRoundStartedEvent,
@@ -87,13 +88,22 @@ const StatusPage: React.FC = () => {
                     <SpreadColumnContainer>
                         <TitleContainer>
                             <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                            <SubTitle>{`${isAgendaPhaseStartedEvent(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
+                            <SubTitle>{`${isUnion(isAgendaPhaseStartedEvent, isAgendaCardRevealedEvent)(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
                         </TitleContainer>
-                        <AgendaCardContainer>
-                            <AgendaCard
-                                src={agendaCardFaces['Judicial Abolishment']}
-                            />
-                        </AgendaCardContainer>
+                        {isUnion(
+                            isAgendaPhaseStartedEvent,
+                            isAgendaCardRevealedEvent
+                        )(lastEvent) && (
+                            <AgendaCardContainer>
+                                <AgendaCard
+                                    src={
+                                        isAgendaPhaseStartedEvent(lastEvent)
+                                            ? agendaCardBack
+                                            : agendaCardFaces[lastEvent.card]
+                                    }
+                                />
+                            </AgendaCardContainer>
+                        )}
                         <TimeSpan>
                             {timeElapsedLabel(lastEvent, currentTime)}
                         </TimeSpan>

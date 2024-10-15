@@ -275,7 +275,8 @@ const AdminPages: React.FC = () => {
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : _.last(events)?.type === 'AgendaPhaseStarted' ? (
+            ) : _.last(events)?.type === 'AgendaPhaseStarted' ||
+              _.last(events)?.type === 'AgendaCardRevealed' ? (
                 <AgendaPhasePage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}

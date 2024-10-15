@@ -85,7 +85,7 @@ type AgendaPhaseStartedEvent = {
 type AgendaCardRevealedEvent = {
     type: 'AgendaCardRevealed';
     time: number;
-    name: AgendaCard;
+    card: AgendaCard;
 };
 
 type RoundEndedEvent = {
@@ -116,6 +116,9 @@ const isActionPhaseStartedEvent = (e: Event): e is ActionPhaseStartedEvent =>
 
 const isAgendaPhaseStartedEvent = (e: Event): e is AgendaPhaseStartedEvent =>
     e.type === 'AgendaPhaseStarted';
+
+const isAgendaCardRevealedEvent = (e: Event): e is AgendaCardRevealedEvent =>
+    e.type === 'AgendaCardRevealed';
 
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
@@ -327,6 +330,7 @@ export {
     factionsInGame,
     hasMecatolRexBeenCaptured,
     isActionPhaseStartedEvent,
+    isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,

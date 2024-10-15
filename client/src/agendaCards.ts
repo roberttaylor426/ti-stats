@@ -1,3 +1,4 @@
+import agendaCardBack from './assets/agendaCards/agenda-card-back.webp';
 import antiIntellectualRevolution from './assets/agendaCards/anti-intellectual-revolution.webp';
 import archivedSecret from './assets/agendaCards/archived-secret.webp';
 import armedForcesStandardization from './assets/agendaCards/armed-forces-standardization.webp';
@@ -14,22 +15,25 @@ import prophecyOfIxth from './assets/agendaCards/prophecy-of-ixth.webp';
 import regulatedConscription from './assets/agendaCards/regulated-conscription.webp';
 import seedsOfAnEmpire from './assets/agendaCards/seed-of-an-empire.webp';
 
-type AgendaCard =
-    | 'Anti-Intellectual Revolution'
-    | 'Archived Secret'
-    | 'Armed Forces Standardization'
-    | 'Arms Reduction'
-    | 'Committee Formation'
-    | 'Conventions of War'
-    | 'Covert Legislation'
-    | 'Ixthian Artifact'
-    | 'Judicial Abolishment'
-    | 'Minister of War'
-    | 'Miscount Disclosed'
-    | 'New Constitution'
-    | 'Prophecy of Ixth'
-    | 'Regulated Conscription'
-    | 'Seed of an Empire';
+const agendaCards = [
+    'Anti-Intellectual Revolution',
+    'Archived Secret',
+    'Armed Forces Standardization',
+    'Arms Reduction',
+    'Committee Formation',
+    'Conventions of War',
+    'Covert Legislation',
+    'Ixthian Artifact',
+    'Judicial Abolishment',
+    'Minister of War',
+    'Miscount Disclosed',
+    'New Constitution',
+    'Prophecy of Ixth',
+    'Regulated Conscription',
+    'Seed of an Empire',
+];
+
+type AgendaCard = (typeof agendaCards)[number];
 
 const agendaCardFaces: Record<AgendaCard, string> = {
     'Anti-Intellectual Revolution': antiIntellectualRevolution,
@@ -49,4 +53,4 @@ const agendaCardFaces: Record<AgendaCard, string> = {
     'Seed of an Empire': seedsOfAnEmpire,
 };
 
-export { AgendaCard, agendaCardFaces };
+export { AgendaCard, agendaCardBack, agendaCardFaces, agendaCards };
