@@ -290,7 +290,7 @@ const AgendaCardContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 40vh;
+    height: 45vh;
 
     > * {
         flex: 1 1 0;
