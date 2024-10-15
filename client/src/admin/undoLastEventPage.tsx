@@ -34,6 +34,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Action phase started';
         case 'AgendaPhaseStarted':
             return 'Agenda phase started';
+        case 'AgendaCardRevealed':
+            return 'Agenda card revealed';
         case 'MapTilesSelected':
             return 'Map tiles selected';
         case 'PlanetControlled':
