@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
+import prophecyOfIxth from './assets/agendaCards/prophecy-of-ixth.webp';
 import { accentColor } from './colors';
 import {
     currentPlayerTurn,
@@ -88,6 +89,9 @@ const StatusPage: React.FC = () => {
                             <Title>{`Round ${currentRoundNumber(events)}`}</Title>
                             <SubTitle>{`${isAgendaPhaseStartedEvent(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
                         </TitleContainer>
+                        <AgendaCardContainer>
+                            <AgendaCard src={prophecyOfIxth} />
+                        </AgendaCardContainer>
                         <TimeSpan>
                             {timeElapsedLabel(lastEvent, currentTime)}
                         </TimeSpan>
@@ -202,6 +206,21 @@ const TimeSpan = styled.span`
     font-size: 22vw;
     color: red;
     text-align: center;
+`;
+
+const AgendaCardContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 40vh;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+const AgendaCard = styled.img`
+    min-width: 0;
+    min-height: 0;
 `;
 
 export { StatusPage };
