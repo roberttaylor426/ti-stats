@@ -196,9 +196,12 @@ const timeComponent = (n: number | undefined): string => {
 };
 
 const StyledStatusPage = styled.div`
-    display: flex;
-    flex-direction: row;
-    padding: 2rem 0;
+    display: grid;
+    grid-template-areas: 'layer';
+
+    > * {
+        grid-area: layer;
+    }
 `;
 
 const SpreadColumnContainer = styled.div`
@@ -212,6 +215,8 @@ const TitleContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-bottom: ${accentColor}88 solid 1px;
+    background-color: black;
 `;
 
 const Title = styled.h1`
@@ -230,17 +235,21 @@ const CentralContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 2rem;
 `;
 
 const BottomContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-top: ${accentColor}88 solid 1px;
+    background-color: black;
 `;
 
 const PlayerTurn = styled.h1`
     font-size: 16vw;
     text-align: center;
+    line-height: 1.1;
 `;
 
 const ScoresRow = styled.div`
