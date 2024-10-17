@@ -1,4 +1,5 @@
 import { intervalToDuration } from 'date-fns';
+import { formatDate } from 'date-fns/format';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
@@ -47,8 +48,8 @@ const StatusPage: React.FC = () => {
     return (
         <StyledStatusPage>
             <Stars />
-            {lastEvent &&
-                (isRoundStartedEvent(lastEvent) ? (
+            {lastEvent && events.filter(isRoundStartedEvent).length > 0 ? (
+                isRoundStartedEvent(lastEvent) ? (
                     <SpreadColumnContainer>
                         <TitleContainer>
                             <Title>{`Round ${currentRoundNumber(events)}`}</Title>
@@ -148,7 +149,15 @@ const StatusPage: React.FC = () => {
                             />
                         </BottomContainer>
                     </SpreadColumnContainer>
-                ))}
+                )
+            ) : (
+                <SpreadColumnContainer>
+                    <TitleContainer />
+                    <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
+                    <SubTitle>{formatDate(new Date(), 'P')}</SubTitle>
+                    <BottomContainer />
+                </SpreadColumnContainer>
+            )}
         </StyledStatusPage>
     );
 };
