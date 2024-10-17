@@ -68,7 +68,7 @@ const StatusPage: React.FC = () => {
                 ) : isRoundEndedEvent(lastEvent) ? (
                     <SpreadColumnContainer>
                         <TitleContainer>
-                            <Title>{`Round ${currentRoundNumber(events)} complete`}</Title>
+                            <Title>{`Round ${currentRoundNumber(events) - 1} complete`}</Title>
                         </TitleContainer>
                         <CentralContainer>
                             <Title>Time taken:</Title>
