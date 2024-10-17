@@ -10,6 +10,7 @@ import {
     currentPlayerTurn,
     currentRoundNumber,
     Event,
+    factionsInGame,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
@@ -45,119 +46,149 @@ const StatusPage: React.FC = () => {
 
     const activePlayer = currentPlayerTurn(events);
 
+    const winningPlayer = _.first(
+        factionsInGame(events)
+            .map((f) => ({
+                faction: f,
+                score: playerScore(events, f),
+            }))
+            .filter((fs) => fs.score >= 10)
+    );
+
     return (
         <StyledStatusPage>
             <Stars />
-            {lastEvent && events.filter(isRoundStartedEvent).length > 0 ? (
-                isRoundStartedEvent(lastEvent) ? (
+            {lastEvent &&
+                (winningPlayer ? (
                     <SpreadColumnContainer>
-                        <TitleContainer>
-                            <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                            <SubTitle>Strategy Phase</SubTitle>
-                        </TitleContainer>
-                        <BottomContainer>
-                            <TimeSpan>
-                                {timeElapsedLabel(lastEvent, currentTime)}
-                            </TimeSpan>
-                            <TotalTime
-                                events={events}
-                                currentTime={currentTime}
-                            />
-                        </BottomContainer>
-                    </SpreadColumnContainer>
-                ) : isRoundEndedEvent(lastEvent) ? (
-                    <SpreadColumnContainer>
-                        <TitleContainer>
-                            <Title>{`Round ${currentRoundNumber(events) - 1} complete`}</Title>
-                        </TitleContainer>
+                        <TitleContainer />
+                        <Title>{`${winningPlayer.faction} wins!`}</Title>
+
                         <CentralContainer>
                             <Title>Time taken:</Title>
-                            <TimeSpan>
-                                {timeElapsedBetweenEvents(
-                                    _.last(events.filter(isRoundStartedEvent))!,
-                                    lastEvent
-                                )}
-                            </TimeSpan>
+                            <TotalTime
+                                events={events}
+                                currentTime={lastEvent.time}
+                            />
                         </CentralContainer>
-                        <TotalTimeSpan>
-                            {timeElapsedLabel(
-                                _.first(events.filter(isRoundStartedEvent))!,
-                                currentTime
-                            )}
-                        </TotalTimeSpan>
+                        <BottomContainer />
                     </SpreadColumnContainer>
-                ) : activePlayer ? (
-                    <SpreadColumnContainer>
-                        <TitleContainer>
-                            <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                            <SubTitle>Action Phase</SubTitle>
-                        </TitleContainer>
-                        <CentralContainer>
-                            <PlayerTurn>{`${activePlayer} turn`}</PlayerTurn>
-                            <ScoresRow>
-                                <ScoreComponent>(</ScoreComponent>
-                                <ScoresContent>
-                                    <VpScore>{`${playerScore(events, activePlayer)}VP`}</VpScore>
-                                    <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}R`}</ResourcesScore>
-                                    <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}I`}</InfluenceScore>
-                                </ScoresContent>
-                                <ScoreComponent>)</ScoreComponent>
-                            </ScoresRow>
-                        </CentralContainer>
-                        {lastEventWhenPlayerTurnStarted && (
+                ) : events.filter(isRoundStartedEvent).length > 0 ? (
+                    isRoundStartedEvent(lastEvent) ? (
+                        <SpreadColumnContainer>
+                            <TitleContainer>
+                                <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                                <SubTitle>Strategy Phase</SubTitle>
+                            </TitleContainer>
                             <BottomContainer>
                                 <TimeSpan>
-                                    {timeElapsedLabel(
-                                        lastEventWhenPlayerTurnStarted,
-                                        currentTime
-                                    )}
+                                    {timeElapsedLabel(lastEvent, currentTime)}
                                 </TimeSpan>
                                 <TotalTime
                                     events={events}
                                     currentTime={currentTime}
                                 />
                             </BottomContainer>
-                        )}
-                    </SpreadColumnContainer>
+                        </SpreadColumnContainer>
+                    ) : isRoundEndedEvent(lastEvent) ? (
+                        <SpreadColumnContainer>
+                            <TitleContainer>
+                                <Title>{`Round ${currentRoundNumber(events) - 1} complete`}</Title>
+                            </TitleContainer>
+                            <CentralContainer>
+                                <Title>Time taken:</Title>
+                                <TimeSpan>
+                                    {timeElapsedBetweenEvents(
+                                        _.last(
+                                            events.filter(isRoundStartedEvent)
+                                        )!,
+                                        lastEvent
+                                    )}
+                                </TimeSpan>
+                            </CentralContainer>
+                            <TotalTimeSpan>
+                                {timeElapsedLabel(
+                                    _.first(
+                                        events.filter(isRoundStartedEvent)
+                                    )!,
+                                    currentTime
+                                )}
+                            </TotalTimeSpan>
+                        </SpreadColumnContainer>
+                    ) : activePlayer ? (
+                        <SpreadColumnContainer>
+                            <TitleContainer>
+                                <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                                <SubTitle>Action Phase</SubTitle>
+                            </TitleContainer>
+                            <CentralContainer>
+                                <PlayerTurn>{`${activePlayer} turn`}</PlayerTurn>
+                                <ScoresRow>
+                                    <ScoreComponent>(</ScoreComponent>
+                                    <ScoresContent>
+                                        <VpScore>{`${playerScore(events, activePlayer)}VP`}</VpScore>
+                                        <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}R`}</ResourcesScore>
+                                        <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}I`}</InfluenceScore>
+                                    </ScoresContent>
+                                    <ScoreComponent>)</ScoreComponent>
+                                </ScoresRow>
+                            </CentralContainer>
+                            {lastEventWhenPlayerTurnStarted && (
+                                <BottomContainer>
+                                    <TimeSpan>
+                                        {timeElapsedLabel(
+                                            lastEventWhenPlayerTurnStarted,
+                                            currentTime
+                                        )}
+                                    </TimeSpan>
+                                    <TotalTime
+                                        events={events}
+                                        currentTime={currentTime}
+                                    />
+                                </BottomContainer>
+                            )}
+                        </SpreadColumnContainer>
+                    ) : (
+                        <SpreadColumnContainer>
+                            <TitleContainer>
+                                <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                                <SubTitle>{`${isUnion(isAgendaPhaseStartedEvent, isAgendaCardRevealedEvent)(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
+                            </TitleContainer>
+                            {isUnion(
+                                isAgendaPhaseStartedEvent,
+                                isAgendaCardRevealedEvent
+                            )(lastEvent) && (
+                                <AgendaCardContainer>
+                                    <AgendaCard
+                                        src={
+                                            isAgendaPhaseStartedEvent(lastEvent)
+                                                ? agendaCardBack
+                                                : agendaCardFaces[
+                                                      lastEvent.card
+                                                  ]
+                                        }
+                                    />
+                                </AgendaCardContainer>
+                            )}
+                            <BottomContainer>
+                                <TimeSpan>
+                                    {timeElapsedLabel(lastEvent, currentTime)}
+                                </TimeSpan>
+                                <TotalTime
+                                    events={events}
+                                    currentTime={currentTime}
+                                />
+                            </BottomContainer>
+                        </SpreadColumnContainer>
+                    )
                 ) : (
                     <SpreadColumnContainer>
-                        <TitleContainer>
-                            <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                            <SubTitle>{`${isUnion(isAgendaPhaseStartedEvent, isAgendaCardRevealedEvent)(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
-                        </TitleContainer>
-                        {isUnion(
-                            isAgendaPhaseStartedEvent,
-                            isAgendaCardRevealedEvent
-                        )(lastEvent) && (
-                            <AgendaCardContainer>
-                                <AgendaCard
-                                    src={
-                                        isAgendaPhaseStartedEvent(lastEvent)
-                                            ? agendaCardBack
-                                            : agendaCardFaces[lastEvent.card]
-                                    }
-                                />
-                            </AgendaCardContainer>
-                        )}
-                        <BottomContainer>
-                            <TimeSpan>
-                                {timeElapsedLabel(lastEvent, currentTime)}
-                            </TimeSpan>
-                            <TotalTime
-                                events={events}
-                                currentTime={currentTime}
-                            />
-                        </BottomContainer>
+                        <TitleContainer />
+                        <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
+                        <SubTitle>{formatDate(new Date(), 'P')}</SubTitle>
+                        <BottomContainer />
                     </SpreadColumnContainer>
-                )
-            ) : (
-                <SpreadColumnContainer>
-                    <TitleContainer />
-                    <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
-                    <SubTitle>{formatDate(new Date(), 'P')}</SubTitle>
-                    <BottomContainer />
-                </SpreadColumnContainer>
-            )}
+                ))}
         </StyledStatusPage>
     );
 };
@@ -236,7 +267,7 @@ const CentralContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
 `;
 
 const BottomContainer = styled.div`

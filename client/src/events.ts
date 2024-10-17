@@ -315,7 +315,7 @@ const resourcesAndInfluenceForFaction = (
         );
 };
 
-const playerScore = (events: Event[], f: Faction) =>
+const playerScore = (events: Event[], f: Faction): number =>
     events
         .filter(isPlayerScoredVictoryPointEvent)
         .filter((e) => e.faction === f)
