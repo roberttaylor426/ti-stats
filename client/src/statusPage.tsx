@@ -198,6 +198,7 @@ const timeComponent = (n: number | undefined): string => {
 const StyledStatusPage = styled.div`
     display: flex;
     flex-direction: row;
+    padding: 2rem 0;
 `;
 
 const SpreadColumnContainer = styled.div`
