@@ -198,6 +198,7 @@ const timeComponent = (n: number | undefined): string => {
 const StyledStatusPage = styled.div`
     display: grid;
     grid-template-areas: 'layer';
+    line-height: 1.1;
 
     > * {
         grid-area: layer;
@@ -249,7 +250,6 @@ const BottomContainer = styled.div`
 const PlayerTurn = styled.h1`
     font-size: 16vw;
     text-align: center;
-    line-height: 1.1;
 `;
 
 const ScoresRow = styled.div`
