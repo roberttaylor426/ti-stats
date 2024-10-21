@@ -124,13 +124,11 @@ const StatusPage: React.FC = () => {
                             <CentralContainer>
                                 <PlayerTurn>{`${activePlayer} turn`}</PlayerTurn>
                                 <ScoresRow>
-                                    <ScoreComponent>(</ScoreComponent>
                                     <ScoresContent>
                                         <VpScore>{`${playerScore(events, activePlayer)}VP`}</VpScore>
-                                        <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}R`}</ResourcesScore>
-                                        <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}I`}</InfluenceScore>
+                                        <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}`}</ResourcesScore>
+                                        <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}`}</InfluenceScore>
                                     </ScoresContent>
-                                    <ScoreComponent>)</ScoreComponent>
                                 </ScoresRow>
                             </CentralContainer>
                             {lastEventWhenPlayerTurnStarted && (
@@ -292,11 +290,16 @@ const ScoresContent = styled.div`
     display: flex;
     justify-content: center;
     gap: 2rem;
+    line-height: 1;
+
+    > * + * {
+        border-left: 0.125rem white solid;
+        padding-left: 2rem;
+    }
 `;
 
 const ScoreComponent = styled.h3`
     font-size: 10vw;
-    text-transform: uppercase;
 `;
 
 const VpScore = styled(ScoreComponent)`
@@ -314,8 +317,8 @@ const InfluenceScore = styled(ScoreComponent)`
 const TimeSpan = styled.span`
     font-family: 'Alarm Clock', 'sans-serif';
     font-size: 22vw;
-    color: red;
     text-align: center;
+    color: yellow;
 `;
 
 type TotalTimeProps = {
@@ -333,7 +336,7 @@ const TotalTime: React.FC<TotalTimeProps> = ({ events, currentTime }) => (
 );
 
 const TotalTimeSpan = styled(TimeSpan)`
-    color: yellow;
+    color: red;
 `;
 
 const AgendaCardContainer = styled.div`
