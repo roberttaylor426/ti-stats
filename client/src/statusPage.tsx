@@ -251,6 +251,7 @@ const TitleContainer = styled.div`
 
 const Title = styled.h1`
     font-size: 11vw;
+    padding: 0 0.5rem;
     text-align: center;
 `;
 
