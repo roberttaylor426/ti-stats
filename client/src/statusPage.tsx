@@ -58,8 +58,8 @@ const StatusPage: React.FC = () => {
     return (
         <StyledStatusPage>
             <Stars />
-            {lastEvent &&
-                (winningPlayer ? (
+            {lastEvent ? (
+                winningPlayer ? (
                     <SpreadColumnContainer>
                         <TitleContainer />
                         <Title>{`${winningPlayer.faction} wins!`}</Title>
@@ -180,13 +180,11 @@ const StatusPage: React.FC = () => {
                         </SpreadColumnContainer>
                     )
                 ) : (
-                    <SpreadColumnContainer>
-                        <TitleContainer />
-                        <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
-                        <SubTitle>{formatDate(new Date(), 'P')}</SubTitle>
-                        <BottomContainer />
-                    </SpreadColumnContainer>
-                ))}
+                    <HoldingScreen currentTime={currentTime} />
+                )
+            ) : (
+                <HoldingScreen currentTime={currentTime} />
+            )}
         </StyledStatusPage>
     );
 };
@@ -339,6 +337,19 @@ const TotalTime: React.FC<TotalTimeProps> = ({ events, currentTime }) => (
 const TotalTimeSpan = styled(TimeSpan)`
     color: red;
 `;
+
+type HoldingScreenProps = {
+    currentTime: number;
+};
+
+const HoldingScreen: React.FC<HoldingScreenProps> = ({ currentTime }) => (
+    <SpreadColumnContainer>
+        <TitleContainer />
+        <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
+        <SubTitle>{formatDate(new Date(currentTime), 'PPP')}</SubTitle>
+        <BottomContainer />
+    </SpreadColumnContainer>
+);
 
 const AgendaCardContainer = styled.div`
     display: flex;
