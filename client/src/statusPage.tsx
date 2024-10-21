@@ -344,10 +344,10 @@ type HoldingScreenProps = {
 
 const HoldingScreen: React.FC<HoldingScreenProps> = ({ currentTime }) => (
     <SpreadColumnContainer>
-        <TitleContainer />
+        <div />
         <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
         <SubTitle>{formatDate(new Date(currentTime), 'PPP')}</SubTitle>
-        <BottomContainer />
+        <div />
     </SpreadColumnContainer>
 );
 
