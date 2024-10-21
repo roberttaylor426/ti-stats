@@ -1,10 +1,10 @@
-import { currentPlayerTurn } from '../../src/events';
+import { currentPlayerTurnInActionPhase } from '../../src/events';
 
 describe('player turn page', () => {
     describe('determines next player', () => {
         it('when no one has finished a turn', () => {
             expect(
-                currentPlayerTurn([
+                currentPlayerTurnInActionPhase([
                     {
                         type: 'ActionPhaseStarted',
                         time: new Date().getTime(),
@@ -20,7 +20,7 @@ describe('player turn page', () => {
 
         it('when one player has finished a turn', () => {
             expect(
-                currentPlayerTurn([
+                currentPlayerTurnInActionPhase([
                     {
                         type: 'ActionPhaseStarted',
                         time: new Date().getTime(),
@@ -42,7 +42,7 @@ describe('player turn page', () => {
 
         it('when one player has finished a turn and one player has passed', () => {
             expect(
-                currentPlayerTurn([
+                currentPlayerTurnInActionPhase([
                     {
                         type: 'ActionPhaseStarted',
                         time: new Date().getTime(),
@@ -70,7 +70,7 @@ describe('player turn page', () => {
 
         it('when everyone has finished a turn', () => {
             expect(
-                currentPlayerTurn([
+                currentPlayerTurnInActionPhase([
                     {
                         type: 'ActionPhaseStarted',
                         time: new Date().getTime(),
@@ -104,7 +104,7 @@ describe('player turn page', () => {
 
         it('when everyone has finished a turn but the first player passed', () => {
             expect(
-                currentPlayerTurn([
+                currentPlayerTurnInActionPhase([
                     {
                         type: 'ActionPhaseStarted',
                         time: new Date().getTime(),
@@ -138,7 +138,7 @@ describe('player turn page', () => {
 
         it('when everyone has passed', () => {
             expect(
-                currentPlayerTurn([
+                currentPlayerTurnInActionPhase([
                     {
                         type: 'ActionPhaseStarted',
                         time: new Date().getTime(),
@@ -171,7 +171,7 @@ describe('player turn page', () => {
         });
 
         it('when the round has not yet started', () => {
-            expect(currentPlayerTurn([])).toEqual(undefined);
+            expect(currentPlayerTurnInActionPhase([])).toEqual(undefined);
         });
     });
 });

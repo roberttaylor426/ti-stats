@@ -50,6 +50,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return `Player finished turn - ${e.faction}`;
         case 'PlayerScoredVictoryPoint':
             return `Player scored victory point - ${e.faction}`;
+        case 'PlayerSelectedStrategyCard':
+            return `Player selected strategy card - ${e.faction} / ${e.strategyCard}`;
         case 'RoundEnded':
             return 'Round ended';
         case 'RoundStarted':

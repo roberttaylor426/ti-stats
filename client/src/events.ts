@@ -5,10 +5,12 @@ import {
     Faction,
     FactionSelection,
     isFactionSelectionWithCustomHomeworlds,
+    selectedFaction,
 } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
-import { PlayerColor } from './playerColors';
-import { SystemTileNumber } from './systemTiles';
+import { numberOfPlayersInGame, PlayerColor } from './playerColors';
+import { StrategyCard } from './strategyCards';
+import { factionSystemTileNumber, SystemTileNumber } from './systemTiles';
 import { Technology } from './technologies';
 
 type PlayersAssignedFactionsAndColorsEvent = {
@@ -33,6 +35,13 @@ type SpeakerAssignedEvent = {
 type RoundStartedEvent = {
     type: 'RoundStarted';
     time: number;
+};
+
+type PlayerSelectedStrategyCardEvent = {
+    type: 'PlayerSelectedStrategyCard';
+    time: number;
+    faction: Faction;
+    strategyCard: StrategyCard;
 };
 
 type ActionPhaseStartedEvent = {
@@ -109,6 +118,11 @@ const isUnion =
     (x: Event): x is T1 | T2 =>
         isT1(x) || isT2(x);
 
+const lastIndexOfEventType = (events: Event[], eg: EventGuard<Event>): number =>
+    _.last(
+        events.map((e, index) => (eg(e) ? index : -1)).filter((n) => n !== -1)
+    ) || -1;
+
 const isPlayersAssignedFactionsAndColorsEvent = (
     e: Event
 ): e is PlayersAssignedFactionsAndColorsEvent =>
@@ -146,6 +160,11 @@ const isPlayerFinishedTurnEvent = (e: Event): e is PlayerFinishedTurnEvent =>
 const isRoundStartedEvent = (e: Event): e is RoundStartedEvent =>
     e.type === 'RoundStarted';
 
+const isPlayerSelectedStrategyCardEvent = (
+    e: Event
+): e is PlayerSelectedStrategyCardEvent =>
+    e.type === 'PlayerSelectedStrategyCard';
+
 const isRoundEndedEvent = (e: Event): e is RoundEndedEvent =>
     e.type === 'RoundEnded';
 
@@ -166,6 +185,7 @@ type Event =
     | PlayersAssignedFactionsAndColorsEvent
     | PlayerFinishedTurnEvent
     | PlayerScoredVictoryPointEvent
+    | PlayerSelectedStrategyCardEvent
     | RoundEndedEvent
     | RoundStartedEvent
     | SpeakerAssignedEvent
@@ -200,7 +220,82 @@ const hasMecatolRexBeenCaptured = (events: Event[]): boolean =>
         (e) => e.type === 'PlanetControlled' && e.planet === 'Mecatol Rex'
     );
 
-const currentRoundPlayerOrder = (events: Event[]): Faction[] =>
+const currentSpeaker = (events: Event[]): Faction | undefined =>
+    _.last(events.filter(isSpeakerAssignedEvent))?.faction;
+
+const factionAtTileIndex = (
+    tileIndex: number,
+    events: Event[]
+): Faction | undefined => {
+    const mapTilesSelectedEvent = _.last(
+        events.filter(isMapTilesSelectedEvent)
+    );
+
+    if (!mapTilesSelectedEvent) {
+        return undefined;
+    }
+
+    const factionSelectionAtIndex = factionSelections(events).find(
+        (fs) =>
+            factionSystemTileNumber(fs) ===
+            mapTilesSelectedEvent.selections[tileIndex - 1]
+    );
+
+    return factionSelectionAtIndex
+        ? selectedFaction(factionSelectionAtIndex)
+        : undefined;
+};
+
+const currentStrategyPhasePlayerOrder = (
+    events: Event[]
+): Faction[] | undefined =>
+    [
+        factionAtTileIndex(1, events),
+        factionAtTileIndex(4, events),
+        factionAtTileIndex(22, events),
+        factionAtTileIndex(37, events),
+        factionAtTileIndex(34, events),
+        factionAtTileIndex(16, events),
+    ] as Faction[];
+
+const currentPlayerTurnInStrategyPhase = (
+    events: Event[]
+): Faction | undefined => {
+    const speaker = currentSpeaker(events);
+    const playerOrder = currentStrategyPhasePlayerOrder(events);
+    const playerSelectedStrategyCardEvents =
+        playerSelectedStrategyCardEventFromLastStrategyPhase(events);
+
+    if (
+        playerSelectedStrategyCardEvents.length >= numberOfPlayersInGame ||
+        !speaker ||
+        !playerOrder
+    ) {
+        return undefined;
+    }
+
+    const speakerIndex = playerOrder.indexOf(speaker);
+
+    return playerOrder[
+        (speakerIndex + playerSelectedStrategyCardEvents.length) %
+            numberOfPlayersInGame
+    ];
+};
+
+const playerSelectedStrategyCardEventFromLastStrategyPhase = (
+    events: Event[]
+): PlayerSelectedStrategyCardEvent[] => {
+    const lastRoundStartedIndex = lastIndexOfEventType(
+        events,
+        isRoundStartedEvent
+    );
+
+    return events
+        .slice(lastRoundStartedIndex + 1)
+        .filter(isPlayerSelectedStrategyCardEvent);
+};
+
+const currentActionPhasePlayerOrder = (events: Event[]): Faction[] =>
     _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
 
 const turnsFinishedThisActionPhase = (
@@ -216,31 +311,33 @@ const turnsFinishedThisActionPhase = (
         return acc;
     }, [] as PlayerFinishedTurnEvent[]);
 
-const unpassedPlayers = (events: Event[]): Faction[] =>
-    currentRoundPlayerOrder(events).filter(
+const unpassedPlayersThisActionPhase = (events: Event[]): Faction[] =>
+    currentActionPhasePlayerOrder(events).filter(
         (f) =>
             !turnsFinishedThisActionPhase(events).some(
                 (e) => e.faction === f && e.pass
             )
     );
 
-const currentPlayerTurn = (events: Event[]): Faction | undefined => {
+const currentPlayerTurnInActionPhase = (
+    events: Event[]
+): Faction | undefined => {
     const turnsFinished = turnsFinishedThisActionPhase(events);
     const lastPlayerToHaveATurn = _.last(turnsFinished);
-    const playerOrder = currentRoundPlayerOrder(events);
+    const playerOrder = currentActionPhasePlayerOrder(events);
 
     const indexOfPlayerAfterLastToHaveATurn = !lastPlayerToHaveATurn
         ? 0
         : playerOrder.indexOf(lastPlayerToHaveATurn.faction) + 1;
 
-    return findNextUnpassedPlayer(
+    return findNextUnpassedPlayerInActionPhase(
         playerOrder,
-        unpassedPlayers(events),
+        unpassedPlayersThisActionPhase(events),
         indexOfPlayerAfterLastToHaveATurn
     );
 };
 
-const findNextUnpassedPlayer = (
+const findNextUnpassedPlayerInActionPhase = (
     playerOrder: Faction[],
     unpassedPlayers: Faction[],
     fromIndex: number
@@ -255,7 +352,11 @@ const findNextUnpassedPlayer = (
         return potentialNextPlayer;
     }
 
-    return findNextUnpassedPlayer(playerOrder, unpassedPlayers, fromIndex + 1);
+    return findNextUnpassedPlayerInActionPhase(
+        playerOrder,
+        unpassedPlayers,
+        fromIndex + 1
+    );
 };
 
 const currentRoundNumber = (events: Event[]): number =>
@@ -333,8 +434,10 @@ const playerScore = (events: Event[], f: Faction): number =>
 
 export {
     ActionPhaseStartedEvent,
-    currentPlayerTurn,
+    currentPlayerTurnInActionPhase,
+    currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
+    currentSpeaker,
     Event,
     factionSelections,
     factionsInGame,
@@ -349,17 +452,20 @@ export {
     isPlayerFinishedTurnEvent,
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
+    isPlayerSelectedStrategyCardEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isSpeakerAssignedEvent,
     isTechnologyResearchedEvent,
     isUnion,
+    lastIndexOfEventType,
     latestPlanetControlledEventsByPlanet,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
     playerScore,
+    playerSelectedStrategyCardEventFromLastStrategyPhase,
     resourcesAndInfluenceForFaction,
     RoundStartedEvent,
     technologiesResearchedByFaction,

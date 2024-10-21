@@ -7,7 +7,7 @@ import _ from 'underscore';
 import { agendaCardBack, agendaCardFaces } from './agendaCards';
 import { accentColor } from './colors';
 import {
-    currentPlayerTurn,
+    currentPlayerTurnInActionPhase,
     currentRoundNumber,
     Event,
     factionsInGame,
@@ -17,6 +17,7 @@ import {
     isPlayerFinishedTurnEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
+    isSpeakerAssignedEvent,
     isUnion,
     playerScore,
     resourcesAndInfluenceForFaction,
@@ -44,7 +45,7 @@ const StatusPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const activePlayer = currentPlayerTurn(events);
+    const activePlayer = currentPlayerTurnInActionPhase(events);
 
     const winningPlayer = _.first(
         factionsInGame(events)
@@ -80,6 +81,9 @@ const StatusPage: React.FC = () => {
                                 <Title>{`Round ${currentRoundNumber(events)}`}</Title>
                                 <SubTitle>Strategy Phase</SubTitle>
                             </TitleContainer>
+                            <CentralContainer>
+                                <PlayerTurn>{`${_.last(events.filter(isSpeakerAssignedEvent))?.faction} turn`}</PlayerTurn>
+                            </CentralContainer>
                             <BottomContainer>
                                 <TimeSpan>
                                     {timeElapsedLabel(lastEvent, currentTime)}

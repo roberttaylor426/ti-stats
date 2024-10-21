@@ -13,7 +13,11 @@ import {
     selectedFaction,
     startingTechsForFaction,
 } from '../factions';
-import { PlayerColor, playerColors } from '../playerColors';
+import {
+    numberOfPlayersInGame,
+    PlayerColor,
+    playerColors,
+} from '../playerColors';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
@@ -30,14 +34,14 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
 
     const publishPlayerFactionAndColorAssignmentEvents = async () => {
         if (
-            Object.keys(factionSelections).length === 6 &&
-            Object.keys(playerColorSelections).length === 6
+            Object.keys(factionSelections).length === numberOfPlayersInGame &&
+            Object.keys(playerColorSelections).length === numberOfPlayersInGame
         ) {
             const newEvents: Event[] = [
                 {
                     type: 'PlayersAssignedFactionsAndColors',
                     time: new Date().getTime(),
-                    colorAssignments: range(6).reduce(
+                    colorAssignments: range(numberOfPlayersInGame).reduce(
                         (acc, n) => ({
                             ...acc,
                             [selectedFaction(factionSelections[n + 1])]:

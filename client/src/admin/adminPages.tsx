@@ -4,7 +4,8 @@ import _, { identity } from 'underscore';
 import useAsyncEffect from 'use-async-effect';
 
 import {
-    currentPlayerTurn,
+    currentPlayerTurnInActionPhase,
+    currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
     factionsInGame,
@@ -16,18 +17,21 @@ import {
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
+    lastIndexOfEventType,
     PlanetControlledEvent,
+    playerSelectedStrategyCardEventFromLastStrategyPhase,
     technologiesResearchedByFaction,
 } from '../events';
 import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
+import { numberOfPlayersInGame } from '../playerColors';
 import { systemTiles } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { Button, PageTitle, Select } from './components';
 import { FactionAssignmentPage } from './factionAssignmentPage';
-import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
+import { StrategyCardSelectionPage } from './strategyCardSelectionPage';
 import { TileSelectionPage } from './tileSelectionPage';
 import { UndoLastEventPage } from './undoLastEventPage';
 
@@ -256,7 +260,15 @@ const AdminPages: React.FC = () => {
             setUndoLastEventModeEnabled(!undoLastEventModeEnabled),
     };
 
-    const activePlayer = currentPlayerTurn(events);
+    const activePlayerInStrategyPhase =
+        currentPlayerTurnInStrategyPhase(events);
+    const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
+
+    // ) : _.last(events)?.type === 'RoundStarted' ? ( // Need to ask a different question for the player order selection page
+    //         <PlayerOrderSelectionPage
+    //             {...adminPageProps}
+    //             currentRoundNumber={currentRoundNumber(events)}
+    //         />
 
     return (
         <StyledAdminPage>
@@ -266,15 +278,16 @@ const AdminPages: React.FC = () => {
                 <FactionAssignmentPage {...adminPageProps} />
             ) : !events.find(isMapTilesSelectedEvent) ? (
                 <TileSelectionPage {...adminPageProps} />
-            ) : isStartRoundPageVisible(events) ? (
+            ) : !activePlayerInStrategyPhase ||
+              isStartRoundPageVisible(events) ? (
                 <StartRoundPage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : _.last(events)?.type === 'RoundStarted' ? (
-                <PlayerOrderSelectionPage
+            ) : isSelectStrategyCardPageVisible(events) ? (
+                <StrategyCardSelectionPage
                     {...adminPageProps}
-                    currentRoundNumber={currentRoundNumber(events)}
+                    activePlayer={activePlayerInStrategyPhase}
                 />
             ) : _.last(events)?.type === 'AgendaPhaseStarted' ||
               _.last(events)?.type === 'AgendaCardRevealed' ? (
@@ -282,11 +295,11 @@ const AdminPages: React.FC = () => {
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : activePlayer ? (
+            ) : activePlayerInActionPhase ? (
                 <PlayerTurnPage>
                     <PageTitle
                         {...adminPageProps}
-                        title={`${currentPlayerTurn(events)} turn`}
+                        title={`${currentPlayerTurnInActionPhase(events)} turn`}
                     />
                     <StyledPlanetControlledRow>
                         <Select
@@ -308,7 +321,7 @@ const AdminPages: React.FC = () => {
                                 if (selectedPlanetToControl) {
                                     await publishPlanetControlledEvent(
                                         selectedPlanetToControl,
-                                        activePlayer
+                                        activePlayerInActionPhase
                                     );
                                 }
                             }}
@@ -436,7 +449,7 @@ const AdminPages: React.FC = () => {
                             onClick={async () => {
                                 if (vpsToAdd) {
                                     await publishVpScoredEvent(
-                                        activePlayer,
+                                        activePlayerInActionPhase,
                                         vpsToAdd
                                     );
                                 }
@@ -473,7 +486,10 @@ const AdminPages: React.FC = () => {
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
-                                publishTurnFinishedEvent(activePlayer, false)
+                                publishTurnFinishedEvent(
+                                    activePlayerInActionPhase,
+                                    false
+                                )
                             }
                         >
                             Turn finished
@@ -482,7 +498,10 @@ const AdminPages: React.FC = () => {
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
-                                publishTurnFinishedEvent(activePlayer, true)
+                                publishTurnFinishedEvent(
+                                    activePlayerInActionPhase,
+                                    true
+                                )
                             }
                         >
                             Pass
@@ -550,30 +569,26 @@ const AdminPages: React.FC = () => {
 };
 
 const isStartRoundPageVisible = (events: Event[]) => {
-    const lastMapTilesSelectedIndex =
-        _.last(
-            events
-                .map((e, index) => (isMapTilesSelectedEvent(e) ? index : -1))
-                .filter((n) => n !== -1)
-        ) || -1;
-    const lastRoundStartedIndex =
-        _.last(
-            events
-                .map((e, index) => (isRoundStartedEvent(e) ? index : -1))
-                .filter((n) => n !== -1)
-        ) || -1;
-    const lastRoundEndedIndex =
-        _.last(
-            events
-                .map((e, index) => (isRoundEndedEvent(e) ? index : -1))
-                .filter((n) => n !== -1)
-        ) || -1;
+    const lastMapTilesSelectedIndex = lastIndexOfEventType(
+        events,
+        isMapTilesSelectedEvent
+    );
+    const lastRoundStartedIndex = lastIndexOfEventType(
+        events,
+        isRoundStartedEvent
+    );
+    const lastRoundEndedIndex = lastIndexOfEventType(events, isRoundEndedEvent);
 
     return (
         lastMapTilesSelectedIndex > lastRoundStartedIndex ||
         lastRoundEndedIndex > lastRoundStartedIndex
     );
 };
+
+const isSelectStrategyCardPageVisible = (events: Event[]) => (
+        playerSelectedStrategyCardEventFromLastStrategyPhase(events).length <
+        numberOfPlayersInGame
+    );
 
 const latestPlanetControlledEventsByPlanet = (
     events: Event[]

@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 import tile0 from './assets/tiles/ST_0.png';
 import tile1 from './assets/tiles/ST_1.png';
 import tile2 from './assets/tiles/ST_2.png';
@@ -81,7 +83,11 @@ import tile79 from './assets/tiles/ST_79.png';
 import tile80 from './assets/tiles/ST_80.png';
 import tile81 from './assets/tiles/ST_81.png';
 import tile82 from './assets/tiles/ST_82.png';
-import { homeworlds } from './factions';
+import {
+    FactionSelection,
+    homeworlds,
+    isFactionSelectionWithCustomHomeworlds,
+} from './factions';
 import { PlanetName } from './planets';
 
 type SystemTile = {
@@ -674,7 +680,17 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
+const factionSystemTileNumber = (fs: FactionSelection): SystemTileNumber => {
+    const factionForSystemTile = isFactionSelectionWithCustomHomeworlds(fs)
+        ? fs.homeworldsOf
+        : fs;
+    return systemTiles.find((st) =>
+        _.isEqual(st.planets, homeworlds(factionForSystemTile))
+    )?.tileNumber as SystemTileNumber;
+};
+
 export {
+    factionSystemTileNumber,
     mecatolRexTileNumber,
     SystemTile,
     systemTileImages,
