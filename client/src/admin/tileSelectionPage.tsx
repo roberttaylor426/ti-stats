@@ -64,7 +64,10 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
                         }
                     >
                         <option value={''}>--Tile--</option>
-                        {systemTilesForGame(factionSelections(events))
+                        {tilesAvailableForGalaxyIndex(
+                            n + 1,
+                            factionSelections(events)
+                        )
                             .filter(
                                 (st) =>
                                     tileSelections[n + 1] === st.tileNumber ||
@@ -91,22 +94,33 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
 const ghostsOfCreussHomeTileNumber = 51;
 const malliceTileNumber = 82;
 
-const systemTilesForGame = (
+const tilesAvailableForGalaxyIndex = (
+    n: number,
     factionSelections: FactionSelection[]
-): SystemTile[] => {
-    const factionSystemTilesNotInPlay = factionsWithFixedHomeworlds.filter(
-        (f) =>
-            !factionSelections.some((fs) =>
-                isFactionSelectionWithCustomHomeworlds(fs)
-                    ? fs.homeworldsOf === f
-                    : fs === f
-            )
+) => {
+    if (n === 1 || n === 4 || n === 16 || n === 22 || n === 34 || n === 37) {
+        return homeworldTilesForGalaxy(factionSelections);
+    }
+
+    return nonHomeworldTilesForGalaxy();
+};
+
+const homeworldTilesForGalaxy = (
+    factionSelections: FactionSelection[]
+): SystemTile[] =>
+    systemTiles.filter((st) =>
+        factionSelections.some((fs) =>
+            isFactionSelectionWithCustomHomeworlds(fs)
+                ? _.isEqual(homeworlds(fs.homeworldsOf), st.planets)
+                : _.isEqual(homeworlds(fs), st.planets)
+        )
     );
 
-    return systemTiles
+const nonHomeworldTilesForGalaxy = (): SystemTile[] =>
+    systemTiles
         .filter(
             (st) =>
-                !factionSystemTilesNotInPlay.find((f) =>
+                !factionsWithFixedHomeworlds.find((f) =>
                     _.isEqual(homeworlds(f), st.planets)
                 )
         )
@@ -115,7 +129,6 @@ const systemTilesForGame = (
                 st.tileNumber !== ghostsOfCreussHomeTileNumber &&
                 st.tileNumber !== malliceTileNumber
         );
-};
 
 const tileLabel = (tileNumber: SystemTileNumber): string => {
     const systemTilePlanets =
