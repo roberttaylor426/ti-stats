@@ -14,6 +14,8 @@ import {
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     isPlayerScoredVictoryPointEvent,
+    isRoundEndedEvent,
+    isRoundStartedEvent,
     PlanetControlledEvent,
     technologiesResearchedByFaction,
 } from '../events';
@@ -264,8 +266,7 @@ const AdminPages: React.FC = () => {
                 <FactionAssignmentPage {...adminPageProps} />
             ) : !events.find(isMapTilesSelectedEvent) ? (
                 <TileSelectionPage {...adminPageProps} />
-            ) : _.last(events)?.type === 'MapTilesSelected' ||
-              _.last(events)?.type === 'RoundEnded' ? (
+            ) : isStartRoundPageVisible(events) ? (
                 <StartRoundPage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
@@ -545,6 +546,32 @@ const AdminPages: React.FC = () => {
                 </>
             )}
         </StyledAdminPage>
+    );
+};
+
+const isStartRoundPageVisible = (events: Event[]) => {
+    const lastMapTilesSelectedIndex =
+        _.last(
+            events
+                .map((e, index) => (isMapTilesSelectedEvent(e) ? index : -1))
+                .filter((n) => n !== -1)
+        ) || -1;
+    const lastRoundStartedIndex =
+        _.last(
+            events
+                .map((e, index) => (isRoundStartedEvent(e) ? index : -1))
+                .filter((n) => n !== -1)
+        ) || -1;
+    const lastRoundEndedIndex =
+        _.last(
+            events
+                .map((e, index) => (isRoundEndedEvent(e) ? index : -1))
+                .filter((n) => n !== -1)
+        ) || -1;
+
+    return (
+        lastMapTilesSelectedIndex > lastRoundStartedIndex ||
+        lastRoundEndedIndex > lastRoundStartedIndex
     );
 };
 

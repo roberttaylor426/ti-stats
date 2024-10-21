@@ -117,6 +117,9 @@ const isPlayersAssignedFactionsAndColorsEvent = (
 const isMapTilesSelectedEvent = (e: Event): e is MapTilesSelectedEvent =>
     e.type === 'MapTilesSelected';
 
+const isSpeakerAssignedEvent = (e: Event): e is SpeakerAssignedEvent =>
+    e.type === 'SpeakerAssigned';
+
 const isActionPhaseStartedEvent = (e: Event): e is ActionPhaseStartedEvent =>
     e.type === 'ActionPhaseStarted';
 
@@ -348,6 +351,7 @@ export {
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
+    isSpeakerAssignedEvent,
     isTechnologyResearchedEvent,
     isUnion,
     latestPlanetControlledEventsByPlanet,
