@@ -24,6 +24,12 @@ type MapTilesSelectedEvent = {
     selections: Record<number, SystemTileNumber>;
 };
 
+type SpeakerAssignedEvent = {
+    type: 'SpeakerAssigned';
+    time: number;
+    faction: Faction;
+};
+
 type RoundStartedEvent = {
     type: 'RoundStarted';
     time: number;
@@ -159,6 +165,7 @@ type Event =
     | PlayerScoredVictoryPointEvent
     | RoundEndedEvent
     | RoundStartedEvent
+    | SpeakerAssignedEvent
     | TechnologyResearchedEvent;
 
 const playerFactionsAndColors = (

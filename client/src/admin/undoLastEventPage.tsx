@@ -54,6 +54,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Round ended';
         case 'RoundStarted':
             return 'Round started';
+        case 'SpeakerAssigned':
+            return 'Speaker assigned';
         case 'TechnologyResearched':
             return `Tech researched - ${e.faction} / ${e.technology.name}`;
     }
