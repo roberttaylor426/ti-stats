@@ -30,6 +30,7 @@ import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { Button, PageTitle, Select } from './components';
 import { FactionAssignmentPage } from './factionAssignmentPage';
+import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
 import { StrategyCardSelectionPage } from './strategyCardSelectionPage';
 import { TileSelectionPage } from './tileSelectionPage';
@@ -264,12 +265,6 @@ const AdminPages: React.FC = () => {
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
 
-    // ) : _.last(events)?.type === 'RoundStarted' ? ( // Need to ask a different question for the player order selection page
-    //         <PlayerOrderSelectionPage
-    //             {...adminPageProps}
-    //             currentRoundNumber={currentRoundNumber(events)}
-    //         />
-
     return (
         <StyledAdminPage>
             {undoLastEventModeEnabled ? (
@@ -278,16 +273,21 @@ const AdminPages: React.FC = () => {
                 <FactionAssignmentPage {...adminPageProps} />
             ) : !events.find(isMapTilesSelectedEvent) ? (
                 <TileSelectionPage {...adminPageProps} />
-            ) : !activePlayerInStrategyPhase ||
-              isStartRoundPageVisible(events) ? (
+            ) : isStartRoundPageVisible(events) ? (
                 <StartRoundPage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : isSelectStrategyCardPageVisible(events) ? (
+            ) : activePlayerInStrategyPhase &&
+              isSelectStrategyCardPageVisible(events) ? (
                 <StrategyCardSelectionPage
                     {...adminPageProps}
                     activePlayer={activePlayerInStrategyPhase}
+                />
+            ) : _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
+                <PlayerOrderSelectionPage
+                    {...adminPageProps}
+                    currentRoundNumber={currentRoundNumber(events)}
                 />
             ) : _.last(events)?.type === 'AgendaPhaseStarted' ||
               _.last(events)?.type === 'AgendaCardRevealed' ? (
@@ -585,10 +585,9 @@ const isStartRoundPageVisible = (events: Event[]) => {
     );
 };
 
-const isSelectStrategyCardPageVisible = (events: Event[]) => (
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events).length <
-        numberOfPlayersInGame
-    );
+const isSelectStrategyCardPageVisible = (events: Event[]) =>
+    playerSelectedStrategyCardEventFromLastStrategyPhase(events).length <
+    numberOfPlayersInGame;
 
 const latestPlanetControlledEventsByPlanet = (
     events: Event[]
