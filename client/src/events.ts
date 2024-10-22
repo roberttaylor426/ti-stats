@@ -57,6 +57,13 @@ type TechnologyResearchedEvent = {
     faction: Faction;
 };
 
+type StrategyCardPlayedEvent = {
+    type: 'StrategyCardPlayed';
+    time: number;
+    strategyCard: StrategyCard;
+    faction: Faction;
+};
+
 type PlayerFinishedTurnEvent = {
     type: 'PlayerFinishedTurn';
     time: number;
@@ -189,6 +196,7 @@ type Event =
     | RoundEndedEvent
     | RoundStartedEvent
     | SpeakerAssignedEvent
+    | StrategyCardPlayedEvent
     | TechnologyResearchedEvent;
 
 const playerFactionsAndColors = (
