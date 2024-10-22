@@ -8,6 +8,7 @@ import { agendaCardBack, agendaCardFaces } from './agendaCards';
 import { accentColor } from './colors';
 import {
     currentPlayerTurnInActionPhase,
+    currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
     factionsInGame,
@@ -17,7 +18,6 @@ import {
     isPlayerFinishedTurnEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
-    isSpeakerAssignedEvent,
     isUnion,
     playerScore,
     resourcesAndInfluenceForFaction,
@@ -45,7 +45,9 @@ const StatusPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const activePlayer = currentPlayerTurnInActionPhase(events);
+    const activePlayerInStrategyPhase =
+        currentPlayerTurnInStrategyPhase(events);
+    const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
 
     const winningPlayer = _.first(
         factionsInGame(events)
@@ -75,15 +77,18 @@ const StatusPage: React.FC = () => {
                         <BottomContainer />
                     </SpreadColumnContainer>
                 ) : events.filter(isRoundStartedEvent).length > 0 ? (
-                    isRoundStartedEvent(lastEvent) ? (
+                    activePlayerInStrategyPhase ||
+                    _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
                         <SpreadColumnContainer>
                             <TitleContainer>
                                 <Title>{`Round ${currentRoundNumber(events)}`}</Title>
                                 <SubTitle>Strategy Phase</SubTitle>
                             </TitleContainer>
-                            <CentralContainer>
-                                <PlayerTurn>{`${_.last(events.filter(isSpeakerAssignedEvent))?.faction} turn`}</PlayerTurn>
-                            </CentralContainer>
+                            {activePlayerInStrategyPhase && (
+                                <CentralContainer>
+                                    <PlayerTurn>{`${activePlayerInStrategyPhase} turn`}</PlayerTurn>
+                                </CentralContainer>
+                            )}
                             <BottomContainer>
                                 <TimeSpan>
                                     {timeElapsedLabel(lastEvent, currentTime)}
@@ -119,19 +124,19 @@ const StatusPage: React.FC = () => {
                                 )}
                             </TotalTimeSpan>
                         </SpreadColumnContainer>
-                    ) : activePlayer ? (
+                    ) : activePlayerInActionPhase ? (
                         <SpreadColumnContainer>
                             <TitleContainer>
                                 <Title>{`Round ${currentRoundNumber(events)}`}</Title>
                                 <SubTitle>Action Phase</SubTitle>
                             </TitleContainer>
                             <CentralContainer>
-                                <PlayerTurn>{`${activePlayer} turn`}</PlayerTurn>
+                                <PlayerTurn>{`${activePlayerInActionPhase} turn`}</PlayerTurn>
                                 <ScoresRow>
                                     <ScoresContent>
-                                        <VpScore>{`${playerScore(events, activePlayer)}VP`}</VpScore>
-                                        <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).resources}`}</ResourcesScore>
-                                        <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayer).influence}`}</InfluenceScore>
+                                        <VpScore>{`${playerScore(events, activePlayerInActionPhase)}VP`}</VpScore>
+                                        <ResourcesScore>{`${resourcesAndInfluenceForFaction(events, activePlayerInActionPhase).resources}`}</ResourcesScore>
+                                        <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayerInActionPhase).influence}`}</InfluenceScore>
                                     </ScoresContent>
                                 </ScoresRow>
                             </CentralContainer>
