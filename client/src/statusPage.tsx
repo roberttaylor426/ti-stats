@@ -73,7 +73,7 @@ const StatusPage: React.FC = () => {
             {lastEvent ? (
                 winningPlayer ? (
                     <SpreadColumnContainer>
-                        <TitleContainer />
+                        <div />
                         <Title>{`${winningPlayer.faction} wins!`}</Title>
                         <CentralContainer>
                             <Title>Time taken:</Title>
@@ -82,7 +82,7 @@ const StatusPage: React.FC = () => {
                                 currentTime={lastEvent.time}
                             />
                         </CentralContainer>
-                        <BottomContainer />
+                        <div />
                     </SpreadColumnContainer>
                 ) : events.filter(isRoundStartedEvent).length > 0 ? (
                     activePlayerInStrategyPhase ||
@@ -123,14 +123,16 @@ const StatusPage: React.FC = () => {
                                     )}
                                 </TimeSpan>
                             </CentralContainer>
-                            <TotalTimeSpan>
-                                {timeElapsedLabel(
-                                    _.first(
-                                        events.filter(isRoundStartedEvent)
-                                    )!,
-                                    currentTime
-                                )}
-                            </TotalTimeSpan>
+                            <BottomContainer>
+                                <TotalTimeSpan>
+                                    {timeElapsedLabel(
+                                        _.first(
+                                            events.filter(isRoundStartedEvent)
+                                        )!,
+                                        currentTime
+                                    )}
+                                </TotalTimeSpan>
+                            </BottomContainer>
                         </SpreadColumnContainer>
                     ) : activePlayerInActionPhase ? (
                         <SpreadColumnContainer>
@@ -290,13 +292,13 @@ const TitleContainer = styled.div`
 `;
 
 const Title = styled.h1`
-    font-size: 11vw;
+    font-size: 10vw;
     padding: 0 0.5rem;
     text-align: center;
 `;
 
 const SubTitle = styled.h2`
-    font-size: 11vw;
+    font-size: 9vw;
     color: ${accentColor};
     text-align: center;
     text-transform: uppercase;
@@ -315,7 +317,7 @@ const BottomContainer = styled.div`
     align-items: center;
     border-top: ${accentColor}88 solid 1px;
     background-color: black;
-    padding-top: 0.5rem;
+    padding: 0.5rem 0;
 `;
 
 const PlayerTurn = styled.h1`
@@ -374,7 +376,7 @@ const StrategyCard = styled.img`
 
 const TimeSpan = styled.span`
     font-family: 'Alarm Clock', 'sans-serif';
-    font-size: 22vw;
+    font-size: 21vw;
     text-align: center;
     color: yellow;
     line-height: 0.9;
