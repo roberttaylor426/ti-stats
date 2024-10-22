@@ -20,11 +20,14 @@ import {
     lastIndexOfEventType,
     PlanetControlledEvent,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
+    strategyCardPlayedByPlayerOnPreviousTurnThisRound,
+    strategyCardPlayedByPlayerThisTurn,
     technologiesResearchedByFaction,
 } from '../events';
 import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { numberOfPlayersInGame } from '../playerColors';
+import { StrategyCard } from '../strategyCards';
 import { systemTiles } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
@@ -124,14 +127,28 @@ const AdminPages: React.FC = () => {
         await publishNewEvents([newEvent]);
     };
 
-    const publishTechnologyResearchedEvent = async (
+    const publishPlayerResearchedTechnologyEvent = async (
         t: Technology,
         f: Faction
     ) => {
         const newEvent: Event = {
-            type: 'TechnologyResearched',
+            type: 'PlayerResearchedTechnology',
             time: new Date().getTime(),
             technology: t,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishPlayerPlayedStrategyCardEvent = async (
+        sc: StrategyCard,
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'PlayerPlayedStrategyCard',
+            time: new Date().getTime(),
+            strategyCard: sc,
             faction: f,
         };
 
@@ -264,6 +281,10 @@ const AdminPages: React.FC = () => {
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
+    const strategyCardSelectedByActivePlayerInActionPhase =
+        playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
+            (e) => e.faction === activePlayerInActionPhase
+        )?.strategyCard;
 
     return (
         <StyledAdminPage>
@@ -419,7 +440,7 @@ const AdminPages: React.FC = () => {
                         <Button
                             onClick={async () => {
                                 if (factionToResearchTech && techToResearch) {
-                                    await publishTechnologyResearchedEvent(
+                                    await publishPlayerResearchedTechnologyEvent(
                                         techToResearch,
                                         factionToResearchTech
                                     );
@@ -483,6 +504,28 @@ const AdminPages: React.FC = () => {
                             Destroy planet
                         </Button>
                     </DestroyPlanetContainer>
+                    {!strategyCardPlayedByPlayerOnPreviousTurnThisRound(
+                        events,
+                        activePlayerInActionPhase
+                    ) &&
+                        strategyCardSelectedByActivePlayerInActionPhase && (
+                            <ButtonsContainer>
+                                <Button
+                                    disabled={strategyCardPlayedByPlayerThisTurn(
+                                        events,
+                                        activePlayerInActionPhase
+                                    )}
+                                    onClick={() =>
+                                        publishPlayerPlayedStrategyCardEvent(
+                                            strategyCardSelectedByActivePlayerInActionPhase,
+                                            activePlayerInActionPhase
+                                        )
+                                    }
+                                >
+                                    Play strategy card
+                                </Button>
+                            </ButtonsContainer>
+                        )}
                     <ButtonsContainer>
                         <Button
                             onClick={() =>
@@ -495,18 +538,23 @@ const AdminPages: React.FC = () => {
                             Turn finished
                         </Button>
                     </ButtonsContainer>
-                    <ButtonsContainer>
-                        <Button
-                            onClick={() =>
-                                publishTurnFinishedEvent(
-                                    activePlayerInActionPhase,
-                                    true
-                                )
-                            }
-                        >
-                            Pass
-                        </Button>
-                    </ButtonsContainer>
+                    {strategyCardPlayedByPlayerOnPreviousTurnThisRound(
+                        events,
+                        activePlayerInActionPhase
+                    ) && (
+                        <ButtonsContainer>
+                            <Button
+                                onClick={() =>
+                                    publishTurnFinishedEvent(
+                                        activePlayerInActionPhase,
+                                        true
+                                    )
+                                }
+                            >
+                                Pass
+                            </Button>
+                        </ButtonsContainer>
+                    )}
                 </PlayerTurnPage>
             ) : (
                 <>

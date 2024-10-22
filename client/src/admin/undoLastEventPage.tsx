@@ -48,6 +48,10 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Player factions and colors assigned';
         case 'PlayerFinishedTurn':
             return `Player finished turn - ${e.faction}`;
+        case 'PlayerPlayedStrategyCard':
+            return `Strategy card played - ${e.faction} / ${e.strategyCard}`;
+        case 'PlayerResearchedTechnology':
+            return `Tech researched - ${e.faction} / ${e.technology.name}`;
         case 'PlayerScoredVictoryPoint':
             return `Player scored victory point - ${e.faction}`;
         case 'PlayerSelectedStrategyCard':
@@ -58,10 +62,6 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Round started';
         case 'SpeakerAssigned':
             return 'Speaker assigned';
-        case 'StrategyCardPlayed':
-            return `Strategy card played- - ${e.faction} / ${e.strategyCard}`;
-        case 'TechnologyResearched':
-            return `Tech researched - ${e.faction} / ${e.technology.name}`;
     }
 };
 

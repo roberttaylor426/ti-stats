@@ -49,26 +49,30 @@ const initiative = (sc: StrategyCard): number => {
     }
 };
 
-const strategyCardImage = (sc: StrategyCard, back?: true): string => {
+const strategyCardImage = (sc: StrategyCard, showBack: boolean): string => {
     switch (sc) {
         case 'Leadership':
-            return back ? leadershipStrategyCardBack : leadershipStrategyCard;
+            return showBack
+                ? leadershipStrategyCardBack
+                : leadershipStrategyCard;
         case 'Diplomacy':
-            return back ? diplomacyStrategyCardBack : diplomacyStrategyCard;
+            return showBack ? diplomacyStrategyCardBack : diplomacyStrategyCard;
         case 'Politics':
-            return back ? politicsStrategyCardBack : politicsStrategyCard;
+            return showBack ? politicsStrategyCardBack : politicsStrategyCard;
         case 'Construction':
-            return back
+            return showBack
                 ? constructionStrategyCardBack
                 : constructionStrategyCard;
         case 'Trade':
-            return back ? tradeStrategyCardBack : tradeStrategyCard;
+            return showBack ? tradeStrategyCardBack : tradeStrategyCard;
         case 'Warfare':
-            return back ? warfareStrategyCardBack : warfareStrategyCard;
+            return showBack ? warfareStrategyCardBack : warfareStrategyCard;
         case 'Technology':
-            return back ? technologyStrategyCardBack : technologyStrategyCard;
+            return showBack
+                ? technologyStrategyCardBack
+                : technologyStrategyCard;
         case 'Imperial':
-            return back ? imperialStrategyCardBack : imperialStrategyCard;
+            return showBack ? imperialStrategyCardBack : imperialStrategyCard;
     }
 };
 

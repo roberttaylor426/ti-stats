@@ -50,15 +50,15 @@ type ActionPhaseStartedEvent = {
     playerOrder: Faction[];
 };
 
-type TechnologyResearchedEvent = {
-    type: 'TechnologyResearched';
+type PlayerResearchedTechnologyEvent = {
+    type: 'PlayerResearchedTechnology';
     time: number;
     technology: Technology;
     faction: Faction;
 };
 
-type StrategyCardPlayedEvent = {
-    type: 'StrategyCardPlayed';
+type PlayerPlayedStrategyCardEvent = {
+    type: 'PlayerPlayedStrategyCard';
     time: number;
     strategyCard: StrategyCard;
     faction: Faction;
@@ -155,7 +155,8 @@ const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
 
 const isTechnologyResearchedEvent = (
     e: Event
-): e is TechnologyResearchedEvent => e.type === 'TechnologyResearched';
+): e is PlayerResearchedTechnologyEvent =>
+    e.type === 'PlayerResearchedTechnology';
 
 const isPlayerScoredVictoryPointEvent = (
     e: Event
@@ -171,6 +172,10 @@ const isPlayerSelectedStrategyCardEvent = (
     e: Event
 ): e is PlayerSelectedStrategyCardEvent =>
     e.type === 'PlayerSelectedStrategyCard';
+
+const isStrategyCardPlayedEvent = (
+    e: Event
+): e is PlayerPlayedStrategyCardEvent => e.type === 'PlayerPlayedStrategyCard';
 
 const isRoundEndedEvent = (e: Event): e is RoundEndedEvent =>
     e.type === 'RoundEnded';
@@ -196,8 +201,8 @@ type Event =
     | RoundEndedEvent
     | RoundStartedEvent
     | SpeakerAssignedEvent
-    | StrategyCardPlayedEvent
-    | TechnologyResearchedEvent;
+    | PlayerPlayedStrategyCardEvent
+    | PlayerResearchedTechnologyEvent;
 
 const playerFactionsAndColors = (
     events: Event[]
@@ -404,6 +409,46 @@ const planetsControlledByFaction = (
         )
         .map((e) => e.planet);
 
+const strategyCardPlayedByPlayerOnPreviousTurnThisRound = (
+    events: Event[],
+    faction: Faction
+): boolean => {
+    const lastRoundStartedIndex = lastIndexOfEventType(
+        events,
+        isRoundStartedEvent
+    );
+
+    const lastPlayerFinishedTurnIndex = lastIndexOfEventType(
+        events,
+        isPlayerFinishedTurnEvent
+    );
+
+    const eventsThisRoundBeforeStartOfTurn = events.slice(
+        lastRoundStartedIndex + 1,
+        lastPlayerFinishedTurnIndex
+    );
+
+    return !!eventsThisRoundBeforeStartOfTurn
+        .filter(isStrategyCardPlayedEvent)
+        .find((e) => e.faction === faction);
+};
+
+const strategyCardPlayedByPlayerThisTurn = (
+    events: Event[],
+    faction: Faction
+): boolean => {
+    const lastPlayerFinishedTurnIndex = lastIndexOfEventType(
+        events,
+        isPlayerFinishedTurnEvent
+    );
+
+    const eventsThisTurn = events.slice(lastPlayerFinishedTurnIndex + 1);
+
+    return !!eventsThisTurn
+        .filter(isStrategyCardPlayedEvent)
+        .find((e) => e.faction === faction);
+};
+
 const resourcesAndInfluenceForFaction = (
     events: Event[],
     f: Faction
@@ -465,6 +510,7 @@ export {
     isRoundEndedEvent,
     isRoundStartedEvent,
     isSpeakerAssignedEvent,
+    isStrategyCardPlayedEvent,
     isTechnologyResearchedEvent,
     isUnion,
     lastIndexOfEventType,
@@ -477,5 +523,7 @@ export {
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     resourcesAndInfluenceForFaction,
     RoundStartedEvent,
+    strategyCardPlayedByPlayerOnPreviousTurnThisRound,
+    strategyCardPlayedByPlayerThisTurn,
     technologiesResearchedByFaction,
 };

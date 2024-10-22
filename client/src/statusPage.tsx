@@ -22,6 +22,7 @@ import {
     playerScore,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     resourcesAndInfluenceForFaction,
+    strategyCardPlayedByPlayerOnPreviousTurnThisRound,
 } from './events';
 import { shortName } from './factions';
 import { Stars } from './stars';
@@ -151,7 +152,11 @@ const StatusPage: React.FC = () => {
                                     <StrategyCardContainer>
                                         <StrategyCard
                                             src={strategyCardImage(
-                                                strategyCardSelectedByActivePlayerInActionPhase
+                                                strategyCardSelectedByActivePlayerInActionPhase,
+                                                strategyCardPlayedByPlayerOnPreviousTurnThisRound(
+                                                    events,
+                                                    activePlayerInActionPhase
+                                                )
                                             )}
                                         />
                                     </StrategyCardContainer>
