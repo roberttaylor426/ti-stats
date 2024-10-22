@@ -19,6 +19,7 @@ import {
     isRoundEndedEvent,
     isRoundStartedEvent,
     isUnion,
+    lastIndexOfEventType,
     playerScore,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     resourcesAndInfluenceForFaction,
@@ -106,7 +107,7 @@ const StatusPage: React.FC = () => {
                                 />
                             </BottomContainer>
                         </SpreadColumnContainer>
-                    ) : isRoundEndedEvent(lastEvent) ? (
+                    ) : isRoundEndedPageShown(events) ? (
                         <SpreadColumnContainer>
                             <TitleContainer>
                                 <Title>{`Round ${currentRoundNumber(events) - 1} complete`}</Title>
@@ -218,6 +219,16 @@ const StatusPage: React.FC = () => {
             )}
         </StyledStatusPage>
     );
+};
+
+const isRoundEndedPageShown = (events: Event[]): boolean => {
+    const lastRoundEndedIndex = lastIndexOfEventType(events, isRoundEndedEvent);
+    const lastRoundStartedIndex = lastIndexOfEventType(
+        events,
+        isRoundStartedEvent
+    );
+
+    return lastRoundEndedIndex > lastRoundStartedIndex;
 };
 
 const timeElapsedBetweenEvents = (e1: Event, e2: Event): string =>
