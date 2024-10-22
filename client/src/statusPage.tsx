@@ -20,9 +20,12 @@ import {
     isRoundStartedEvent,
     isUnion,
     playerScore,
+    playerSelectedStrategyCardEventFromLastStrategyPhase,
     resourcesAndInfluenceForFaction,
 } from './events';
+import { shortName } from './factions';
 import { Stars } from './stars';
+import { strategyCardImage } from './strategyCards';
 import { useEvents } from './useEvents';
 
 const StatusPage: React.FC = () => {
@@ -48,6 +51,10 @@ const StatusPage: React.FC = () => {
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
+    const strategyCardSelectedByActivePlayerInActionPhase =
+        playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
+            (e) => e.faction === activePlayerInActionPhase
+        )?.strategyCard;
 
     const winningPlayer = _.first(
         factionsInGame(events)
@@ -66,7 +73,6 @@ const StatusPage: React.FC = () => {
                     <SpreadColumnContainer>
                         <TitleContainer />
                         <Title>{`${winningPlayer.faction} wins!`}</Title>
-
                         <CentralContainer>
                             <Title>Time taken:</Title>
                             <TotalTime
@@ -86,7 +92,7 @@ const StatusPage: React.FC = () => {
                             </TitleContainer>
                             {activePlayerInStrategyPhase && (
                                 <CentralContainer>
-                                    <PlayerTurn>{`${activePlayerInStrategyPhase} turn`}</PlayerTurn>
+                                    <PlayerTurn>{`${shortName(activePlayerInStrategyPhase)}`}</PlayerTurn>
                                 </CentralContainer>
                             )}
                             <BottomContainer>
@@ -131,7 +137,7 @@ const StatusPage: React.FC = () => {
                                 <SubTitle>Action Phase</SubTitle>
                             </TitleContainer>
                             <CentralContainer>
-                                <PlayerTurn>{`${activePlayerInActionPhase} turn`}</PlayerTurn>
+                                <PlayerTurn>{`${shortName(activePlayerInActionPhase)}`}</PlayerTurn>
                                 <ScoresRow>
                                     <ScoresContent>
                                         <VpScore>{`${playerScore(events, activePlayerInActionPhase)}VP`}</VpScore>
@@ -139,6 +145,17 @@ const StatusPage: React.FC = () => {
                                         <InfluenceScore>{`${resourcesAndInfluenceForFaction(events, activePlayerInActionPhase).influence}`}</InfluenceScore>
                                     </ScoresContent>
                                 </ScoresRow>
+                            </CentralContainer>
+                            <CentralContainer>
+                                {strategyCardSelectedByActivePlayerInActionPhase && (
+                                    <StrategyCardContainer>
+                                        <StrategyCard
+                                            src={strategyCardImage(
+                                                strategyCardSelectedByActivePlayerInActionPhase
+                                            )}
+                                        />
+                                    </StrategyCardContainer>
+                                )}
                             </CentralContainer>
                             {lastEventWhenPlayerTurnStarted && (
                                 <BottomContainer>
@@ -282,6 +299,7 @@ const BottomContainer = styled.div`
     align-items: center;
     border-top: ${accentColor}88 solid 1px;
     background-color: black;
+    padding-top: 0.5rem;
 `;
 
 const PlayerTurn = styled.h1`
@@ -322,11 +340,28 @@ const InfluenceScore = styled(ScoreComponent)`
     color: ${accentColor};
 `;
 
+const StrategyCardContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 25vh;
+
+    > * {
+        flex: 1 1 0;
+    }
+`;
+
+const StrategyCard = styled.img`
+    min-width: 0;
+    min-height: 0;
+`;
+
 const TimeSpan = styled.span`
     font-family: 'Alarm Clock', 'sans-serif';
     font-size: 22vw;
     text-align: center;
     color: yellow;
+    line-height: 0.9;
 `;
 
 type TotalTimeProps = {

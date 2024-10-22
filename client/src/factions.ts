@@ -67,6 +67,8 @@ const factions = _.sortBy([
     ...factionsWithDynamicHomeworlds,
 ]);
 
+const shortName = (f: Faction): string => f.replace('The ', '');
+
 const homeworlds = (f: FactionWithFixedHomeworlds): PlanetName[] => {
     switch (f) {
         case 'Sardakk N’orr':
@@ -215,5 +217,6 @@ export {
     isFactionSelectionWithCustomHomeworlds,
     isFactionWithDynamicHomeworlds,
     selectedFaction,
+    shortName,
     startingTechsForFaction,
 };
