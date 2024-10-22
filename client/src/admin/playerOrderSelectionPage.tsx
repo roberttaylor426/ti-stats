@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import _ from 'underscore';
 
-import { Event, factionsInGame } from '../events';
+import {
+    Event,
+    factionsInGame,
+    playerSelectedStrategyCardEventFromLastStrategyPhase,
+} from '../events';
 import { Faction } from '../factions';
+import { initiative } from '../strategyCards';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
 
@@ -12,7 +17,16 @@ type Props = {
 
 const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
     const { currentRoundNumber, events, publishNewEvents } = props;
-    const [playerOrder, setPlayerOrder] = useState<Faction[]>([]);
+    const factionsInInitiativeOrder = _.sortBy(
+        playerSelectedStrategyCardEventFromLastStrategyPhase(events),
+        (e) =>
+            e.faction === 'The Naalu Collective'
+                ? 0
+                : initiative(e.strategyCard)
+    ).map((e) => e.faction);
+    const [playerOrder, setPlayerOrder] = useState<Faction[]>(
+        factionsInInitiativeOrder
+    );
 
     const publishActionPhaseStartedEvent = async () => {
         if (
@@ -37,6 +51,7 @@ const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
             {factionsInGame(events).map((_f, index) => (
                 <Select
                     key={index}
+                    defaultValue={factionsInInitiativeOrder[index]}
                     onChange={(e) =>
                         setPlayerOrder(
                             Object.assign([], playerOrder, {
