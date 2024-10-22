@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
 import useAsyncEffect from 'use-async-effect';
@@ -55,6 +55,11 @@ const AdminPages: React.FC = () => {
             }
         } catch {}
     }, []);
+
+    const pageTitleRef = useRef<HTMLDivElement>(null);
+    const scrollToTop = () => {
+        pageTitleRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     const [selectedPlanetToControl, setSelectedPlanetToControl] =
         useState<PlanetName>();
@@ -318,10 +323,12 @@ const AdminPages: React.FC = () => {
                 />
             ) : activePlayerInActionPhase ? (
                 <PlayerTurnPage>
-                    <PageTitle
-                        {...adminPageProps}
-                        title={`${currentPlayerTurnInActionPhase(events)} turn`}
-                    />
+                    <div ref={pageTitleRef}>
+                        <PageTitle
+                            {...adminPageProps}
+                            title={`${currentPlayerTurnInActionPhase(events)} turn`}
+                        />
+                    </div>
                     <StyledPlanetControlledRow>
                         <Select
                             onChange={(e) =>
@@ -528,12 +535,14 @@ const AdminPages: React.FC = () => {
                         )}
                     <ButtonsContainer>
                         <Button
-                            onClick={() =>
-                                publishTurnFinishedEvent(
+                            onClick={async () => {
+                                await publishTurnFinishedEvent(
                                     activePlayerInActionPhase,
                                     false
-                                )
-                            }
+                                );
+
+                                scrollToTop();
+                            }}
                         >
                             Turn finished
                         </Button>
@@ -544,12 +553,14 @@ const AdminPages: React.FC = () => {
                     ) && (
                         <ButtonsContainer>
                             <Button
-                                onClick={() =>
-                                    publishTurnFinishedEvent(
+                                onClick={async () => {
+                                    await publishTurnFinishedEvent(
                                         activePlayerInActionPhase,
                                         true
-                                    )
-                                }
+                                    );
+
+                                    scrollToTop();
+                                }}
                             >
                                 Pass
                             </Button>
