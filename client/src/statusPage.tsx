@@ -408,7 +408,9 @@ const HoldingScreen: React.FC<HoldingScreenProps> = ({ currentTime }) => (
     <SpreadColumnContainer>
         <div />
         <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
-        <SubTitle>{formatDate(new Date(currentTime), 'PPP')}</SubTitle>
+        <SubTitle>
+            {formatDate(new Date(currentTime), 'PPP').replace(/,/g, '')}
+        </SubTitle>
         <div />
     </SpreadColumnContainer>
 );
