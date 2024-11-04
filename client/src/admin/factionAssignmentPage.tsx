@@ -68,7 +68,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                         startingTechsForFaction(f).map(
                             (t) =>
                                 ({
-                                    type: 'TechnologyResearched',
+                                    type: 'PlayerResearchedTechnology',
                                     time: new Date().getTime(),
                                     technology: t,
                                     faction: f,
