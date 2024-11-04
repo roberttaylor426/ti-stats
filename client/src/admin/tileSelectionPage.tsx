@@ -10,6 +10,9 @@ import {
     isFactionSelectionWithCustomHomeworlds,
 } from '../factions';
 import {
+    ghostsOfCreussGalaxyTileNumber,
+    ghostsOfCreussHomeTileNumber,
+    malliceTileNumber,
     mecatolRexTileNumber,
     SystemTile,
     SystemTileNumber,
@@ -90,10 +93,6 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
         </>
     );
 };
-
-const ghostsOfCreussGalaxyTileNumber = 17;
-const ghostsOfCreussHomeTileNumber = 51;
-const malliceTileNumber = 82;
 
 const tilesAvailableForGalaxyIndex = (
     n: number,

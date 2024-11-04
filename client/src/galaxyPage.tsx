@@ -6,11 +6,13 @@ import tile51 from './assets/tiles/ST_51.png';
 import tile82 from './assets/tiles/ST_82.png';
 import tile82Back from './assets/tiles/ST_82_Back.png';
 import {
+    Event,
     factionsInGame,
     isMapTilesSelectedEvent,
     latestPlanetControlledEventsByPlanet,
     playerFactionsAndColors,
     resourcesAndInfluenceForFaction,
+    systemTileNumbersInPlay,
 } from './events';
 import { Faction } from './factions';
 import { ResourcesAndInfluence } from './planets';
@@ -18,7 +20,13 @@ import { hexPlayerColor, PlayerColor } from './playerColors';
 import { Scoreboard, ScoreboardRow } from './scoreboard';
 import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
-import { systemTileImages, systemTiles, tile0 } from './systemTiles';
+import {
+    ghostsOfCreussHomeTileNumber,
+    systemTileImages,
+    SystemTileNumber,
+    systemTiles,
+    tile0,
+} from './systemTiles';
 import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
 
@@ -64,30 +72,10 @@ const GalaxyPage: React.FC = () => {
                                                 systemTileNumber={
                                                     systemTileNumber
                                                 }
-                                                controllingPlayerColors={
-                                                    systemTiles
-                                                        .find(
-                                                            (st) =>
-                                                                st.tileNumber ===
-                                                                systemTileNumber
-                                                        )
-                                                        ?.planets.map((p) =>
-                                                            latestPlanetControlledEventsByPlanet(
-                                                                events
-                                                            ).find(
-                                                                (e) =>
-                                                                    e.planet ===
-                                                                    p
-                                                            )
-                                                        )
-                                                        .filter(notUndefined)
-                                                        .map(
-                                                            (e) =>
-                                                                playerFactionsAndColors(
-                                                                    events
-                                                                )[e.faction]
-                                                        ) || []
-                                                }
+                                                controllingPlayerColors={controllingPlayerColors(
+                                                    systemTileNumber,
+                                                    events
+                                                )}
                                             />
                                         );
                                     }
@@ -108,10 +96,17 @@ const GalaxyPage: React.FC = () => {
                             )[0]
                     }
                 />
-                {Object.values(
-                    mapTilesSelectedEvent?.selections || {}
-                ).includes(51) ? (
-                    <GhostsOfCreussHomeTile controllingPlayerColor={'Green'} />
+                {systemTileNumbersInPlay(events).includes(
+                    ghostsOfCreussHomeTileNumber
+                ) ? (
+                    <GhostsOfCreussHomeTile
+                        controllingPlayerColor={
+                            controllingPlayerColors(
+                                ghostsOfCreussHomeTileNumber,
+                                events
+                            )[0]
+                        }
+                    />
                 ) : (
                     <div />
                 )}
@@ -285,6 +280,20 @@ const ExtraTiles = styled.div`
         }
     }
 `;
+
+const controllingPlayerColors = (
+    systemTileNumber: SystemTileNumber | undefined,
+    events: Event[]
+): PlayerColor[] =>
+    systemTiles
+        .find((st) => st.tileNumber === systemTileNumber)
+        ?.planets.map((p) =>
+            latestPlanetControlledEventsByPlanet(events).find(
+                (e) => e.planet === p
+            )
+        )
+        .filter(notUndefined)
+        .map((e) => playerFactionsAndColors(events)[e.faction]) || [];
 
 type HighlightableTileProps = {
     systemTileNumber?: number;

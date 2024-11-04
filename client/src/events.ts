@@ -10,8 +10,14 @@ import {
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { numberOfPlayersInGame, PlayerColor } from './playerColors';
 import { StrategyCard } from './strategyCards';
-import { factionSystemTileNumber, SystemTileNumber } from './systemTiles';
+import {
+    factionSystemTileNumber,
+    ghostsOfCreussHomeTileNumber,
+    malliceTileNumber,
+    SystemTileNumber,
+} from './systemTiles';
 import { Technology } from './technologies';
+import { notUndefined } from './util';
 
 type PlayersAssignedFactionsAndColorsEvent = {
     type: 'PlayersAssignedFactionsAndColors';
@@ -309,6 +315,17 @@ const playerSelectedStrategyCardEventFromLastStrategyPhase = (
         .filter(isPlayerSelectedStrategyCardEvent);
 };
 
+const systemTileNumbersInPlay = (events: Event[]): SystemTileNumber[] =>
+    [
+        ...Object.values(
+            _.last(events.filter(isMapTilesSelectedEvent))?.selections || {}
+        ),
+        malliceTileNumber,
+        factionsInGame(events).includes('The Ghosts of Creuss')
+            ? ghostsOfCreussHomeTileNumber
+            : undefined,
+    ].filter(notUndefined) as SystemTileNumber[];
+
 const currentActionPhasePlayerOrder = (events: Event[]): Faction[] =>
     _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
 
@@ -525,5 +542,6 @@ export {
     RoundStartedEvent,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
+    systemTileNumbersInPlay,
     technologiesResearchedByFaction,
 };

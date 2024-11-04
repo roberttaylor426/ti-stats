@@ -22,6 +22,7 @@ import {
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
+    systemTileNumbersInPlay,
     technologiesResearchedByFaction,
 } from '../events';
 import { Faction } from '../factions';
@@ -215,22 +216,17 @@ const AdminPages: React.FC = () => {
         return await publishNewEvents([newEvent]);
     };
 
-    const planetsOnTheBoard: PlanetName[] = [
-        ...Object.values(
-            _.last(events.filter(isMapTilesSelectedEvent))?.selections || {}
+    const planetsOnTheBoard: PlanetName[] = systemTileNumbersInPlay(events)
+        .flatMap(
+            (stn) =>
+                systemTiles.find((t) => t.tileNumber === stn)?.planets || []
         )
-            .flatMap(
-                (stn) =>
-                    systemTiles.find((t) => t.tileNumber === stn)?.planets || []
-            )
-            .filter(
-                (p) =>
-                    !events
-                        .filter(isPlanetDestroyedEvent)
-                        .some((dp) => dp.planet === p)
-            ),
-        'Mallice',
-    ];
+        .filter(
+            (p) =>
+                !events
+                    .filter(isPlanetDestroyedEvent)
+                    .some((dp) => dp.planet === p)
+        );
 
     const factionCurrentlyControllingPlanet = (p: PlanetName) =>
         latestPlanetControlledEventsByPlanet(events).find((e) => e.planet === p)

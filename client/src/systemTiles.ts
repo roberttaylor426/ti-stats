@@ -265,7 +265,10 @@ type SystemTileNumber =
     | 81
     | 82;
 
+const ghostsOfCreussGalaxyTileNumber = 17;
 const mecatolRexTileNumber = 18;
+const ghostsOfCreussHomeTileNumber = 51;
+const malliceTileNumber = 82;
 
 const systemTiles: SystemTile[] = [
     {
@@ -349,7 +352,7 @@ const systemTiles: SystemTile[] = [
         planets: homeworlds('The Emirates of Hacan'),
     },
     {
-        tileNumber: 17,
+        tileNumber: ghostsOfCreussGalaxyTileNumber,
         image: tile17,
         planets: [],
     },
@@ -519,7 +522,7 @@ const systemTiles: SystemTile[] = [
         planets: [],
     },
     {
-        tileNumber: 51,
+        tileNumber: ghostsOfCreussHomeTileNumber,
         image: tile51,
         planets: homeworlds('The Ghosts of Creuss'),
     },
@@ -674,7 +677,7 @@ const systemTiles: SystemTile[] = [
         planets: [],
     },
     {
-        tileNumber: 82,
+        tileNumber: malliceTileNumber,
         image: tile82,
         planets: ['Mallice'],
     },
@@ -691,6 +694,9 @@ const factionSystemTileNumber = (fs: FactionSelection): SystemTileNumber => {
 
 export {
     factionSystemTileNumber,
+    ghostsOfCreussGalaxyTileNumber,
+    ghostsOfCreussHomeTileNumber,
+    malliceTileNumber,
     mecatolRexTileNumber,
     SystemTile,
     systemTileImages,
