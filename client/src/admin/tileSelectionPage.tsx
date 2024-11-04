@@ -91,6 +91,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
     );
 };
 
+const ghostsOfCreussGalaxyTileNumber = 17;
 const ghostsOfCreussHomeTileNumber = 51;
 const malliceTileNumber = 82;
 
@@ -112,7 +113,9 @@ const homeworldTilesForGalaxy = (
         factionSelections.some((fs) =>
             isFactionSelectionWithCustomHomeworlds(fs)
                 ? _.isEqual(homeworlds(fs.homeworldsOf), st.planets)
-                : _.isEqual(homeworlds(fs), st.planets)
+                : fs === 'The Ghosts of Creuss'
+                  ? st.tileNumber === ghostsOfCreussGalaxyTileNumber
+                  : _.isEqual(homeworlds(fs), st.planets)
         )
     );
 
@@ -126,6 +129,7 @@ const nonHomeworldTilesForGalaxy = (): SystemTile[] =>
         )
         .filter(
             (st) =>
+                st.tileNumber !== ghostsOfCreussGalaxyTileNumber &&
                 st.tileNumber !== ghostsOfCreussHomeTileNumber &&
                 st.tileNumber !== malliceTileNumber
         );
