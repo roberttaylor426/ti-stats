@@ -265,6 +265,9 @@ type SystemTileNumber =
     | 81
     | 82;
 
+const isSystemTileNumber = (n: number): n is SystemTileNumber =>
+    Number.isInteger(n) && n >= 1 && n < 82;
+
 const ghostsOfCreussGalaxyTileNumber = 17;
 const mecatolRexTileNumber = 18;
 const ghostsOfCreussHomeTileNumber = 51;
@@ -696,6 +699,7 @@ export {
     factionSystemTileNumber,
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
+    isSystemTileNumber,
     malliceTileNumber,
     mecatolRexTileNumber,
     SystemTile,

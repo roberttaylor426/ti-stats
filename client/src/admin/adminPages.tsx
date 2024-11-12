@@ -34,6 +34,7 @@ import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { Button, PageTitle, Select } from './components';
 import { FactionAssignmentPage } from './factionAssignmentPage';
+import { NumberInput } from './input';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
 import { StrategyCardSelectionPage } from './strategyCardSelectionPage';
@@ -743,11 +744,6 @@ const ButtonsContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-`;
-
-const NumberInput = styled.input.attrs(() => ({ type: 'number' }))`
-    min-width: 0;
-    font-size: 2.25rem;
 `;
 
 export { AdminPages };
