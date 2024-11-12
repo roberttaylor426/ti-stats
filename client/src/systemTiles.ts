@@ -90,11 +90,21 @@ import {
 } from './factions';
 import { PlanetName } from './planets';
 
-type SystemTile = {
-    tileNumber: SystemTileNumber;
+type PlanetlessSystemTile = {
+    tileNumber: PlanetlessSystemTileNumber;
+    image: string;
+};
+
+type SystemWithPlanetsTile = {
+    tileNumber: SystemWithPlanetsTileNumber;
     image: string;
     planets: PlanetName[];
 };
+
+type SystemTile = PlanetlessSystemTile | SystemWithPlanetsTile;
+
+const isSystemWithPlanetsTile = (t: SystemTile): t is SystemWithPlanetsTile =>
+    !!(t as SystemWithPlanetsTile).planets;
 
 const systemTileImages = [
     tile1,
@@ -181,89 +191,30 @@ const systemTileImages = [
     tile82,
 ];
 
+const planetlessSystemTileNumbers = [
+    17, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 77, 78, 79, 80, 81,
+] as const;
+
+type PlanetlessSystemTileNumber = (typeof planetlessSystemTileNumbers)[number];
+
+const systemWithPlanetsTileNumbers = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22,
+    23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 51, 52, 53,
+    54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
+    73, 74, 75, 76, 82,
+] as const;
+
+type SystemWithPlanetsTileNumber =
+    (typeof systemWithPlanetsTileNumbers)[number];
+
 type SystemTileNumber =
-    | 1
-    | 2
-    | 3
-    | 4
-    | 5
-    | 6
-    | 7
-    | 8
-    | 9
-    | 10
-    | 11
-    | 12
-    | 13
-    | 14
-    | 15
-    | 16
-    | 17
-    | 18
-    | 19
-    | 20
-    | 21
-    | 22
-    | 23
-    | 24
-    | 25
-    | 26
-    | 27
-    | 28
-    | 29
-    | 30
-    | 31
-    | 32
-    | 33
-    | 34
-    | 35
-    | 36
-    | 37
-    | 38
-    | 39
-    | 40
-    | 41
-    | 42
-    | 43
-    | 44
-    | 45
-    | 46
-    | 47
-    | 48
-    | 49
-    | 50
-    | 51
-    | 52
-    | 53
-    | 54
-    | 55
-    | 56
-    | 57
-    | 58
-    | 59
-    | 60
-    | 61
-    | 62
-    | 63
-    | 64
-    | 65
-    | 66
-    | 67
-    | 68
-    | 69
-    | 70
-    | 71
-    | 72
-    | 73
-    | 74
-    | 75
-    | 76
-    | 77
-    | 78
-    | 79
-    | 80
-    | 81
-    | 82;
+    | PlanetlessSystemTileNumber
+    | SystemWithPlanetsTileNumber;
+
+const isSystemWithPlanetsTileNumber = (
+    stn: SystemTileNumber
+): stn is SystemWithPlanetsTileNumber =>
+    !!systemWithPlanetsTileNumbers.find((n) => n === stn);
 
 const isSystemTileNumber = (n: number): n is SystemTileNumber =>
     Number.isInteger(n) && n >= 1 && n < 82;
@@ -357,7 +308,6 @@ const systemTiles: SystemTile[] = [
     {
         tileNumber: ghostsOfCreussGalaxyTileNumber,
         image: tile17,
-        planets: [],
     },
     {
         tileNumber: mecatolRexTileNumber,
@@ -467,62 +417,50 @@ const systemTiles: SystemTile[] = [
     {
         tileNumber: 39,
         image: tile39,
-        planets: [],
     },
     {
         tileNumber: 40,
         image: tile40,
-        planets: [],
     },
     {
         tileNumber: 41,
         image: tile41,
-        planets: [],
     },
     {
         tileNumber: 42,
         image: tile42,
-        planets: [],
     },
     {
         tileNumber: 43,
         image: tile43,
-        planets: [],
     },
     {
         tileNumber: 44,
         image: tile44,
-        planets: [],
     },
     {
         tileNumber: 45,
         image: tile45,
-        planets: [],
     },
     {
         tileNumber: 46,
         image: tile46,
-        planets: [],
     },
     {
         tileNumber: 47,
         image: tile47,
-        planets: [],
     },
     {
         tileNumber: 48,
         image: tile48,
-        planets: [],
     },
     {
         tileNumber: 49,
         image: tile49,
-        planets: [],
     },
     {
         tileNumber: 50,
         image: tile50,
-        planets: [],
     },
     {
         tileNumber: ghostsOfCreussHomeTileNumber,
@@ -657,27 +595,22 @@ const systemTiles: SystemTile[] = [
     {
         tileNumber: 77,
         image: tile77,
-        planets: [],
     },
     {
         tileNumber: 78,
         image: tile78,
-        planets: [],
     },
     {
         tileNumber: 79,
         image: tile79,
-        planets: [],
     },
     {
         tileNumber: 80,
         image: tile80,
-        planets: [],
     },
     {
         tileNumber: 81,
         image: tile81,
-        planets: [],
     },
     {
         tileNumber: malliceTileNumber,
@@ -686,13 +619,61 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
+const systemTileDescription = (stn: SystemTileNumber): string =>
+    `${stn} - ${isSystemWithPlanetsTileNumber(stn) ? systemWithPlanetsTileDescription(stn) : planetlessSystemTileDescription(stn)}`;
+
+const systemWithPlanetsTileDescription = (
+    stn: SystemWithPlanetsTileNumber
+): string =>
+    (
+        systemTiles
+            .filter(isSystemWithPlanetsTile)
+            .find((st) => st.tileNumber === stn)?.planets || []
+    ).join(', ');
+
+const planetlessSystemTileDescription = (
+    stn: PlanetlessSystemTileNumber
+): string => {
+    switch (stn) {
+        case 17:
+            return 'The Creuss Gate';
+        case 39:
+            return 'Alpha wormhole';
+        case 40:
+            return 'Beta wormhole';
+        case 41:
+            return 'Gravity rift';
+        case 42:
+            return 'Nebula';
+        case 43:
+        case 80:
+            return 'Supernova';
+        case 44:
+        case 45:
+            return 'Asteroid field';
+        case 46:
+        case 47:
+        case 48:
+        case 49:
+        case 50:
+        case 77:
+        case 78:
+            return 'Empty space';
+        case 79:
+            return 'Alpha wormhole in asteroid field';
+        case 81:
+            return 'Muaat supernova';
+    }
+};
+
 const factionSystemTileNumber = (fs: FactionSelection): SystemTileNumber => {
     const factionForSystemTile = isFactionSelectionWithCustomHomeworlds(fs)
         ? fs.homeworldsOf
         : fs;
-    return systemTiles.find((st) =>
-        _.isEqual(st.planets, homeworlds(factionForSystemTile))
-    )?.tileNumber as SystemTileNumber;
+    return systemTiles
+        .filter(isSystemWithPlanetsTile)
+        .find((st) => _.isEqual(st.planets, homeworlds(factionForSystemTile)))
+        ?.tileNumber as SystemTileNumber;
 };
 
 export {
@@ -700,9 +681,12 @@ export {
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
     isSystemTileNumber,
+    isSystemWithPlanetsTile,
     malliceTileNumber,
     mecatolRexTileNumber,
+    PlanetlessSystemTileNumber,
     SystemTile,
+    systemTileDescription,
     systemTileImages,
     SystemTileNumber,
     systemTiles,

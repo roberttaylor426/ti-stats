@@ -29,7 +29,7 @@ import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { numberOfPlayersInGame } from '../playerColors';
 import { StrategyCard } from '../strategyCards';
-import { systemTiles } from '../systemTiles';
+import { isSystemWithPlanetsTile, systemTiles } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { Button, PageTitle, Select } from './components';
@@ -220,7 +220,9 @@ const AdminPages: React.FC = () => {
     const planetsOnTheBoard: PlanetName[] = systemTileNumbersInPlay(events)
         .flatMap(
             (stn) =>
-                systemTiles.find((t) => t.tileNumber === stn)?.planets || []
+                systemTiles
+                    .filter(isSystemWithPlanetsTile)
+                    .find((t) => t.tileNumber === stn)?.planets || []
         )
         .filter(
             (p) =>

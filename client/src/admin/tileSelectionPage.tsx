@@ -13,9 +13,11 @@ import {
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
     isSystemTileNumber,
+    isSystemWithPlanetsTile,
     malliceTileNumber,
     mecatolRexTileNumber,
     SystemTile,
+    systemTileDescription,
     SystemTileNumber,
     systemTiles,
 } from '../systemTiles';
@@ -101,7 +103,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
                                     key={st.tileNumber}
                                     value={st.tileNumber}
                                 >
-                                    {tileLabel(st.tileNumber)}
+                                    {systemTileDescription(st.tileNumber)}
                                 </option>
                             ))}
                     </Select>
@@ -184,11 +186,13 @@ const homeworldTilesForGalaxy = (
 ): SystemTile[] =>
     systemTiles.filter((st) =>
         factionSelections.some((fs) =>
-            isFactionSelectionWithCustomHomeworlds(fs)
-                ? _.isEqual(homeworlds(fs.homeworldsOf), st.planets)
-                : fs === 'The Ghosts of Creuss'
-                  ? st.tileNumber === ghostsOfCreussGalaxyTileNumber
-                  : _.isEqual(homeworlds(fs), st.planets)
+            fs === 'The Ghosts of Creuss'
+                ? st.tileNumber === ghostsOfCreussGalaxyTileNumber
+                : isFactionSelectionWithCustomHomeworlds(fs)
+                  ? isSystemWithPlanetsTile(st) &&
+                    _.isEqual(homeworlds(fs.homeworldsOf), st.planets)
+                  : isSystemWithPlanetsTile(st) &&
+                    _.isEqual(homeworlds(fs), st.planets)
         )
     );
 
@@ -196,6 +200,7 @@ const nonHomeworldTilesForGalaxy = (): SystemTile[] =>
     systemTiles
         .filter(
             (st) =>
+                !isSystemWithPlanetsTile(st) ||
                 !factionsWithFixedHomeworlds.find((f) =>
                     _.isEqual(homeworlds(f), st.planets)
                 )
@@ -206,12 +211,6 @@ const nonHomeworldTilesForGalaxy = (): SystemTile[] =>
                 st.tileNumber !== ghostsOfCreussHomeTileNumber &&
                 st.tileNumber !== malliceTileNumber
         );
-
-const tileLabel = (tileNumber: SystemTileNumber): string => {
-    const systemTilePlanets =
-        systemTiles.find((st) => st.tileNumber === tileNumber)?.planets || [];
-    return `${tileNumber}${systemTilePlanets.length > 0 ? ` - ${systemTilePlanets?.join(', ')}` : ''}`;
-};
 
 const TtsMapStringContainer = styled.div`
     display: flex;

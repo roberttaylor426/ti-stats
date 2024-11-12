@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import _ from 'underscore';
 
 import { Event } from '../events';
+import { systemTileDescription } from '../systemTiles';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle } from './components';
 
@@ -44,6 +45,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return `Planet destroyed - ${e.planet}`;
         case 'PlanetEnhanced':
             return `Planet enhanced - ${e.planet}`;
+        case 'PlanetlessSystemControlled':
+            return `Planetless system controlled - ${systemTileDescription(e.tileNumber)}`;
         case 'PlayersAssignedFactionsAndColors':
             return 'Player factions and colors assigned';
         case 'PlayerFinishedTurn':

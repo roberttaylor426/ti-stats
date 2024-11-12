@@ -14,6 +14,7 @@ import {
     factionSystemTileNumber,
     ghostsOfCreussHomeTileNumber,
     malliceTileNumber,
+    PlanetlessSystemTileNumber,
     SystemTileNumber,
 } from './systemTiles';
 import { Technology } from './technologies';
@@ -96,6 +97,13 @@ type PlanetControlledEvent = {
     type: 'PlanetControlled';
     time: number;
     planet: PlanetName;
+    faction: Faction;
+};
+
+type PlanetlessSystemControlledEvent = {
+    type: 'PlanetlessSystemControlled';
+    time: number;
+    tileNumber: PlanetlessSystemTileNumber;
     faction: Faction;
 };
 
@@ -200,6 +208,7 @@ type Event =
     | PlanetControlledEvent
     | PlanetDestroyedEvent
     | PlanetEnhancedEvent
+    | PlanetlessSystemControlledEvent
     | PlayersAssignedFactionsAndColorsEvent
     | PlayerFinishedTurnEvent
     | PlayerScoredVictoryPointEvent

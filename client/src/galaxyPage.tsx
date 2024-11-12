@@ -22,6 +22,7 @@ import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import {
     ghostsOfCreussHomeTileNumber,
+    isSystemWithPlanetsTile,
     systemTileImages,
     SystemTileNumber,
     systemTiles,
@@ -33,6 +34,7 @@ import { notUndefined, range } from './util';
 /*
  Extract common scoreboard component
  Extract all pages into separate files
+ Support tile changes in game (Creuss, Muaat heroes)
 */
 
 const GalaxyPage: React.FC = () => {
@@ -286,6 +288,7 @@ const controllingPlayerColors = (
     events: Event[]
 ): PlayerColor[] =>
     systemTiles
+        .filter(isSystemWithPlanetsTile)
         .find((st) => st.tileNumber === systemTileNumber)
         ?.planets.map((p) =>
             latestPlanetControlledEventsByPlanet(events).find(
