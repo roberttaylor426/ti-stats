@@ -426,6 +426,20 @@ const latestPlanetControlledEventsByPlanet = (events: Event[]) =>
                 )
         );
 
+const latestPlanetlessSystemControlledEventsBySystem = (
+    events: Event[]
+): PlanetlessSystemControlledEvent[] =>
+    events
+        .filter(isPlanetlessSystemControlledEvent)
+        .reverse()
+        .reduce(
+            (acc: PlanetlessSystemControlledEvent[], n) =>
+                acc.find((e) => e.tileNumber === n.tileNumber)
+                    ? acc
+                    : [...acc, n],
+            []
+        );
+
 const planetsControlledByFaction = (
     events: Event[],
     faction: Faction
@@ -547,6 +561,7 @@ export {
     isUnion,
     lastIndexOfEventType,
     latestPlanetControlledEventsByPlanet,
+    latestPlanetlessSystemControlledEventsBySystem,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     PlanetlessSystemControlledEvent,

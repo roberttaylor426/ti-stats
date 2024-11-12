@@ -11,17 +11,15 @@ import {
     factionsInGame,
     hasMecatolRexBeenCaptured,
     isMapTilesSelectedEvent,
-    isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
-    isPlanetlessSystemControlledEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     lastIndexOfEventType,
+    latestPlanetControlledEventsByPlanet,
+    latestPlanetlessSystemControlledEventsBySystem,
     MapTilesSelectedEvent,
-    PlanetControlledEvent,
-    PlanetlessSystemControlledEvent,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
@@ -752,32 +750,6 @@ const isStartRoundPageVisible = (events: Event[]) => {
 const isSelectStrategyCardPageVisible = (events: Event[]) =>
     playerSelectedStrategyCardEventFromLastStrategyPhase(events).length <
     numberOfPlayersInGame;
-
-const latestPlanetControlledEventsByPlanet = (
-    events: Event[]
-): PlanetControlledEvent[] =>
-    events
-        .filter(isPlanetControlledEvent)
-        .reverse()
-        .reduce(
-            (acc: PlanetControlledEvent[], n) =>
-                acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
-            []
-        );
-
-const latestPlanetlessSystemControlledEventsBySystem = (
-    events: Event[]
-): PlanetlessSystemControlledEvent[] =>
-    events
-        .filter(isPlanetlessSystemControlledEvent)
-        .reverse()
-        .reduce(
-            (acc: PlanetlessSystemControlledEvent[], n) =>
-                acc.find((e) => e.tileNumber === n.tileNumber)
-                    ? acc
-                    : [...acc, n],
-            []
-        );
 
 const tileIndexOnBoard = (
     stn: PlanetlessSystemTileNumber,

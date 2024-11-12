@@ -10,6 +10,7 @@ import {
     factionsInGame,
     isMapTilesSelectedEvent,
     latestPlanetControlledEventsByPlanet,
+    latestPlanetlessSystemControlledEventsBySystem,
     playerFactionsAndColors,
     resourcesAndInfluenceForFaction,
     systemTileNumbersInPlay,
@@ -22,6 +23,7 @@ import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import {
     ghostsOfCreussHomeTileNumber,
+    isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
     systemTileImages,
     SystemTileNumber,
@@ -288,20 +290,39 @@ const ExtraTiles = styled.div`
 const controllingPlayerColors = (
     systemTileNumber: SystemTileNumber | undefined,
     events: Event[]
-): PlayerColor[] =>
-    systemTiles
-        .filter(isSystemWithPlanetsTile)
-        .find((st) => st.tileNumber === systemTileNumber)
-        ?.planets.map((p) =>
-            latestPlanetControlledEventsByPlanet(events).find(
-                (e) => e.planet === p
-            )
-        )
-        .filter(notUndefined)
-        .map((e) => playerFactionsAndColors(events)[e.faction]) || [];
+): PlayerColor[] => {
+    const systemTile = systemTiles.find(
+        (st) => st.tileNumber === systemTileNumber
+    );
+
+    if (!systemTile) {
+        return [];
+    }
+
+    if (isSystemWithPlanetsTile(systemTile)) {
+        return (
+            systemTile.planets
+                .map((p) =>
+                    latestPlanetControlledEventsByPlanet(events).find(
+                        (e) => e.planet === p
+                    )
+                )
+                .filter(notUndefined)
+                .map((e) => playerFactionsAndColors(events)[e.faction]) || []
+        );
+    }
+
+    const controllingFaction = latestPlanetlessSystemControlledEventsBySystem(
+        events
+    ).find((e) => e.tileNumber === systemTileNumber)?.faction;
+
+    return controllingFaction
+        ? [playerFactionsAndColors(events)[controllingFaction]]
+        : [];
+};
 
 type HighlightableTileProps = {
-    systemTileNumber?: number;
+    systemTileNumber?: SystemTileNumber;
     controllingPlayerColors: PlayerColor[];
 };
 
@@ -318,7 +339,12 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
             }
             alt={`System tile ${systemTileNumber}`}
         />
-        <HexHighlight controllingPlayerColors={controllingPlayerColors} />
+        {systemTileNumber && (
+            <HexHighlight
+                controllingPlayerColors={controllingPlayerColors}
+                dashedBorder={isPlanetlessSystemTileNumber(systemTileNumber)}
+            />
+        )}
     </StyledHighlightableTile>
 );
 
@@ -337,10 +363,12 @@ const tanFromDegrees = (degrees: number) => Math.tan((degrees * Math.PI) / 180);
 
 type HexHighlightProps = {
     controllingPlayerColors: PlayerColor[];
+    dashedBorder: boolean;
 };
 
 const HexHighlight: React.FC<HexHighlightProps> = ({
     controllingPlayerColors,
+    dashedBorder,
 }) => (
     <>
         {controllingPlayerColors.length > 0 &&
@@ -355,6 +383,7 @@ const HexHighlight: React.FC<HexHighlightProps> = ({
                             )
                         ]
                     )}
+                    $dashedBorder={dashedBorder}
                 />
             ))}
     </>
@@ -366,10 +395,20 @@ const standardHexTransparency = 'ff';
 type HexHighlightSegmentProps = {
     $rotation: number;
     $color: string;
+    $dashedBorder: boolean;
 };
 
 const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
-    background: ${(props) => props.$color}${standardHexTransparency};
+    background: ${(props) =>
+        props.$dashedBorder
+            ? `repeating-linear-gradient(
+        45deg,
+        ${props.$color}${standardHexTransparency} 0px,
+        ${props.$color}${standardHexTransparency} 9px,
+        transparent 9px,
+        transparent 19px
+    )`
+            : `${props.$color}${standardHexTransparency}`};
     transform: rotate(${(props) => props.$rotation}deg);
     clip-path: polygon(
         0% 50%,
