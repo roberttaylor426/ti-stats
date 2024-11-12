@@ -101,7 +101,7 @@ const StatsPage: React.FC = () => {
         }
     ).playerTurnTimes;
 
-    const averageTimesTakenPerPlayer = factionsInGame(events).map((f) => ({
+    const timesTakenPerPlayer = factionsInGame(events).map((f) => ({
         faction: f,
         playerColor: playerFactionsAndColors(events)[f],
         maxTimeTakenInMillis: timesTakenPerPlayerPerTurn[f].reduce(
@@ -228,7 +228,7 @@ const StatsPage: React.FC = () => {
                             <StatsTitle>Average time taken per turn</StatsTitle>
                             <StatsContainer>
                                 {_.sortBy(
-                                    averageTimesTakenPerPlayer,
+                                    timesTakenPerPlayer,
                                     (ps) => ps.avTimeTakenInMillis
                                 )
                                     .reverse()
@@ -259,7 +259,7 @@ const StatsPage: React.FC = () => {
                             <StatsTitle>Max time taken on a turn</StatsTitle>
                             <StatsContainer>
                                 {_.sortBy(
-                                    averageTimesTakenPerPlayer,
+                                    timesTakenPerPlayer,
                                     (ps) => ps.maxTimeTakenInMillis
                                 )
                                     .reverse()
