@@ -167,6 +167,11 @@ const isAgendaCardRevealedEvent = (e: Event): e is AgendaCardRevealedEvent =>
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
 
+const isPlanetlessSystemControlledEvent = (
+    e: Event
+): e is PlanetlessSystemControlledEvent =>
+    e.type === 'PlanetlessSystemControlled';
+
 const isTechnologyResearchedEvent = (
     e: Event
 ): e is PlayerResearchedTechnologyEvent =>
@@ -529,6 +534,7 @@ export {
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
+    isPlanetlessSystemControlledEvent,
     isPlayerFinishedTurnEvent,
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
@@ -543,6 +549,7 @@ export {
     latestPlanetControlledEventsByPlanet,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
+    PlanetlessSystemControlledEvent,
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
     playerScore,

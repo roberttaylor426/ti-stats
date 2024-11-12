@@ -104,7 +104,7 @@ type SystemWithPlanetsTile = {
 type SystemTile = PlanetlessSystemTile | SystemWithPlanetsTile;
 
 const isSystemWithPlanetsTile = (t: SystemTile): t is SystemWithPlanetsTile =>
-    !!(t as SystemWithPlanetsTile).planets;
+    isSystemWithPlanetsTileNumber(t.tileNumber);
 
 const systemTileImages = [
     tile1,
@@ -215,6 +215,10 @@ const isSystemWithPlanetsTileNumber = (
     stn: SystemTileNumber
 ): stn is SystemWithPlanetsTileNumber =>
     !!systemWithPlanetsTileNumbers.find((n) => n === stn);
+
+const isPlanetlessSystemTileNumber = (
+    stn: SystemTileNumber
+): stn is PlanetlessSystemTileNumber => !isSystemWithPlanetsTileNumber(stn);
 
 const isSystemTileNumber = (n: number): n is SystemTileNumber =>
     Number.isInteger(n) && n >= 1 && n < 82;
@@ -680,8 +684,10 @@ export {
     factionSystemTileNumber,
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
+    isPlanetlessSystemTileNumber,
     isSystemTileNumber,
     isSystemWithPlanetsTile,
+    isSystemWithPlanetsTileNumber,
     malliceTileNumber,
     mecatolRexTileNumber,
     PlanetlessSystemTileNumber,

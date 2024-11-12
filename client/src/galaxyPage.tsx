@@ -35,6 +35,8 @@ import { notUndefined, range } from './util';
  Extract common scoreboard component
  Extract all pages into separate files
  Support tile changes in game (Creuss, Muaat heroes)
+ Support players losing control of systems without planets
+ Show systems without planets controlled by players
 */
 
 const GalaxyPage: React.FC = () => {

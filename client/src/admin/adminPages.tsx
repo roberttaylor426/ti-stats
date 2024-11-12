@@ -14,11 +14,14 @@ import {
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
+    isPlanetlessSystemControlledEvent,
     isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     lastIndexOfEventType,
+    MapTilesSelectedEvent,
     PlanetControlledEvent,
+    PlanetlessSystemControlledEvent,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
@@ -29,7 +32,13 @@ import { Faction } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { numberOfPlayersInGame } from '../playerColors';
 import { StrategyCard } from '../strategyCards';
-import { isSystemWithPlanetsTile, systemTiles } from '../systemTiles';
+import {
+    isPlanetlessSystemTileNumber,
+    isSystemWithPlanetsTile,
+    PlanetlessSystemTileNumber,
+    systemTileDescription,
+    systemTiles,
+} from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { Button, PageTitle, Select } from './components';
@@ -65,6 +74,11 @@ const AdminPages: React.FC = () => {
 
     const [selectedPlanetToControl, setSelectedPlanetToControl] =
         useState<PlanetName>();
+
+    const [
+        selectedPlanetlessSystemToControl,
+        setSelectedPlanetlessSystemToControl,
+    ] = useState<PlanetlessSystemTileNumber>();
 
     const [selectedPlanetToEnhance, setSelectedPlanetToEnhance] =
         useState<PlanetName>();
@@ -112,6 +126,20 @@ const AdminPages: React.FC = () => {
             type: 'PlanetControlled',
             time: new Date().getTime(),
             planet: p,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishPlanetlessSystemControlledEvent = async (
+        stn: PlanetlessSystemTileNumber,
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'PlanetlessSystemControlled',
+            time: new Date().getTime(),
+            tileNumber: stn,
             faction: f,
         };
 
@@ -231,12 +259,27 @@ const AdminPages: React.FC = () => {
                     .some((dp) => dp.planet === p)
         );
 
+    const planetlessSystemTilesOnTheBoard: PlanetlessSystemTileNumber[] =
+        systemTileNumbersInPlay(events).filter(isPlanetlessSystemTileNumber);
+
     const factionCurrentlyControllingPlanet = (p: PlanetName) =>
         latestPlanetControlledEventsByPlanet(events).find((e) => e.planet === p)
             ?.faction;
 
     const planetNameWithControllingFaction = (p: PlanetName) =>
         `${p}${factionCurrentlyControllingPlanet(p) ? ` (${factionCurrentlyControllingPlanet(p)})` : ''}`;
+
+    const factionCurrentlyControllingPlanetlessSystemTile = (
+        stn: PlanetlessSystemTileNumber
+    ) =>
+        latestPlanetlessSystemControlledEventsBySystem(events).find(
+            (e) => e.tileNumber === stn
+        )?.faction;
+
+    const planetlessSystemTileWithControllingFaction = (
+        stn: PlanetlessSystemTileNumber
+    ) =>
+        `${systemTileDescription(stn)}${factionCurrentlyControllingPlanetlessSystemTile(stn) ? ` (${factionCurrentlyControllingPlanetlessSystemTile(stn)})` : ''}`;
 
     const planetResourcesAndInfluence = (p: PlanetName) => ({
         resources:
@@ -282,6 +325,9 @@ const AdminPages: React.FC = () => {
             setUndoLastEventModeEnabled(!undoLastEventModeEnabled),
     };
 
+    const mapTilesSelectedEvent = _.last(
+        events.filter(isMapTilesSelectedEvent)
+    );
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
@@ -296,7 +342,7 @@ const AdminPages: React.FC = () => {
                 <UndoLastEventPage {...adminPageProps} />
             ) : events.length === 0 ? (
                 <FactionAssignmentPage {...adminPageProps} />
-            ) : !events.find(isMapTilesSelectedEvent) ? (
+            ) : !mapTilesSelectedEvent ? (
                 <TileSelectionPage {...adminPageProps} />
             ) : isStartRoundPageVisible(events) ? (
                 <StartRoundPage
@@ -348,6 +394,44 @@ const AdminPages: React.FC = () => {
                                 if (selectedPlanetToControl) {
                                     await publishPlanetControlledEvent(
                                         selectedPlanetToControl,
+                                        activePlayerInActionPhase
+                                    );
+                                }
+                            }}
+                        >
+                            Take control
+                        </Button>
+                    </StyledPlanetControlledRow>
+                    <StyledPlanetControlledRow>
+                        <Select
+                            onChange={(e) =>
+                                setSelectedPlanetlessSystemToControl(
+                                    Number.parseInt(
+                                        e.target.value
+                                    ) as PlanetlessSystemTileNumber
+                                )
+                            }
+                        >
+                            <option value={''}>--Planetless system--</option>
+                            <option
+                                value={''}
+                                disabled
+                            >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                            {_.sortBy(planetlessSystemTilesOnTheBoard, (stn) =>
+                                tileIndexOnBoard(stn, mapTilesSelectedEvent)
+                            ).map((stn) => (
+                                <option key={stn} value={stn}>
+                                    {`Index ${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                        stn
+                                    )}`}
+                                </option>
+                            ))}
+                        </Select>
+                        <Button
+                            onClick={async () => {
+                                if (selectedPlanetlessSystemToControl) {
+                                    await publishPlanetlessSystemControlledEvent(
+                                        selectedPlanetlessSystemToControl,
                                         activePlayerInActionPhase
                                     );
                                 }
@@ -658,6 +742,30 @@ const latestPlanetControlledEventsByPlanet = (
                 acc.find((e) => e.planet === n.planet) ? acc : [...acc, n],
             []
         );
+
+const latestPlanetlessSystemControlledEventsBySystem = (
+    events: Event[]
+): PlanetlessSystemControlledEvent[] =>
+    events
+        .filter(isPlanetlessSystemControlledEvent)
+        .reverse()
+        .reduce(
+            (acc: PlanetlessSystemControlledEvent[], n) =>
+                acc.find((e) => e.tileNumber === n.tileNumber)
+                    ? acc
+                    : [...acc, n],
+            []
+        );
+
+const tileIndexOnBoard = (
+    stn: PlanetlessSystemTileNumber,
+    mapTilesSelectedEvent: MapTilesSelectedEvent
+): number =>
+    Number.parseInt(
+        (Object.entries(mapTilesSelectedEvent.selections).find(
+            ([_, v]) => v === stn
+        ) || ['-1'])[0]
+    ) + 1;
 
 const StyledAdminPage = styled.div`
     display: flex;
