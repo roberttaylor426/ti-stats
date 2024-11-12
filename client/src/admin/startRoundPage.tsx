@@ -13,6 +13,10 @@ type Props = {
 
 const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
     const { currentRoundNumber, events, publishNewEvents } = props;
+    const currentSpeaker = _.last(
+        events.filter(isSpeakerAssignedEvent)
+    )?.faction;
+
     const [assignedSpeaker, setAssignedSpeaker] = useState<Faction>();
 
     const publishSpeakerAssignedEvent = async (f: Faction) => {
@@ -21,27 +25,21 @@ const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
             time: new Date().getTime(),
             faction: f,
         };
-
         await publishNewEvents([newEvent]);
     };
-
     const publishRoundStartedEvent = async () => {
         const newEvent: Event = {
             type: 'RoundStarted',
             time: new Date().getTime(),
         };
-
         await publishNewEvents([newEvent]);
     };
-
     return (
         <StyledStartRoundPage>
             <PageTitle {...props} title={'Start round'} />
             <SpeakerAssignmentRow>
                 <Select
-                    defaultValue={
-                        _.last(events.filter(isSpeakerAssignedEvent))?.faction
-                    }
+                    defaultValue={currentSpeaker}
                     onChange={(e) =>
                         setAssignedSpeaker(e.target.value as Faction)
                     }
@@ -49,7 +47,7 @@ const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
                     <option value={''}>--Faction--</option>
                     {_.sortBy(factionsInGame(events), identity).map((ac) => (
                         <option key={ac} value={ac}>
-                            {ac}
+                            {`${ac}${ac === currentSpeaker ? ' (Speaker)' : ''}`}
                         </option>
                     ))}
                 </Select>
