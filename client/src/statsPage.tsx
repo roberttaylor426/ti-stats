@@ -246,6 +246,7 @@ const StatsPage: React.FC = () => {
                                                 }),
                                                 {
                                                     format: [
+                                                        'hours',
                                                         'minutes',
                                                         'seconds',
                                                     ],
@@ -277,6 +278,7 @@ const StatsPage: React.FC = () => {
                                                 }),
                                                 {
                                                     format: [
+                                                        'hours',
                                                         'minutes',
                                                         'seconds',
                                                     ],
