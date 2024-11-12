@@ -30,8 +30,8 @@ const hexPlayerColor = (pc: PlayerColor): string => {
         case 'Pink':
             return '#f212c1';
         case 'Purple':
-            return '#c57fef';
+            return '#7b00c5';
     }
 };
 
-export { hexPlayerColor, numberOfPlayersInGame,PlayerColor, playerColors };
+export { hexPlayerColor, numberOfPlayersInGame, PlayerColor, playerColors };
