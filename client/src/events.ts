@@ -104,7 +104,7 @@ type PlanetlessSystemControlledEvent = {
     type: 'PlanetlessSystemControlled';
     time: number;
     tileNumber: PlanetlessSystemTileNumber;
-    faction: Faction;
+    faction: Faction | undefined;
 };
 
 type PlanetDestroyedEvent = {

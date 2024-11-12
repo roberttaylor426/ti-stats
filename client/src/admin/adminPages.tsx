@@ -28,7 +28,7 @@ import {
     systemTileNumbersInPlay,
     technologiesResearchedByFaction,
 } from '../events';
-import { Faction } from '../factions';
+import { Faction, shortName } from '../factions';
 import { PlanetName, planets } from '../planets';
 import { numberOfPlayersInGame } from '../playerColors';
 import { StrategyCard } from '../strategyCards';
@@ -134,7 +134,7 @@ const AdminPages: React.FC = () => {
 
     const publishPlanetlessSystemControlledEvent = async (
         stn: PlanetlessSystemTileNumber,
-        f: Faction
+        f: Faction | undefined
     ) => {
         const newEvent: Event = {
             type: 'PlanetlessSystemControlled',
@@ -266,20 +266,24 @@ const AdminPages: React.FC = () => {
         latestPlanetControlledEventsByPlanet(events).find((e) => e.planet === p)
             ?.faction;
 
-    const planetNameWithControllingFaction = (p: PlanetName) =>
-        `${p}${factionCurrentlyControllingPlanet(p) ? ` (${factionCurrentlyControllingPlanet(p)})` : ''}`;
+    const planetNameWithControllingFaction = (p: PlanetName) => {
+        const faction = factionCurrentlyControllingPlanet(p);
+        return `${p}${faction ? ` (${shortName(faction)})` : ''}`;
+    };
 
     const factionCurrentlyControllingPlanetlessSystemTile = (
         stn: PlanetlessSystemTileNumber
-    ) =>
+    ): Faction | undefined =>
         latestPlanetlessSystemControlledEventsBySystem(events).find(
             (e) => e.tileNumber === stn
         )?.faction;
 
     const planetlessSystemTileWithControllingFaction = (
         stn: PlanetlessSystemTileNumber
-    ) =>
-        `${systemTileDescription(stn)}${factionCurrentlyControllingPlanetlessSystemTile(stn) ? ` (${factionCurrentlyControllingPlanetlessSystemTile(stn)})` : ''}`;
+    ) => {
+        const faction = factionCurrentlyControllingPlanetlessSystemTile(stn);
+        return `${systemTileDescription(stn)}${faction ? ` (${shortName(faction)})` : ''}`;
+    };
 
     const planetResourcesAndInfluence = (p: PlanetName) => ({
         resources:
@@ -421,7 +425,7 @@ const AdminPages: React.FC = () => {
                                 tileIndexOnBoard(stn, mapTilesSelectedEvent)
                             ).map((stn) => (
                                 <option key={stn} value={stn}>
-                                    {`Index ${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                    {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
                                         stn
                                     )}`}
                                 </option>
@@ -438,6 +442,24 @@ const AdminPages: React.FC = () => {
                             }}
                         >
                             Take control
+                        </Button>
+                        <Button
+                            disabled={
+                                !selectedPlanetlessSystemToControl ||
+                                factionCurrentlyControllingPlanetlessSystemTile(
+                                    selectedPlanetlessSystemToControl
+                                ) !== activePlayerInActionPhase
+                            }
+                            onClick={async () => {
+                                if (selectedPlanetlessSystemToControl) {
+                                    await publishPlanetlessSystemControlledEvent(
+                                        selectedPlanetlessSystemToControl,
+                                        undefined
+                                    );
+                                }
+                            }}
+                        >
+                            Lose control
                         </Button>
                     </StyledPlanetControlledRow>
                     <StyledPlanetEnhancedRow>
