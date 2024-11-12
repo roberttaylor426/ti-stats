@@ -403,10 +403,10 @@ const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
         props.$dashedBorder
             ? `repeating-linear-gradient(
         45deg,
-        ${props.$color}${standardHexTransparency} 0px,
-        ${props.$color}${standardHexTransparency} 9px,
-        transparent 9px,
-        transparent 19px
+        ${props.$color}${standardHexTransparency} 0%,
+        ${props.$color}${standardHexTransparency} 12%,
+        transparent 12%,
+        transparent 18%
     )`
             : `${props.$color}${standardHexTransparency}`};
     transform: rotate(${(props) => props.$rotation}deg);
