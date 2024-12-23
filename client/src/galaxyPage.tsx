@@ -37,6 +37,13 @@ import { notUndefined, range } from './util';
  Extract common scoreboard component
  Extract all pages into separate files
  Support tile changes in game (Creuss, Muaat heroes)
+ Support tiles being added to edge of galaxy
+ Digitize the VP tracks
+ Ability to lose a tech
+ Pause timer after Strategy primary
+ Add Mirage planet to tile
+ Score VPs during Agenda phase
+ Can we keep track of votes?
 */
 
 const GalaxyPage: React.FC = () => {
