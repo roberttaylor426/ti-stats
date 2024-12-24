@@ -42,8 +42,8 @@ import { notUndefined, range } from './util';
  Ability to lose a tech
  Pause timer after Strategy primary
  Add Mirage planet to tile
- Score VPs during Agenda phase
  Can we keep track of votes?
+ When a player captures Mecatol they should score a point
 */
 
 const GalaxyPage: React.FC = () => {

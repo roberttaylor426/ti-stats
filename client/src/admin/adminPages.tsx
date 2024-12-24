@@ -10,10 +10,10 @@ import {
     Event,
     factionsInGame,
     hasMecatolRexBeenCaptured,
+    isAgendaPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
-    isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     lastIndexOfEventType,
@@ -39,7 +39,8 @@ import {
 } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
-import { Button, PageTitle, Select } from './components';
+import { Button, InputsColumn, PageTitle, Select } from './components';
+import { VpScoringContainer } from './components/vpScoringContainer';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { NumberInput } from './input';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
@@ -86,9 +87,6 @@ const AdminPages: React.FC = () => {
     const [techToResearch, setTechToResearch] = useState<Technology>();
     const [factionToResearchTech, setFactionToResearchTech] =
         useState<Faction>();
-
-    const [playerToScoreVps, setPlayerToScoreVps] = useState<Faction>();
-    const [vpsToAdd, setVpsToAdd] = useState<number>(0);
 
     const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
 
@@ -215,20 +213,6 @@ const AdminPages: React.FC = () => {
         };
 
         await publishNewEvents([newEvent]);
-    };
-
-    const publishVpScoredEvent = async (
-        f: Faction,
-        delta: number
-    ): Promise<boolean> => {
-        const newEvent: Event = {
-            type: 'PlayerScoredVictoryPoint',
-            time: new Date().getTime(),
-            faction: f,
-            delta,
-        };
-
-        return await publishNewEvents([newEvent]);
     };
 
     const publishPlanetDestroyedEvent = async (
@@ -362,8 +346,7 @@ const AdminPages: React.FC = () => {
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : _.last(events)?.type === 'AgendaPhaseStarted' ||
-              _.last(events)?.type === 'AgendaCardRevealed' ? (
+            ) : isAgendaPhasePageVisible(events) ? (
                 <AgendaPhasePage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
@@ -495,9 +478,7 @@ const AdminPages: React.FC = () => {
                         </PlanetEnhancementInputsRow>
                         <Button
                             onClick={async () => {
-                                if (
-                                    selectedPlanetToEnhance
-                                ) {
+                                if (selectedPlanetToEnhance) {
                                     await publishPlanetEnhancedEvent(
                                         selectedPlanetToEnhance,
                                         resourcesToEnhance,
@@ -568,25 +549,10 @@ const AdminPages: React.FC = () => {
                             Research
                         </Button>
                     </StyledTechResearchedRow>
-                    <ScoreVpsRow>
-                        <NumberInput
-                            onChange={(e) =>
-                                setVpsToAdd(Number.parseInt(e.target.value))
-                            }
-                        />
-                        <Button
-                            onClick={async () => {
-                                if (vpsToAdd) {
-                                    await publishVpScoredEvent(
-                                        activePlayerInActionPhase,
-                                        vpsToAdd
-                                    );
-                                }
-                            }}
-                        >
-                            Score
-                        </Button>
-                    </ScoreVpsRow>
+                    <VpScoringContainer
+                        defaultFaction={activePlayerInActionPhase}
+                        {...adminPageProps}
+                    />
                     <DestroyPlanetContainer>
                         <Select
                             onChange={(e) =>
@@ -617,7 +583,7 @@ const AdminPages: React.FC = () => {
                         activePlayerInActionPhase
                     ) &&
                         strategyCardSelectedByActivePlayerInActionPhase && (
-                            <ButtonsContainer>
+                            <InputsColumn>
                                 <Button
                                     disabled={strategyCardPlayedByPlayerThisTurn(
                                         events,
@@ -632,9 +598,9 @@ const AdminPages: React.FC = () => {
                                 >
                                     Play strategy card
                                 </Button>
-                            </ButtonsContainer>
+                            </InputsColumn>
                         )}
-                    <ButtonsContainer>
+                    <InputsColumn>
                         <Button
                             onClick={async () => {
                                 await publishTurnFinishedEvent(
@@ -647,12 +613,12 @@ const AdminPages: React.FC = () => {
                         >
                             Turn finished
                         </Button>
-                    </ButtonsContainer>
+                    </InputsColumn>
                     {strategyCardPlayedByPlayerOnPreviousTurnThisRound(
                         events,
                         activePlayerInActionPhase
                     ) && (
-                        <ButtonsContainer>
+                        <InputsColumn>
                             <Button
                                 onClick={async () => {
                                     await publishTurnFinishedEvent(
@@ -665,7 +631,7 @@ const AdminPages: React.FC = () => {
                             >
                                 Pass
                             </Button>
-                        </ButtonsContainer>
+                        </InputsColumn>
                     )}
                 </PlayerTurnPage>
             ) : (
@@ -674,45 +640,7 @@ const AdminPages: React.FC = () => {
                         {...adminPageProps}
                         title={'End of round scoring'}
                     />
-                    <FactionScoresVpsContainer>
-                        <Select
-                            onChange={(e) =>
-                                setPlayerToScoreVps(e.target.value as Faction)
-                            }
-                        >
-                            <option value={''}>--Faction--</option>
-                            {factionsInGame(events).map((f) => (
-                                <option key={f} value={f}>
-                                    {`${f} (${events
-                                        .filter(isPlayerScoredVictoryPointEvent)
-                                        .filter((vpe) => vpe.faction === f)
-                                        .reduce(
-                                            (acc, n) => acc + n.delta,
-                                            0
-                                        )}vp)`}
-                                </option>
-                            ))}
-                        </Select>
-                        <ScoreVpsRow>
-                            <NumberInput
-                                onChange={(e) =>
-                                    setVpsToAdd(Number.parseInt(e.target.value))
-                                }
-                            />
-                            <Button
-                                onClick={async () => {
-                                    if (playerToScoreVps && vpsToAdd) {
-                                        await publishVpScoredEvent(
-                                            playerToScoreVps,
-                                            vpsToAdd
-                                        );
-                                    }
-                                }}
-                            >
-                                Score
-                            </Button>
-                        </ScoreVpsRow>
-                    </FactionScoresVpsContainer>
+                    <VpScoringContainer {...adminPageProps} />
                     {hasMecatolRexBeenCaptured(events) ? (
                         <Button onClick={publishAgendaPhaseStartedEvent}>
                             {`Start Agenda Phase`}
@@ -748,6 +676,16 @@ const isStartRoundPageVisible = (events: Event[]) => {
 const isSelectStrategyCardPageVisible = (events: Event[]) =>
     playerSelectedStrategyCardEventFromLastStrategyPhase(events).length <
     numberOfPlayersInGame;
+
+const isAgendaPhasePageVisible = (events: Event[]) => {
+    const lastAgendaPhaseStartedIndex = lastIndexOfEventType(
+        events,
+        isAgendaPhaseStartedEvent
+    );
+    const lastRoundEndedIndex = lastIndexOfEventType(events, isRoundEndedEvent);
+
+    return lastAgendaPhaseStartedIndex > lastRoundEndedIndex;
+};
 
 const tileIndexOnBoard = (
     stn: PlanetlessSystemTileNumber,
@@ -815,22 +753,6 @@ const PlanetEnhancementInputsRow = styled.div`
     }
 `;
 
-const FactionScoresVpsContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-`;
-
-const ScoreVpsRow = styled.div`
-    display: flex;
-    column-gap: 1rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
 const DestroyPlanetContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
@@ -840,12 +762,6 @@ const DestroyPlanetContainer = styled.div`
     > * {
         flex: 1 1 0;
     }
-`;
-
-const ButtonsContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 `;
 
 export { AdminPages };

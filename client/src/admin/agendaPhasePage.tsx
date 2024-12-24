@@ -6,6 +6,7 @@ import { AgendaCard, agendaCards } from '../agendaCards';
 import { Event } from '../events';
 import { AdminPageProps } from './adminPageProps';
 import { Button, PageTitle, Select } from './components';
+import { VpScoringContainer } from './components/vpScoringContainer';
 
 type Props = {
     currentRoundNumber: number;
@@ -64,6 +65,7 @@ const AgendaPhasePage: React.FC<Props & AdminPageProps> = (props) => {
                     Reveal card
                 </Button>
             </AgendaCardRevealedRow>
+            <VpScoringContainer {...props} />
             <Button onClick={publishRoundEndedEvent}>
                 {`End Round ${currentRoundNumber}`}
             </Button>
