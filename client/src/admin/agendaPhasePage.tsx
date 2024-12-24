@@ -5,7 +5,7 @@ import _, { identity } from 'underscore';
 import { AgendaCard, agendaCards } from '../agendaCards';
 import { Event } from '../events';
 import { AdminPageProps } from './adminPageProps';
-import { Button, PageTitle, Select } from './components';
+import { Button, InputsRow, PageTitle, Select } from './components';
 import { VpScoringContainer } from './components/vpScoringContainer';
 
 type Props = {
@@ -40,7 +40,7 @@ const AgendaPhasePage: React.FC<Props & AdminPageProps> = (props) => {
     return (
         <StyledAgendaPhasePage>
             <PageTitle {...props} title={'Agenda phase'} />
-            <AgendaCardRevealedRow>
+            <InputsRow>
                 <Select
                     onChange={(e) =>
                         setSelectedAgendaCard(e.target.value as AgendaCard)
@@ -64,7 +64,7 @@ const AgendaPhasePage: React.FC<Props & AdminPageProps> = (props) => {
                 >
                     Reveal card
                 </Button>
-            </AgendaCardRevealedRow>
+            </InputsRow>
             <VpScoringContainer {...props} />
             <Button onClick={publishRoundEndedEvent}>
                 {`End Round ${currentRoundNumber}`}
@@ -78,17 +78,6 @@ const StyledAgendaPhasePage = styled.div`
     flex-direction: column;
     gap: 4rem;
     height: 100%;
-`;
-
-const AgendaCardRevealedRow = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 2rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
 `;
 
 export { AgendaPhasePage };

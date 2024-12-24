@@ -39,7 +39,13 @@ import {
 } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
-import { Button, InputsColumn, PageTitle, Select } from './components';
+import {
+    Button,
+    InputsColumn,
+    InputsRow,
+    PageTitle,
+    Select,
+} from './components';
 import { VpScoringContainer } from './components/vpScoringContainer';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { NumberInput } from './input';
@@ -359,7 +365,7 @@ const AdminPages: React.FC = () => {
                             title={`${currentPlayerTurnInActionPhase(events)} turn`}
                         />
                     </div>
-                    <StyledPlanetControlledRow>
+                    <InputsRow>
                         <Select
                             onChange={(e) =>
                                 setSelectedPlanetToControl(
@@ -386,8 +392,8 @@ const AdminPages: React.FC = () => {
                         >
                             Take control
                         </Button>
-                    </StyledPlanetControlledRow>
-                    <StyledPlanetControlledRow>
+                    </InputsRow>
+                    <InputsRow>
                         <Select
                             onChange={(e) =>
                                 setSelectedPlanetlessSystemToControl(
@@ -442,8 +448,8 @@ const AdminPages: React.FC = () => {
                         >
                             Lose control
                         </Button>
-                    </StyledPlanetControlledRow>
-                    <StyledPlanetEnhancedRow>
+                    </InputsRow>
+                    <InputsColumn>
                         <Select
                             onChange={(e) =>
                                 setSelectedPlanetToEnhance(
@@ -458,7 +464,7 @@ const AdminPages: React.FC = () => {
                                 </option>
                             ))}
                         </Select>
-                        <PlanetEnhancementInputsRow>
+                        <InputsRow>
                             <NumberInput
                                 placeholder={'Resources'}
                                 onChange={(e) =>
@@ -475,7 +481,7 @@ const AdminPages: React.FC = () => {
                                     )
                                 }
                             />
-                        </PlanetEnhancementInputsRow>
+                        </InputsRow>
                         <Button
                             onClick={async () => {
                                 if (selectedPlanetToEnhance) {
@@ -489,8 +495,8 @@ const AdminPages: React.FC = () => {
                         >
                             Enhance
                         </Button>
-                    </StyledPlanetEnhancedRow>
-                    <StyledTechResearchedRow>
+                    </InputsColumn>
+                    <InputsRow>
                         <Select
                             onChange={(e) =>
                                 setFactionToResearchTech(
@@ -548,12 +554,12 @@ const AdminPages: React.FC = () => {
                         >
                             Research
                         </Button>
-                    </StyledTechResearchedRow>
+                    </InputsRow>
                     <VpScoringContainer
                         defaultFaction={activePlayerInActionPhase}
                         {...adminPageProps}
                     />
-                    <DestroyPlanetContainer>
+                    <InputsRow>
                         <Select
                             onChange={(e) =>
                                 setPlanetToDestroy(e.target.value as PlanetName)
@@ -577,7 +583,7 @@ const AdminPages: React.FC = () => {
                         >
                             Destroy planet
                         </Button>
-                    </DestroyPlanetContainer>
+                    </InputsRow>
                     {!strategyCardPlayedByPlayerOnPreviousTurnThisRound(
                         events,
                         activePlayerInActionPhase
@@ -709,59 +715,6 @@ const PlayerTurnPage = styled.div`
     flex-direction: column;
     gap: 4rem;
     height: 100%;
-`;
-
-const StyledPlanetControlledRow = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 2rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-const StyledPlanetEnhancedRow = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 2rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-const StyledTechResearchedRow = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 2rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-const PlanetEnhancementInputsRow = styled.div`
-    display: flex;
-    column-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-const DestroyPlanetContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 2rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
 `;
 
 export { AdminPages };
