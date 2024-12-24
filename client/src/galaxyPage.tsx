@@ -39,7 +39,7 @@ import { notUndefined, range } from './util';
  Support tile changes in game (Creuss, Muaat heroes)
  Support tiles being added to edge of galaxy
  Digitize the VP tracks
- Ability to lose a tech
+ Ability to lose a tech (Jol Nar)
  Pause timer after Strategy primary
  Add Mirage planet to tile
  Can we keep track of votes?
