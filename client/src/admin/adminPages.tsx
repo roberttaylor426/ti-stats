@@ -9,7 +9,6 @@ import {
     currentRoundNumber,
     Event,
     factionsInGame,
-    hasMecatolRexBeenCaptured,
     isAgendaPhaseStartedEvent,
     isMapTilesSelectedEvent,
     isPlanetDestroyedEvent,
@@ -46,6 +45,7 @@ import { InputsRow } from './components/inputsRow';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
 import { VpScoringContainer } from './components/vpScoringContainer';
+import { EndOfRoundScoringPage } from './endOfRoundScoringPage';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
@@ -196,24 +196,6 @@ const AdminPages: React.FC = () => {
             time: new Date().getTime(),
             faction: f,
             pass,
-        };
-
-        await publishNewEvents([newEvent]);
-    };
-
-    const publishRoundEndedEvent = async () => {
-        const newEvent: Event = {
-            type: 'RoundEnded',
-            time: new Date().getTime(),
-        };
-
-        await publishNewEvents([newEvent]);
-    };
-
-    const publishAgendaPhaseStartedEvent = async () => {
-        const newEvent: Event = {
-            type: 'AgendaPhaseStarted',
-            time: new Date().getTime(),
         };
 
         await publishNewEvents([newEvent]);
@@ -639,22 +621,7 @@ const AdminPages: React.FC = () => {
                     )}
                 </PlayerTurnPage>
             ) : (
-                <>
-                    <PageTitle
-                        {...adminPageProps}
-                        title={'End of round scoring'}
-                    />
-                    <VpScoringContainer {...adminPageProps} />
-                    {hasMecatolRexBeenCaptured(events) ? (
-                        <Button onClick={publishAgendaPhaseStartedEvent}>
-                            {`Start Agenda Phase`}
-                        </Button>
-                    ) : (
-                        <Button onClick={publishRoundEndedEvent}>
-                            {`End Round ${currentRoundNumber(events)}`}
-                        </Button>
-                    )}
-                </>
+                <EndOfRoundScoringPage {...adminPageProps} />
             )}
         </StyledAdminPage>
     );
