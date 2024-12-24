@@ -496,9 +496,7 @@ const AdminPages: React.FC = () => {
                         <Button
                             onClick={async () => {
                                 if (
-                                    selectedPlanetToEnhance &&
-                                    resourcesToEnhance &&
-                                    influenceToEnhance
+                                    selectedPlanetToEnhance
                                 ) {
                                     await publishPlanetEnhancedEvent(
                                         selectedPlanetToEnhance,
