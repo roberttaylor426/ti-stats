@@ -7,8 +7,8 @@ import {
     isPlayerScoredVictoryPointEvent,
 } from '../../events';
 import { Faction } from '../../factions';
-import { NumberInput } from '../input';
 import { Button } from './button';
+import { NumberInput } from './input';
 import { InputsColumn } from './inputsColumn';
 import { InputsRow } from './inputsRow';
 import { Select } from './select';

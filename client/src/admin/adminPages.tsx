@@ -40,13 +40,13 @@ import {
 import { technologies, Technology } from '../technologies';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { Button } from './components/button';
+import { NumberInput } from './components/input';
 import { InputsColumn } from './components/inputsColumn';
 import { InputsRow } from './components/inputsRow';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
 import { VpScoringContainer } from './components/vpScoringContainer';
 import { FactionAssignmentPage } from './factionAssignmentPage';
-import { NumberInput } from './input';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { StartRoundPage } from './startRoundPage';
 import { StrategyCardSelectionPage } from './strategyCardSelectionPage';

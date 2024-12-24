@@ -24,9 +24,9 @@ import {
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
+import { TextInput } from './components/input';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
-import { TextInput } from './input';
 
 const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
     const { events, publishNewEvents } = props;
