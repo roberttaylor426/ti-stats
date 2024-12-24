@@ -23,7 +23,9 @@ import {
 } from '../systemTiles';
 import { range } from '../util';
 import { AdminPageProps } from './adminPageProps';
-import { Button, PageTitle, Select } from './components';
+import { Button } from './components/button';
+import { PageTitle } from './components/pageTitle';
+import { Select } from './components/select';
 import { TextInput } from './input';
 
 const TileSelectionPage: React.FC<AdminPageProps> = (props) => {

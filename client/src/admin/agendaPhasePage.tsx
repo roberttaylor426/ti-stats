@@ -5,7 +5,10 @@ import _, { identity } from 'underscore';
 import { AgendaCard, agendaCards } from '../agendaCards';
 import { Event } from '../events';
 import { AdminPageProps } from './adminPageProps';
-import { Button, InputsRow, PageTitle, Select } from './components';
+import { Button } from './components/button';
+import { InputsRow } from './components/inputsRow';
+import { PageTitle } from './components/pageTitle';
+import { Select } from './components/select';
 import { VpScoringContainer } from './components/vpScoringContainer';
 
 type Props = {

@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { Button } from './button';
+
 type PageTitleProps = {
     title: string;
     toggleUndoLastEventMode: () => void;
@@ -38,28 +40,4 @@ const ButtonContainer = styled.div`
     justify-content: flex-end;
 `;
 
-const InputsColumn = styled.div`
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-`;
-
-const InputsRow = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-const Button = styled.button`
-    font-size: 2.25rem;
-`;
-
-const Select = styled.select`
-    font-size: 2.25rem;
-`;
-
-export { Button, InputsColumn, InputsRow, PageTitle, Select };
+export { PageTitle };

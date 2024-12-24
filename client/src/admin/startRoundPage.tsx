@@ -5,7 +5,9 @@ import _, { identity } from 'underscore';
 import { Event, factionsInGame, isSpeakerAssignedEvent } from '../events';
 import { Faction } from '../factions';
 import { AdminPageProps } from './adminPageProps';
-import { Button, PageTitle, Select } from './components';
+import { Button } from './components/button';
+import { PageTitle } from './components/pageTitle';
+import { Select } from './components/select';
 
 type Props = {
     currentRoundNumber: number;

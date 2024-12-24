@@ -7,8 +7,11 @@ import {
     isPlayerScoredVictoryPointEvent,
 } from '../../events';
 import { Faction } from '../../factions';
-import { Button, InputsColumn, InputsRow, Select } from '../components';
 import { NumberInput } from '../input';
+import { Button } from './button';
+import { InputsColumn } from './inputsColumn';
+import { InputsRow } from './inputsRow';
+import { Select } from './select';
 
 type Props = {
     defaultFaction?: Faction;

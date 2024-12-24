@@ -5,7 +5,8 @@ import _ from 'underscore';
 import { Event } from '../events';
 import { systemTileDescription } from '../systemTiles';
 import { AdminPageProps } from './adminPageProps';
-import { Button, PageTitle } from './components';
+import { Button } from './components/button';
+import { PageTitle } from './components/pageTitle';
 
 const UndoLastEventPage: React.FC<AdminPageProps> = ({
     events,

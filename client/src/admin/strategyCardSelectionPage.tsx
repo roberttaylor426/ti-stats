@@ -8,7 +8,9 @@ import {
 import { Faction } from '../factions';
 import { initiative, StrategyCard, strategyCards } from '../strategyCards';
 import { AdminPageProps } from './adminPageProps';
-import { Button, PageTitle, Select } from './components';
+import { Button } from './components/button';
+import { PageTitle } from './components/pageTitle';
+import { Select } from './components/select';
 
 type Props = {
     activePlayer: Faction;
