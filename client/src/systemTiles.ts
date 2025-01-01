@@ -83,6 +83,30 @@ import tile79 from './assets/tiles/ST_79.webp';
 import tile80 from './assets/tiles/ST_80.webp';
 import tile81 from './assets/tiles/ST_81.webp';
 import tile82 from './assets/tiles/ST_82.webp';
+import tile4253 from './assets/tiles/ST_4253.webp';
+import tile4254 from './assets/tiles/ST_4254.webp';
+import tile4255 from './assets/tiles/ST_4255.webp';
+import tile4256 from './assets/tiles/ST_4256.webp';
+import tile4257 from './assets/tiles/ST_4257.webp';
+import tile4258 from './assets/tiles/ST_4258.webp';
+import tile4259 from './assets/tiles/ST_4259.webp';
+import tile4260 from './assets/tiles/ST_4260.webp';
+import tile4261 from './assets/tiles/ST_4261.webp';
+import tile4262 from './assets/tiles/ST_4262.webp';
+import tile4263 from './assets/tiles/ST_4263.webp';
+import tile4264 from './assets/tiles/ST_4264.webp';
+import tile4265 from './assets/tiles/ST_4265.webp';
+import tile4266 from './assets/tiles/ST_4266.webp';
+import tile4267 from './assets/tiles/ST_4267.webp';
+import tile4268 from './assets/tiles/ST_4268.webp';
+import tile4269 from './assets/tiles/ST_4269.webp';
+import tile4270 from './assets/tiles/ST_4270.webp';
+import tile4271 from './assets/tiles/ST_4271.webp';
+import tile4272 from './assets/tiles/ST_4272.webp';
+import tile4273 from './assets/tiles/ST_4273.webp';
+import tile4274 from './assets/tiles/ST_4274.webp';
+import tile4275 from './assets/tiles/ST_4275.webp';
+import tile4276 from './assets/tiles/ST_4276.webp';
 import {
     FactionSelection,
     homeworlds,
@@ -193,6 +217,7 @@ const systemTileImages = [
 
 const planetlessSystemTileNumbers = [
     17, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 77, 78, 79, 80, 81,
+    4270, 4271, 4272, 4273, 4274, 4275, 4276,
 ] as const;
 
 type PlanetlessSystemTileNumber = (typeof planetlessSystemTileNumbers)[number];
@@ -201,7 +226,8 @@ const systemWithPlanetsTileNumbers = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22,
     23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 51, 52, 53,
     54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
-    73, 74, 75, 76, 82,
+    73, 74, 75, 76, 82, 4253, 4254, 4255, 4256, 4257, 4258, 4259, 4260, 4261,
+    4262, 4263, 4264, 4265, 4266, 4267, 4268, 4269,
 ] as const;
 
 type SystemWithPlanetsTileNumber =
@@ -621,6 +647,129 @@ const systemTiles: SystemTile[] = [
         image: tile82,
         planets: ['Mallice'],
     },
+    {
+        tileNumber: 4253,
+        image: tile4253,
+        planets: ['Silence'],
+    },
+    {
+        tileNumber: 4254,
+        image: tile4254,
+        planets: ['Echo'],
+    },
+    {
+        tileNumber: 4255,
+        image: tile4255,
+        planets: ['Tarrock'],
+    },
+    {
+        tileNumber: 4256,
+        image: tile4256,
+        planets: ['Prism'],
+    },
+    {
+        tileNumber: 4257,
+        image: tile4257,
+        planets: ['Troac'],
+    },
+    {
+        tileNumber: 4258,
+        image: tile4258,
+        planets: ['Etir V'],
+    },
+    {
+        tileNumber: 4259,
+        image: tile4259,
+        planets: ['Vioss'],
+    },
+    {
+        tileNumber: 4260,
+        image: tile4260,
+        planets: ['Fakrenn'],
+    },
+    {
+        tileNumber: 4260,
+        image: tile4260,
+        planets: ['Fakrenn'],
+    },
+    {
+        tileNumber: 4260,
+        image: tile4260,
+        planets: ['Fakrenn'],
+    },
+    {
+        tileNumber: 4261,
+        image: tile4261,
+        planets: ['San-vit', 'Lodran'],
+    },
+    {
+        tileNumber: 4262,
+        image: tile4262,
+        planets: ['Dorvok', 'Derbrae'],
+    },
+    {
+        tileNumber: 4263,
+        image: tile4263,
+        planets: ['Moln', 'Rysaa'],
+    },
+    {
+        tileNumber: 4264,
+        image: tile4264,
+        planets: ['Salin', 'Gwiyun'],
+    },
+    {
+        tileNumber: 4265,
+        image: tile4265,
+        planets: ['Inan', 'Swog'],
+    },
+    {
+        tileNumber: 4266,
+        image: tile4266,
+        planets: ['Detic', 'Lliot'],
+    },
+    {
+        tileNumber: 4267,
+        image: tile4267,
+        planets: ['Qaak', 'Larred', 'Nairb'],
+    },
+    {
+        tileNumber: 4268,
+        image: tile4268,
+        planets: ['Sierpen', 'Mandle', 'Regnem'],
+    },
+    {
+        tileNumber: 4269,
+        image: tile4269,
+        planets: ['Domna'],
+    },
+    {
+        tileNumber: 4270,
+        image: tile4270,
+    },
+    {
+        tileNumber: 4271,
+        image: tile4271,
+    },
+    {
+        tileNumber: 4272,
+        image: tile4272,
+    },
+    {
+        tileNumber: 4273,
+        image: tile4273,
+    },
+    {
+        tileNumber: 4274,
+        image: tile4274,
+    },
+    {
+        tileNumber: 4275,
+        image: tile4275,
+    },
+    {
+        tileNumber: 4276,
+        image: tile4276,
+    },
 ];
 
 const systemTileDescription = (stn: SystemTileNumber): string =>
@@ -649,6 +798,16 @@ const planetlessSystemTileDescription = (
             return 'Gravity rift';
         case 42:
             return 'Nebula';
+        case 4272:
+            return 'Beta wormhole in nebula';
+        case 4273:
+            return 'Asteroid field in nebula';
+        case 4274:
+            return 'Gravity rift in asteroid field';
+        case 4275:
+            return 'Gamma wormhole next to gravity rift';
+        case 4276:
+            return 'Alpha and beta wormhole in supernova';
         case 43:
         case 80:
             return 'Supernova';
@@ -662,6 +821,8 @@ const planetlessSystemTileDescription = (
         case 50:
         case 77:
         case 78:
+        case 4270:
+        case 4271:
             return 'Empty space';
         case 79:
             return 'Alpha wormhole in asteroid field';

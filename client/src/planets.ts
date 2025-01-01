@@ -98,6 +98,33 @@ const planetNames = [
     'Rigel I',
     'Mallice',
     'Custodia Vigilia',
+    'Silence',
+    'Echo',
+    'Tarrock',
+    'Prism',
+    'Troac',
+    'Etir V',
+    'Vioss',
+    'Fakrenn',
+    'San-vit',
+    'Lodran',
+    'Dorvok',
+    'Derbrae',
+    'Moln',
+    'Rysaa',
+    'Salin',
+    'Gwiyun',
+    'Inan',
+    'Swog',
+    'Detic',
+    'Lliot',
+    'Qaak',
+    'Larred',
+    'Nairb',
+    'Sierpen',
+    'Mandle',
+    'Regnem',
+    'Domna',
 ] as const;
 
 type PlanetName = (typeof planetNames)[number];
@@ -503,6 +530,114 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     'Custodia Vigilia': {
         resources: 2,
         influence: 3,
+    },
+    'Etir V': {
+        resources: 4,
+        influence: 0,
+    },
+    Echo: {
+        resources: 1,
+        influence: 2,
+    },
+    Fakrenn: {
+        resources: 2,
+        influence: 2,
+    },
+    Prism: {
+        resources: 0,
+        influence: 3,
+    },
+    Silence: {
+        resources: 2,
+        influence: 2,
+    },
+    Tarrock: {
+        resources: 3,
+        influence: 0,
+    },
+    Troac: {
+        resources: 0,
+        influence: 4,
+    },
+    Vioss: {
+        resources: 3,
+        influence: 3,
+    },
+    'San-vit': {
+        resources: 3,
+        influence: 1,
+    },
+    Lodran: {
+        resources: 0,
+        influence: 2,
+    },
+    Dorvok: {
+        resources: 1,
+        influence: 2,
+    },
+    Derbrae: {
+        resources: 2,
+        influence: 3,
+    },
+    Moln: {
+        resources: 1,
+        influence: 2,
+    },
+    Rysaa: {
+        resources: 2,
+        influence: 0,
+    },
+    Salin: {
+        resources: 1,
+        influence: 2,
+    },
+    Gwiyun: {
+        resources: 2,
+        influence: 2,
+    },
+    Inan: {
+        resources: 1,
+        influence: 2,
+    },
+    Swog: {
+        resources: 1,
+        influence: 0,
+    },
+    Detic: {
+        resources: 3,
+        influence: 2,
+    },
+    Lliot: {
+        resources: 0,
+        influence: 1,
+    },
+    Qaak: {
+        resources: 1,
+        influence: 1,
+    },
+    Larred: {
+        resources: 1,
+        influence: 1,
+    },
+    Nairb: {
+        resources: 1,
+        influence: 1,
+    },
+    Sierpen: {
+        resources: 2,
+        influence: 0,
+    },
+    Mandle: {
+        resources: 1,
+        influence: 1,
+    },
+    Regnem: {
+        resources: 0,
+        influence: 2,
+    },
+    Domna: {
+        resources: 2,
+        influence: 1,
     },
 };
 
