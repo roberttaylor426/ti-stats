@@ -32,7 +32,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
     const { events, publishNewEvents } = props;
 
     const [tileSelections, setTileSelections] = useState<
-        Record<number, SystemTileNumber>
+        Record<number, SystemTileNumber | undefined>
     >(initialTileSelections);
 
     const publishMapTileSelectionEvents = async () => {
@@ -120,12 +120,12 @@ const initialTileSelections = { 19: mecatolRexTileNumber } as const;
 
 const parseTtsMapString = (
     s: string
-): Record<number, SystemTileNumber> | undefined => {
+): Record<number, SystemTileNumber | undefined> | undefined => {
     const tiles = s
         .split(' ')
         .map((s) => s.trim())
         .map((s) => Number.parseInt(s))
-        .filter(isSystemTileNumber);
+        .map((s) => (isSystemTileNumber(s) ? s : undefined));
 
     if (tiles.length === 36) {
         return {

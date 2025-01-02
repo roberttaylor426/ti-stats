@@ -164,91 +164,6 @@ type SystemTile = PlanetlessSystemTile | SystemWithPlanetsTile;
 const isSystemWithPlanetsTile = (t: SystemTile): t is SystemWithPlanetsTile =>
     isSystemWithPlanetsTileNumber(t.tileNumber);
 
-const systemTileImages = [
-    tile1,
-    tile2,
-    tile3,
-    tile4,
-    tile5,
-    tile6,
-    tile7,
-    tile8,
-    tile9,
-    tile10,
-    tile11,
-    tile12,
-    tile13,
-    tile14,
-    tile15,
-    tile16,
-    tile17,
-    tile18,
-    tile19,
-    tile20,
-    tile21,
-    tile22,
-    tile23,
-    tile24,
-    tile25,
-    tile26,
-    tile27,
-    tile28,
-    tile29,
-    tile30,
-    tile31,
-    tile32,
-    tile33,
-    tile34,
-    tile35,
-    tile36,
-    tile37,
-    tile38,
-    tile39,
-    tile40,
-    tile41,
-    tile42,
-    tile43,
-    tile44,
-    tile45,
-    tile46,
-    tile47,
-    tile48,
-    tile49,
-    tile50,
-    tile51,
-    tile52,
-    tile53,
-    tile54,
-    tile55,
-    tile56,
-    tile57,
-    tile58,
-    tile59,
-    tile60,
-    tile61,
-    tile62,
-    tile63,
-    tile64,
-    tile65,
-    tile66,
-    tile67,
-    tile68,
-    tile69,
-    tile70,
-    tile71,
-    tile72,
-    tile73,
-    tile74,
-    tile75,
-    tile76,
-    tile77,
-    tile78,
-    tile79,
-    tile80,
-    tile81,
-    tile82,
-];
-
 const planetlessSystemTileNumbers = [
     17, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 77, 78, 79, 80, 81,
     3232, 4270, 4271, 4272, 4273, 4274, 4275, 4276,
@@ -284,7 +199,10 @@ const isPlanetlessSystemTileNumber = (
 ): stn is PlanetlessSystemTileNumber => !isSystemWithPlanetsTileNumber(stn);
 
 const isSystemTileNumber = (n: number): n is SystemTileNumber =>
-    Number.isInteger(n) && n >= 1 && n < 82;
+    Number.isInteger(n) &&
+    !![...planetlessSystemTileNumbers, ...systemWithPlanetsTileNumbers].find(
+        (tn) => tn === n
+    );
 
 const ghostsOfCreussGalaxyTileNumber = 17;
 const mecatolRexTileNumber = 18;
@@ -978,6 +896,9 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
+const systemTileImage = (stn?: SystemTileNumber) =>
+    systemTiles.find((st) => st.tileNumber === stn) || tile0;
+
 const systemTileDescription = (stn: SystemTileNumber): string =>
     `${stn} - ${isSystemWithPlanetsTileNumber(stn) ? systemWithPlanetsTileDescription(stn) : planetlessSystemTileDescription(stn)}`;
 
@@ -1062,8 +983,7 @@ export {
     PlanetlessSystemTileNumber,
     SystemTile,
     systemTileDescription,
-    systemTileImages,
+    systemTileImage,
     SystemTileNumber,
     systemTiles,
-    tile0,
 };

@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
-import tile51 from './assets/tiles/ST_51.png';
-import tile82 from './assets/tiles/ST_82.png';
-import tile82Back from './assets/tiles/ST_82_Back.png';
+import tile51 from './assets/tiles/ST_51.webp';
+import tile82 from './assets/tiles/ST_82.webp';
+import tile82Back from './assets/tiles/ST_82_Back.webp';
 import {
     Event,
     factionsInGame,
@@ -25,10 +25,9 @@ import {
     ghostsOfCreussHomeTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
-    systemTileImages,
+    systemTileImage,
     SystemTileNumber,
     systemTiles,
-    tile0,
 } from './systemTiles';
 import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
@@ -337,11 +336,7 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
 }) => (
     <StyledHighlightableTile>
         <Tile
-            src={
-                systemTileNumber
-                    ? systemTileImages[systemTileNumber - 1]
-                    : tile0
-            }
+            src={systemTileImage(systemTileNumber)}
             alt={`System tile ${systemTileNumber}`}
         />
         {systemTileNumber && (
