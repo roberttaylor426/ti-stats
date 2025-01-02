@@ -83,6 +83,40 @@ import tile79 from './assets/tiles/ST_79.webp';
 import tile80 from './assets/tiles/ST_80.webp';
 import tile81 from './assets/tiles/ST_81.webp';
 import tile82 from './assets/tiles/ST_82.webp';
+import tile3201 from './assets/tiles/ST_3201.webp';
+import tile3202 from './assets/tiles/ST_3202.webp';
+import tile3203 from './assets/tiles/ST_3203.webp';
+import tile3204 from './assets/tiles/ST_3204.webp';
+import tile3205 from './assets/tiles/ST_3205.webp';
+import tile3206 from './assets/tiles/ST_3206.webp';
+import tile3207 from './assets/tiles/ST_3207.webp';
+import tile3208 from './assets/tiles/ST_3208.webp';
+import tile3209 from './assets/tiles/ST_3209.webp';
+import tile3210 from './assets/tiles/ST_3210.webp';
+import tile3211 from './assets/tiles/ST_3211.webp';
+import tile3212 from './assets/tiles/ST_3212.webp';
+import tile3213 from './assets/tiles/ST_3213.webp';
+import tile3214 from './assets/tiles/ST_3214.webp';
+import tile3215 from './assets/tiles/ST_3215.webp';
+import tile3216 from './assets/tiles/ST_3216.webp';
+import tile3217 from './assets/tiles/ST_3217.webp';
+import tile3218 from './assets/tiles/ST_3218.webp';
+import tile3219 from './assets/tiles/ST_3219.webp';
+import tile3220 from './assets/tiles/ST_3220.webp';
+import tile3221 from './assets/tiles/ST_3221.webp';
+import tile3222 from './assets/tiles/ST_3222.webp';
+import tile3223 from './assets/tiles/ST_3223.webp';
+import tile3224 from './assets/tiles/ST_3224.webp';
+import tile3226 from './assets/tiles/ST_3226.webp';
+import tile3227 from './assets/tiles/ST_3227.webp';
+import tile3228 from './assets/tiles/ST_3228.webp';
+import tile3229 from './assets/tiles/ST_3229.webp';
+import tile3230 from './assets/tiles/ST_3230.webp';
+import tile3231 from './assets/tiles/ST_3231.webp';
+import tile3232 from './assets/tiles/ST_3232.webp';
+import tile3233 from './assets/tiles/ST_3233.webp';
+import tile3234 from './assets/tiles/ST_3234.webp';
+import tile3235 from './assets/tiles/ST_3235.webp';
 import tile4253 from './assets/tiles/ST_4253.webp';
 import tile4254 from './assets/tiles/ST_4254.webp';
 import tile4255 from './assets/tiles/ST_4255.webp';
@@ -217,7 +251,7 @@ const systemTileImages = [
 
 const planetlessSystemTileNumbers = [
     17, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 77, 78, 79, 80, 81,
-    4270, 4271, 4272, 4273, 4274, 4275, 4276,
+    3232, 4270, 4271, 4272, 4273, 4274, 4275, 4276,
 ] as const;
 
 type PlanetlessSystemTileNumber = (typeof planetlessSystemTileNumbers)[number];
@@ -226,8 +260,11 @@ const systemWithPlanetsTileNumbers = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22,
     23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 51, 52, 53,
     54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
-    73, 74, 75, 76, 82, 4253, 4254, 4255, 4256, 4257, 4258, 4259, 4260, 4261,
-    4262, 4263, 4264, 4265, 4266, 4267, 4268, 4269,
+    73, 74, 75, 76, 82, 3201, 3202, 3203, 3204, 3205, 3206, 3207, 3208, 3209,
+    3210, 3211, 3212, 3213, 3214, 3215, 3216, 3217, 3218, 3219, 3220, 3221,
+    3222, 3223, 3224, 3225, 3226, 3227, 3228, 3229, 3230, 3231, 3233, 3234,
+    3235, 4253, 4254, 4255, 4256, 4257, 4258, 4259, 4260, 4261, 4262, 4263,
+    4264, 4265, 4266, 4267, 4268, 4269,
 ] as const;
 
 type SystemWithPlanetsTileNumber =
@@ -648,6 +685,175 @@ const systemTiles: SystemTile[] = [
         planets: ['Mallice'],
     },
     {
+        tileNumber: 3201,
+        image: tile3201,
+        planets: homeworlds('The Veldyr Sovereignty'),
+    },
+    {
+        tileNumber: 3202,
+        image: tile3202,
+        planets: homeworlds('The Free Systems Compact'),
+    },
+    {
+        tileNumber: 3203,
+        image: tile3203,
+        planets: homeworlds('The Li-Zho Dynasty'),
+    },
+    {
+        tileNumber: 3204,
+        image: tile3204,
+        planets: homeworlds('The Kortali Tribunal'),
+    },
+    {
+        tileNumber: 3205,
+        image: tile3205,
+        planets: homeworlds('The Ghemina Raiders'),
+    },
+    {
+        tileNumber: 3206,
+        image: tile3206,
+        planets: homeworlds('The Vaden Banking Clans'),
+    },
+    {
+        tileNumber: 3207,
+        image: tile3207,
+        planets: homeworlds('The Glimmer of Mortheus'),
+    },
+    {
+        tileNumber: 3208,
+        image: tile3208,
+        planets: homeworlds('The Augurs of Illyxum'),
+    },
+    {
+        tileNumber: 3209,
+        image: tile3209,
+        planets: homeworlds('The Shipwrights of Ark'),
+    },
+    {
+        tileNumber: 3210,
+        image: tile3210,
+        planets: homeworlds('The Olradin League'),
+    },
+    {
+        tileNumber: 3211,
+        image: tile3211,
+        planets: homeworlds('The Myko-Mentori'),
+    },
+    {
+        tileNumber: 3212,
+        image: tile3212,
+        planets: homeworlds('The Tnelis Syndicate'),
+    },
+    {
+        tileNumber: 3213,
+        image: tile3213,
+        planets: homeworlds('The Savages of Cymiae'),
+    },
+    {
+        tileNumber: 3214,
+        image: tile3214,
+        planets: homeworlds("Roh'Dhna Mechatronics"),
+    },
+    {
+        tileNumber: 3215,
+        image: tile3215,
+        planets: homeworlds('The Zelian Purifier'),
+    },
+    {
+        tileNumber: 3216,
+        image: tile3216,
+        planets: homeworlds('The Vaylerian Scourge'),
+    },
+    {
+        tileNumber: 3217,
+        image: tile3217,
+        planets: homeworlds('The Florzen Profiteers'),
+    },
+    {
+        tileNumber: 3218,
+        image: tile3218,
+        planets: homeworlds('The Dih-Mohn Flotilla'),
+    },
+    {
+        tileNumber: 3219,
+        image: tile3219,
+        planets: homeworlds('The Celdauri Trade Confederation'),
+    },
+    {
+        tileNumber: 3220,
+        image: tile3220,
+        planets: homeworlds('The Nivyn Star of Kings'),
+    },
+    {
+        tileNumber: 3221,
+        image: tile3221,
+        planets: homeworlds('The Mirveda Protectorate'),
+    },
+    {
+        tileNumber: 3222,
+        image: tile3222,
+        planets: homeworlds("The L'tokk Khrask"),
+    },
+    {
+        tileNumber: 3223,
+        image: tile3223,
+        planets: homeworlds('The Kollecc Society'),
+    },
+    {
+        tileNumber: 3224,
+        image: tile3224,
+        planets: homeworlds('The Zealots of Rhodun'),
+    },
+    {
+        tileNumber: 3226,
+        image: tile3226,
+        planets: homeworlds('The Berserkers of Kjalengard'),
+    },
+    {
+        tileNumber: 3227,
+        image: tile3227,
+        planets: homeworlds('The Bentor Conglomerate'),
+    },
+    {
+        tileNumber: 3228,
+        image: tile3228,
+        planets: homeworlds('The Nokar Sellships'),
+    },
+    {
+        tileNumber: 3229,
+        image: tile3229,
+        planets: homeworlds('The GLEdge Union'),
+    },
+    {
+        tileNumber: 3230,
+        image: tile3230,
+        planets: homeworlds('The Lanefir Remants'),
+    },
+    {
+        tileNumber: 3231,
+        image: tile3231,
+        planets: homeworlds('The Kyro Sodality'),
+    },
+    {
+        tileNumber: 3232,
+        image: tile3232,
+    },
+    {
+        tileNumber: 3233,
+        image: tile3233,
+        planets: homeworlds('The Monks of Kolume'),
+    },
+    {
+        tileNumber: 3234,
+        image: tile3234,
+        planets: homeworlds('The Cheiran Hordes'),
+    },
+    {
+        tileNumber: 3235,
+        image: tile3235,
+        planets: homeworlds('The Edyn Mandate'),
+    },
+    {
         tileNumber: 4253,
         image: tile4253,
         planets: ['Silence'],
@@ -798,6 +1004,8 @@ const planetlessSystemTileDescription = (
             return 'Gravity rift';
         case 42:
             return 'Nebula';
+        case 3232:
+            return 'Ghoti Wayfarers home system';
         case 4272:
             return 'Beta wormhole in nebula';
         case 4273:

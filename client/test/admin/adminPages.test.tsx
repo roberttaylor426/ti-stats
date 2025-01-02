@@ -1,16 +1,6 @@
 import { currentPlayerTurnInActionPhase } from '../../src/events';
 
 describe('player turn page', () => {
-    for (let i = 4261; i < 4277; i++) {
-        console.log(`import tile${i} from './assets/tiles/ST_${i}.webp';`);
-    }
-
-    `{
-        tileNumber: 4270,
-        image: tile4270,
-        planets: [],
-    }`;
-
     describe('determines next player', () => {
         it('when no one has finished a turn', () => {
             expect(

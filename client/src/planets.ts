@@ -125,6 +125,61 @@ const planetNames = [
     'Mandle',
     'Regnem',
     'Domna',
+    'Rhune',
+    'Kroll',
+    'Cyrra',
+    'Idyn',
+    'Pax',
+    'Kyr',
+    'Vess',
+    'Ogdun',
+    'Brthkul',
+    'Drah',
+    'Trykk',
+    'Vadarian',
+    'Norvus',
+    'Biaheo',
+    'Empero',
+    'Demis',
+    'Chrion',
+    'Axis',
+    'Sanctuary',
+    'Shi-Halaum',
+    'Discordia',
+    'Cymiae',
+    'Prind',
+    'Gen',
+    'Zelian',
+    'Vaylar',
+    'Delmor',
+    'Kyd',
+    'Abyssus',
+    'Louk',
+    'Auldane',
+    'Ellas',
+    'Aldra',
+    'Beata',
+    'Bohl-Dhur',
+    'Susuros',
+    'Poh',
+    'Orad',
+    'Kjalengard',
+    'Hulgade',
+    'Benc',
+    'Hau',
+    'Zarr',
+    'Nokk',
+    'Last Stop',
+    "Aysis' Rest",
+    'Solitude',
+    'Avicenna',
+    'Alesna',
+    'Azle',
+    'Arche',
+    'Gghurn Theta',
+    'Ekko',
+    'Edyn',
+    'Okke',
 ] as const;
 
 type PlanetName = (typeof planetNames)[number];
@@ -637,6 +692,226 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     },
     Domna: {
         resources: 2,
+        influence: 1,
+    },
+    Rhune: {
+        resources: 3,
+        influence: 4,
+    },
+    Kroll: {
+        resources: 1,
+        influence: 1,
+    },
+    Cyrra: {
+        resources: 0,
+        influence: 1,
+    },
+    Idyn: {
+        resources: 1,
+        influence: 0,
+    },
+    Pax: {
+        resources: 1,
+        influence: 2,
+    },
+    Kyr: {
+        resources: 2,
+        influence: 0,
+    },
+    Vess: {
+        resources: 0,
+        influence: 1,
+    },
+    Ogdun: {
+        resources: 2,
+        influence: 0,
+    },
+    Brthkul: {
+        resources: 1,
+        influence: 3,
+    },
+    Drah: {
+        resources: 1,
+        influence: 2,
+    },
+    Trykk: {
+        resources: 2,
+        influence: 1,
+    },
+    Vadarian: {
+        resources: 3,
+        influence: 0,
+    },
+    Norvus: {
+        resources: 1,
+        influence: 2,
+    },
+    Biaheo: {
+        resources: 3,
+        influence: 0,
+    },
+    Empero: {
+        resources: 0,
+        influence: 3,
+    },
+    Demis: {
+        resources: 2,
+        influence: 2,
+    },
+    Chrion: {
+        resources: 2,
+        influence: 3,
+    },
+    Axis: {
+        resources: 5,
+        influence: 0,
+    },
+    Sanctuary: {
+        resources: 3,
+        influence: 4,
+    },
+    'Shi-Halaum': {
+        resources: 4,
+        influence: 0,
+    },
+    Discordia: {
+        resources: 4,
+        influence: 1,
+    },
+    Cymiae: {
+        resources: 3,
+        influence: 1,
+    },
+    Prind: {
+        resources: 3,
+        influence: 3,
+    },
+    Gen: {
+        resources: 2,
+        influence: 0,
+    },
+    Zelian: {
+        resources: 3,
+        influence: 3,
+    },
+    Vaylar: {
+        resources: 3,
+        influence: 2,
+    },
+    Delmor: {
+        resources: 2,
+        influence: 1,
+    },
+    Kyd: {
+        resources: 1,
+        influence: 2,
+    },
+    Abyssus: {
+        resources: 4,
+        influence: 2,
+    },
+    Louk: {
+        resources: 2,
+        influence: 1,
+    },
+    Auldane: {
+        resources: 1,
+        influence: 3,
+    },
+    Ellas: {
+        resources: 3,
+        influence: 3,
+    },
+    Aldra: {
+        resources: 2,
+        influence: 3,
+    },
+    Beata: {
+        resources: 2,
+        influence: 1,
+    },
+    'Bohl-Dhur': {
+        resources: 3,
+        influence: 4,
+    },
+    Susuros: {
+        resources: 4,
+        influence: 4,
+    },
+    Poh: {
+        resources: 2,
+        influence: 0,
+    },
+    Orad: {
+        resources: 3,
+        influence: 1,
+    },
+    Kjalengard: {
+        resources: 3,
+        influence: 2,
+    },
+    Hulgade: {
+        resources: 1,
+        influence: 0,
+    },
+    Benc: {
+        resources: 2,
+        influence: 0,
+    },
+    Hau: {
+        resources: 1,
+        influence: 2,
+    },
+    Zarr: {
+        resources: 2,
+        influence: 1,
+    },
+    Nokk: {
+        resources: 1,
+        influence: 1,
+    },
+    'Last Stop': {
+        resources: 3,
+        influence: 0,
+    },
+    "Aysis' Rest": {
+        resources: 4,
+        influence: 3,
+    },
+    Solitude: {
+        resources: 0,
+        influence: 1,
+    },
+    Avicenna: {
+        resources: 4,
+        influence: 0,
+    },
+    Alesna: {
+        resources: 2,
+        influence: 0,
+    },
+    Azle: {
+        resources: 2,
+        influence: 0,
+    },
+    Arche: {
+        resources: 2,
+        influence: 2,
+    },
+    'Gghurn Theta': {
+        resources: 2,
+        influence: 1,
+    },
+    Ekko: {
+        resources: 0,
+        influence: 1,
+    },
+    Edyn: {
+        resources: 3,
+        influence: 3,
+    },
+    Okke: {
+        resources: 0,
         influence: 1,
     },
 };
