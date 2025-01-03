@@ -897,7 +897,7 @@ const systemTiles: SystemTile[] = [
 ];
 
 const systemTileImage = (stn?: SystemTileNumber) =>
-    systemTiles.find((st) => st.tileNumber === stn) || tile0;
+    systemTiles.find((st) => st.tileNumber === stn)?.image || tile0;
 
 const systemTileDescription = (stn: SystemTileNumber): string =>
     `${stn} - ${isSystemWithPlanetsTileNumber(stn) ? systemWithPlanetsTileDescription(stn) : planetlessSystemTileDescription(stn)}`;
