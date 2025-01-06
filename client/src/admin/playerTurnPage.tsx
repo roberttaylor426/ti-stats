@@ -6,6 +6,8 @@ import {
     currentPlayerTurnInActionPhase,
     Event,
     factionsInGame,
+    hasMiragePlanetBeenFound,
+    hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     latestPlanetControlledEventsByPlanet,
@@ -15,6 +17,7 @@ import {
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
     systemTileNumbersInPlay,
+    systemTilePlanets,
     technologiesResearchedByFaction,
 } from '../events';
 import { Faction, shortName } from '../factions';
@@ -22,10 +25,8 @@ import { PlanetName, planets } from '../planets';
 import { StrategyCard } from '../strategyCards';
 import {
     isPlanetlessSystemTileNumber,
-    isSystemWithPlanetsTile,
     PlanetlessSystemTileNumber,
     systemTileDescription,
-    systemTiles,
 } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
 import { AdminPageProps } from './adminPageProps';
@@ -63,6 +64,11 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         setSelectedPlanetlessSystemToControl,
     ] = useState<PlanetlessSystemTileNumber>();
 
+    const [
+        selectedPlanetlessSystemToFindMirageIn,
+        setSelectedPlanetlessSystemToFindMirageIn,
+    ] = useState<PlanetlessSystemTileNumber>();
+
     const [selectedPlanetToEnhance, setSelectedPlanetToEnhance] =
         useState<PlanetName>();
     const [resourcesToEnhance, setResourcesToEnhance] = useState(0);
@@ -91,6 +97,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     ) => {
         const newEvent: Event = {
             type: 'PlanetlessSystemControlled',
+            time: new Date().getTime(),
+            tileNumber: stn,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishMiragePlanetFoundEvent = async (
+        stn: PlanetlessSystemTileNumber,
+        f: Faction | undefined
+    ) => {
+        const newEvent: Event = {
+            type: 'MiragePlanetFound',
             time: new Date().getTime(),
             tileNumber: stn,
             faction: f,
@@ -167,11 +187,12 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     };
 
     const planetsOnTheBoard: PlanetName[] = systemTileNumbersInPlay(events)
-        .flatMap(
-            (stn) =>
-                systemTiles
-                    .filter(isSystemWithPlanetsTile)
-                    .find((t) => t.tileNumber === stn)?.planets || []
+        .flatMap((stn) =>
+            isPlanetlessSystemTileNumber(stn)
+                ? hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, stn)
+                    ? (['Mirage'] as const)
+                    : []
+                : systemTilePlanets(events, stn)
         )
         .filter(
             (p) =>
@@ -181,7 +202,12 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         );
 
     const planetlessSystemTilesOnTheBoard: PlanetlessSystemTileNumber[] =
-        systemTileNumbersInPlay(events).filter(isPlanetlessSystemTileNumber);
+        systemTileNumbersInPlay(events)
+            .filter(isPlanetlessSystemTileNumber)
+            .filter(
+                (stn) =>
+                    !hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, stn)
+            );
 
     const factionCurrentlyControllingPlanet = (p: PlanetName) =>
         latestPlanetControlledEventsByPlanet(events).find((e) => e.planet === p)
@@ -337,6 +363,46 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     Lose control
                 </Button>
             </InputsRow>
+            {!hasMiragePlanetBeenFound(events) && (
+                <InputsRow>
+                    <Select
+                        onChange={(e) =>
+                            setSelectedPlanetlessSystemToFindMirageIn(
+                                Number.parseInt(
+                                    e.target.value
+                                ) as PlanetlessSystemTileNumber
+                            )
+                        }
+                    >
+                        <option value={''}>--Planetless system--</option>
+                        <option
+                            value={''}
+                            disabled
+                        >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                        {_.sortBy(planetlessSystemTilesOnTheBoard, (stn) =>
+                            tileIndexOnBoard(stn, mapTilesSelectedEvent)
+                        ).map((stn) => (
+                            <option key={stn} value={stn}>
+                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                    stn
+                                )}`}
+                            </option>
+                        ))}
+                    </Select>
+                    <Button
+                        onClick={async () => {
+                            if (selectedPlanetlessSystemToFindMirageIn) {
+                                await publishMiragePlanetFoundEvent(
+                                    selectedPlanetlessSystemToFindMirageIn,
+                                    activePlayerInActionPhase
+                                );
+                            }
+                        }}
+                    >
+                        Find Mirage
+                    </Button>
+                </InputsRow>
+            )}
             <InputsColumn>
                 <Select
                     onChange={(e) =>

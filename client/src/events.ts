@@ -13,8 +13,11 @@ import { StrategyCard } from './strategyCards';
 import {
     factionSystemTileNumber,
     ghostsOfCreussHomeTileNumber,
+    isSystemWithPlanetsTile,
     malliceTileNumber,
+    PlanetlessSystemTile,
     PlanetlessSystemTileNumber,
+    systemTile,
     SystemTileNumber,
 } from './systemTiles';
 import { Technology } from './technologies';
@@ -107,6 +110,13 @@ type PlanetlessSystemControlledEvent = {
     faction: Faction | undefined;
 };
 
+type MiragePlanetFoundEvent = {
+    type: 'MiragePlanetFound';
+    time: number;
+    tileNumber: PlanetlessSystemTileNumber;
+    faction: Faction | undefined;
+};
+
 type PlanetDestroyedEvent = {
     type: 'PlanetDestroyed';
     time: number;
@@ -172,6 +182,9 @@ const isPlanetlessSystemControlledEvent = (
 ): e is PlanetlessSystemControlledEvent =>
     e.type === 'PlanetlessSystemControlled';
 
+const isMiragePlanetFoundEvent = (e: Event): e is MiragePlanetFoundEvent =>
+    e.type === 'MiragePlanetFound';
+
 const isTechnologyResearchedEvent = (
     e: Event
 ): e is PlayerResearchedTechnologyEvent =>
@@ -210,6 +223,7 @@ type Event =
     | AgendaCardRevealedEvent
     | AgendaPhaseStartedEvent
     | MapTilesSelectedEvent
+    | MiragePlanetFoundEvent
     | PlanetControlledEvent
     | PlanetDestroyedEvent
     | PlanetEnhancedEvent
@@ -252,6 +266,37 @@ const hasMecatolRexBeenCaptured = (events: Event[]): boolean =>
     events.some(
         (e) => e.type === 'PlanetControlled' && e.planet === 'Mecatol Rex'
     );
+
+const hasMiragePlanetBeenFound = (events: Event[]): boolean =>
+    events.some((e) => e.type === 'MiragePlanetFound');
+
+const hasMiragePlanetBeenFoundOnSystemTileWithNumber = (
+    events: Event[],
+    stn: PlanetlessSystemTileNumber
+): boolean => events.find(isMiragePlanetFoundEvent)?.tileNumber === stn;
+
+const hasMiragePlanetBeenFoundOnSystemTile = (
+    events: Event[],
+    tile: PlanetlessSystemTile
+): boolean =>
+    hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, tile.tileNumber);
+
+const systemTilePlanets = (
+    events: Event[],
+    stn: SystemTileNumber
+): PlanetName[] => {
+    const st = systemTile(stn);
+
+    if (isSystemWithPlanetsTile(st)) {
+        return st.planets;
+    }
+
+    if (hasMiragePlanetBeenFoundOnSystemTile(events, st)) {
+        return ['Mirage'];
+    }
+
+    return [];
+};
 
 const currentSpeaker = (events: Event[]): Faction | undefined =>
     _.last(events.filter(isSpeakerAssignedEvent))?.faction;
@@ -541,6 +586,9 @@ export {
     factionSelections,
     factionsInGame,
     hasMecatolRexBeenCaptured,
+    hasMiragePlanetBeenFound,
+    hasMiragePlanetBeenFoundOnSystemTile,
+    hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
@@ -574,5 +622,6 @@ export {
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
     systemTileNumbersInPlay,
+    systemTilePlanets,
     technologiesResearchedByFaction,
 };

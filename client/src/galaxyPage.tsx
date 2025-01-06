@@ -2,12 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
+import mirageToken from './assets/tiles/MirageToken.webp';
 import tile51 from './assets/tiles/ST_51.webp';
 import tile82 from './assets/tiles/ST_82.webp';
 import tile82Back from './assets/tiles/ST_82_Back.webp';
 import {
     Event,
     factionsInGame,
+    hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     isMapTilesSelectedEvent,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
@@ -40,7 +42,6 @@ import { notUndefined, range } from './util';
  Digitize the VP tracks
  Ability to lose a tech (Jol Nar)
  Pause timer after Strategy primary
- Add Mirage planet to tile
  Can we keep track of votes?
  When a player captures Mecatol they should score a point
 */
@@ -86,6 +87,16 @@ const GalaxyPage: React.FC = () => {
                                                     systemTileNumber,
                                                     events
                                                 )}
+                                                showMirageToken={
+                                                    !!systemTileNumber &&
+                                                    isPlanetlessSystemTileNumber(
+                                                        systemTileNumber
+                                                    ) &&
+                                                    hasMiragePlanetBeenFoundOnSystemTileWithNumber(
+                                                        events,
+                                                        systemTileNumber
+                                                    )
+                                                }
                                             />
                                         );
                                     }
@@ -114,7 +125,7 @@ const GalaxyPage: React.FC = () => {
                             controllingPlayerColors(
                                 ghostsOfCreussHomeTileNumber,
                                 events
-                            )[0]
+                            )?.playerColors[0] as PlayerColor
                         }
                     />
                 ) : (
@@ -228,6 +239,21 @@ const Tile = styled.img`
     min-height: 0;
 `;
 
+const MirageTokenContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > * {
+        width: 50%;
+    }
+`;
+
+const MirageToken = styled.img`
+    min-width: 0;
+    min-height: 0;
+`;
+
 type ExtraTileProps = {
     $highlightColor: string | undefined;
 };
@@ -291,29 +317,55 @@ const ExtraTiles = styled.div`
     }
 `;
 
+type ControllingPlayerColors = {
+    style: 'solid' | 'dashed';
+    playerColors: PlayerColor[];
+};
+
 const controllingPlayerColors = (
     systemTileNumber: SystemTileNumber | undefined,
     events: Event[]
-): PlayerColor[] => {
+): ControllingPlayerColors | undefined => {
     const systemTile = systemTiles.find(
         (st) => st.tileNumber === systemTileNumber
     );
 
     if (!systemTile) {
-        return [];
+        return undefined;
     }
 
     if (isSystemWithPlanetsTile(systemTile)) {
-        return (
-            systemTile.planets
-                .map((p) =>
-                    latestPlanetControlledEventsByPlanet(events).find(
-                        (e) => e.planet === p
+        return {
+            style: 'solid',
+            playerColors:
+                systemTile.planets
+                    .map((p) =>
+                        latestPlanetControlledEventsByPlanet(events).find(
+                            (e) => e.planet === p
+                        )
                     )
-                )
-                .filter(notUndefined)
-                .map((e) => playerFactionsAndColors(events)[e.faction]) || []
-        );
+                    .filter(notUndefined)
+                    .map((e) => playerFactionsAndColors(events)[e.faction]) ||
+                [],
+        };
+    }
+
+    const factionControllingMirage = latestPlanetControlledEventsByPlanet(
+        events
+    ).find((e) => e.planet === 'Mirage')?.faction;
+    if (
+        hasMiragePlanetBeenFoundOnSystemTileWithNumber(
+            events,
+            systemTile.tileNumber
+        ) &&
+        factionControllingMirage
+    ) {
+        return {
+            style: 'solid',
+            playerColors: [
+                playerFactionsAndColors(events)[factionControllingMirage],
+            ],
+        };
     }
 
     const controllingFaction = latestPlanetlessSystemControlledEventsBySystem(
@@ -321,29 +373,38 @@ const controllingPlayerColors = (
     ).find((e) => e.tileNumber === systemTileNumber)?.faction;
 
     return controllingFaction
-        ? [playerFactionsAndColors(events)[controllingFaction]]
-        : [];
+        ? {
+              style: 'dashed',
+              playerColors: [
+                  playerFactionsAndColors(events)[controllingFaction],
+              ],
+          }
+        : undefined;
 };
 
 type HighlightableTileProps = {
     systemTileNumber?: SystemTileNumber;
-    controllingPlayerColors: PlayerColor[];
+    controllingPlayerColors: ControllingPlayerColors | undefined;
+    showMirageToken: boolean;
 };
 
 const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
     systemTileNumber,
     controllingPlayerColors,
+    showMirageToken,
 }) => (
     <StyledHighlightableTile>
         <Tile
             src={systemTileImage(systemTileNumber)}
             alt={`System tile ${systemTileNumber}`}
         />
+        {showMirageToken && (
+            <MirageTokenContainer>
+                <MirageToken src={mirageToken} alt={`Mirage tile`} />
+            </MirageTokenContainer>
+        )}
         {systemTileNumber && (
-            <HexHighlight
-                controllingPlayerColors={controllingPlayerColors}
-                dashedBorder={isPlanetlessSystemTileNumber(systemTileNumber)}
-            />
+            <HexHighlight controllingPlayerColors={controllingPlayerColors} />
         )}
     </StyledHighlightableTile>
 );
@@ -362,28 +423,31 @@ const sinFromDegrees = (degrees: number) => Math.sin((degrees * Math.PI) / 180);
 const tanFromDegrees = (degrees: number) => Math.tan((degrees * Math.PI) / 180);
 
 type HexHighlightProps = {
-    controllingPlayerColors: PlayerColor[];
-    dashedBorder: boolean;
+    controllingPlayerColors: ControllingPlayerColors | undefined;
 };
 
 const HexHighlight: React.FC<HexHighlightProps> = ({
     controllingPlayerColors,
-    dashedBorder,
 }) => (
     <>
-        {controllingPlayerColors.length > 0 &&
+        {controllingPlayerColors &&
+            controllingPlayerColors.playerColors.length > 0 &&
             [0, 60, 120, 180, 240, 300].map((rotation, index) => (
                 <HexHighlightSegment
                     key={rotation}
                     $rotation={rotation}
                     $color={hexPlayerColor(
-                        _.sortBy(controllingPlayerColors, identity)[
+                        _.sortBy(
+                            controllingPlayerColors.playerColors,
+                            identity
+                        )[
                             Math.floor(
-                                controllingPlayerColors.length * (index / 6)
+                                controllingPlayerColors.playerColors.length *
+                                    (index / 6)
                             )
                         ]
                     )}
-                    $dashedBorder={dashedBorder}
+                    $dashedBorder={controllingPlayerColors.style === 'dashed'}
                 />
             ))}
     </>

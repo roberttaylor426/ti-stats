@@ -97,6 +97,7 @@ const planetNames = [
     'Rigel III',
     'Rigel I',
     'Mallice',
+    'Mirage',
     'Custodia Vigilia',
     'Silence',
     'Echo',
@@ -581,6 +582,10 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     Mallice: {
         resources: 0,
         influence: 3,
+    },
+    Mirage: {
+        resources: 1,
+        influence: 2,
     },
     'Custodia Vigilia': {
         resources: 2,

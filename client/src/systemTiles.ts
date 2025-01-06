@@ -896,8 +896,11 @@ const systemTiles: SystemTile[] = [
     },
 ];
 
+const systemTile = (stn: SystemTileNumber): SystemTile =>
+    systemTiles.find((st) => st.tileNumber === stn) as SystemTile;
+
 const systemTileImage = (stn?: SystemTileNumber) =>
-    systemTiles.find((st) => st.tileNumber === stn)?.image || tile0;
+    !!stn ? systemTile(stn).image : tile0;
 
 const systemTileDescription = (stn: SystemTileNumber): string =>
     `${stn} - ${isSystemWithPlanetsTileNumber(stn) ? systemWithPlanetsTileDescription(stn) : planetlessSystemTileDescription(stn)}`;
@@ -980,8 +983,10 @@ export {
     isSystemWithPlanetsTileNumber,
     malliceTileNumber,
     mecatolRexTileNumber,
+    PlanetlessSystemTile,
     PlanetlessSystemTileNumber,
     SystemTile,
+    systemTile,
     systemTileDescription,
     systemTileImage,
     SystemTileNumber,
