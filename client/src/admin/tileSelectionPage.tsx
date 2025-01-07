@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { Event, factionSelections } from '../events';
+import { factionSelections, MapTilesSelectedEvent } from '../events';
 import {
     FactionSelection,
     homeworlds,
@@ -37,7 +37,7 @@ const TileSelectionPage: React.FC<AdminPageProps> = (props) => {
 
     const publishMapTileSelectionEvents = async () => {
         if (_.uniq(Object.keys(tileSelections)).length === 37) {
-            const newEvents: Event[] = [
+            const newEvents: MapTilesSelectedEvent[] = [
                 {
                     type: 'MapTilesSelected',
                     time: new Date().getTime(),
