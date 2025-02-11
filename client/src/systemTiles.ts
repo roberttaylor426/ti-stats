@@ -991,4 +991,5 @@ export {
     systemTileImage,
     SystemTileNumber,
     systemTiles,
+    SystemWithPlanetsTileNumber,
 };

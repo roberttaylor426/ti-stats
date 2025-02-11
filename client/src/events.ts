@@ -19,6 +19,7 @@ import {
     PlanetlessSystemTileNumber,
     systemTile,
     SystemTileNumber,
+    SystemWithPlanetsTileNumber,
 } from './systemTiles';
 import { Technology } from './technologies';
 import { notUndefined } from './util';
@@ -123,6 +124,21 @@ type PlanetDestroyedEvent = {
     planet: PlanetName;
 };
 
+type MapTileAddedToBoardEvent = {
+    type: 'MapTileAddedToBoard';
+    time: number;
+    tileNumber: SystemWithPlanetsTileNumber;
+    position:
+        | {
+              column: -2 | -1 | 7 | 8;
+              row: -1 | 0 | 1 | 2 | 3;
+          }
+        | {
+              row: -2 | -1 | 4 | 5 | 6 | 7;
+              column: -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+          };
+};
+
 type AgendaPhaseStartedEvent = {
     type: 'AgendaPhaseStarted';
     time: number;
@@ -185,6 +201,9 @@ const isPlanetlessSystemControlledEvent = (
 const isMiragePlanetFoundEvent = (e: Event): e is MiragePlanetFoundEvent =>
     e.type === 'MiragePlanetFound';
 
+const isMapTileAddedToBoardEvent = (e: Event): e is MapTileAddedToBoardEvent =>
+    e.type === 'MapTileAddedToBoard';
+
 const isTechnologyResearchedEvent = (
     e: Event
 ): e is PlayerResearchedTechnologyEvent =>
@@ -222,6 +241,7 @@ type Event =
     | ActionPhaseStartedEvent
     | AgendaCardRevealedEvent
     | AgendaPhaseStartedEvent
+    | MapTileAddedToBoardEvent
     | MapTilesSelectedEvent
     | MiragePlanetFoundEvent
     | PlanetControlledEvent
@@ -592,6 +612,7 @@ export {
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
@@ -610,6 +631,7 @@ export {
     lastIndexOfEventType,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
+    MapTileAddedToBoardEvent,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     PlanetlessSystemControlledEvent,

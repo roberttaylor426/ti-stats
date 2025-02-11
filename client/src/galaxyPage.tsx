@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
@@ -10,9 +10,11 @@ import {
     Event,
     factionsInGame,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
+    MapTileAddedToBoardEvent,
     playerFactionsAndColors,
     resourcesAndInfluenceForFaction,
     systemTileNumbersInPlay,
@@ -30,15 +32,17 @@ import {
     systemTileImage,
     SystemTileNumber,
     systemTiles,
+    SystemWithPlanetsTileNumber,
 } from './systemTiles';
 import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
 
 /*
+ Support tiles being added to edge of galaxy
+ Introduce horizontal status pane
  Extract common scoreboard component
  Extract all pages into separate files
  Support tile changes in game (Creuss, Muaat heroes)
- Support tiles being added to edge of galaxy
  Digitize the VP tracks
  Ability to lose a tech (Jol Nar)
  Pause timer after Strategy primary
@@ -60,17 +64,143 @@ const GalaxyPage: React.FC = () => {
             resourcesAndInfluence: resourcesAndInfluenceForFaction(events, f),
         }));
 
+    // const mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[] = [
+    //     {
+    //         type: 'MapTileAddedToBoard',
+    //         tileNumber: 4259,
+    //         position: {
+    //             column: 2,
+    //             row: -1,
+    //         },
+    //     },
+    //     {
+    //         type: 'MapTileAddedToBoard',
+    //         tileNumber: 4254,
+    //         position: {
+    //             column: -1,
+    //             row: -1,
+    //         },
+    //     },
+    //     {
+    //         type: 'MapTileAddedToBoard',
+    //         tileNumber: 4263,
+    //         position: {
+    //             column: 7,
+    //             row: 2,
+    //         },
+    //     },
+    // ];
+
+    const mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[] = events.filter(
+        isMapTileAddedToBoardEvent
+    );
+
+    const tileNumbersInColumnOutsideOfInitialGalaxy = (
+        c: -2 | -1 | 7 | 8,
+        mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[]
+    ): readonly (SystemWithPlanetsTileNumber | -1)[] => {
+        const tiles =
+            c === -2 || c === 8
+                ? ([-1, -1, -1, -1, -1, -1] as const)
+                : ([-1, -1, -1, -1, -1, -1, -1] as const);
+
+        const tilesAddedToColumn = mapTileAddedToBoardEvents.filter(
+            (e) => e.position.column === c
+        );
+
+        return tiles.map(
+            (t, index) =>
+                tilesAddedToColumn.find((t) => t.position.row === index - 2)
+                    ?.tileNumber || t
+        );
+    };
+
+    const columnOutsideOfInitialGalaxy = (
+        c: -2 | -1 | 7 | 8,
+        mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[]
+    ): ReactNode => {
+        const tileNumbers = tileNumbersInColumnOutsideOfInitialGalaxy(
+            c,
+            mapTileAddedToBoardEvents
+        );
+
+        return tileNumbers.some((tn) => tn !== -1) ? (
+            <TileColumn
+                $firstColumn={
+                    c == -2 ||
+                    (c == -1 &&
+                        tileNumbersInColumnOutsideOfInitialGalaxy(
+                            -2,
+                            mapTileAddedToBoardEvents
+                        ).every((tn) => tn === -1))
+                }
+                key={c}
+            >
+                {range(
+                    maxTilesAddedToBeginningOfCenterThreeColumns(
+                        mapTileAddedToBoardEvents
+                    )
+                ).map((i) => (
+                    <DummyTile key={`beginning of column dummy tile ${i}`} />
+                ))}
+                {tileNumbersInColumnOutsideOfInitialGalaxy(
+                    c,
+                    mapTileAddedToBoardEvents
+                ).map((t, i) =>
+                    t === -1 ? (
+                        <DummyTile key={`dummy tile ${i}`} />
+                    ) : (
+                        <HighlightableSystemTile
+                            key={`tile ${t}`}
+                            systemTileNumber={t}
+                            controllingPlayerColors={controllingPlayerColors(
+                                t,
+                                events
+                            )}
+                            showMirageToken={false}
+                        />
+                    )
+                )}
+                {range(
+                    maxTilesAddedToEndOfCenterThreeColumns(
+                        mapTileAddedToBoardEvents
+                    )
+                ).map((i) => (
+                    <DummyTile key={`end of column dummy tile ${i}`} />
+                ))}
+            </TileColumn>
+        ) : (
+            <></>
+        );
+    };
+
     return (
         <StyledGalaxy>
             <Stars />
             <GalaxyContainer>
                 <StandardGalaxy>
                     <TileColumnRow>
+                        {columnOutsideOfInitialGalaxy(
+                            -2,
+                            mapTileAddedToBoardEvents
+                        )}
+                        {columnOutsideOfInitialGalaxy(
+                            -1,
+                            mapTileAddedToBoardEvents
+                        )}
                         {range(galaxyColumnCount).map((columnIndex) => (
                             <TileColumn
-                                $columnIndex={columnIndex}
+                                $firstColumn={
+                                    !mapTileAddedToBoardEvents.find(
+                                        (e) => e.position.column < 0
+                                    ) && columnIndex === 0
+                                }
                                 key={columnIndex}
                             >
+                                {tilesAtBeginningOfColumn(
+                                    columnIndex,
+                                    mapTileAddedToBoardEvents
+                                )}
                                 {range(tilesPerColumn(columnIndex)).map(
                                     (rowIndex) => {
                                         const systemTileNumber =
@@ -101,8 +231,20 @@ const GalaxyPage: React.FC = () => {
                                         );
                                     }
                                 )}
+                                {tilesAtEndOfColumn(
+                                    columnIndex,
+                                    mapTileAddedToBoardEvents
+                                )}
                             </TileColumn>
                         ))}
+                        {columnOutsideOfInitialGalaxy(
+                            7,
+                            mapTileAddedToBoardEvents
+                        )}
+                        {columnOutsideOfInitialGalaxy(
+                            8,
+                            mapTileAddedToBoardEvents
+                        )}
                     </TileColumnRow>
                 </StandardGalaxy>
             </GalaxyContainer>
@@ -193,6 +335,126 @@ const tileIndex = (columnIndex: number, rowIndex: number): number =>
     range(columnIndex).reduce((acc, n) => acc + tilesPerColumn(n), 0) +
     rowIndex;
 
+const maxTilesAddedToBeginningOfCenterThreeColumns = (
+    events: MapTileAddedToBoardEvent[]
+) =>
+    Math.max(
+        ...[2, 3, 4].map(
+            (n) =>
+                events.filter(
+                    (e) => e.position.column === n && e.position.row < 0
+                ).length
+        )
+    );
+
+const maxTilesAddedToEndOfCenterThreeColumns = (
+    events: MapTileAddedToBoardEvent[]
+) =>
+    Math.max(
+        ...[2, 3, 4].map(
+            (n) =>
+                events.filter(
+                    (e) => e.position.column === n && e.position.row > 0
+                ).length
+        )
+    );
+
+const tilesAtBeginningOfColumn = (
+    c: number,
+    mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[]
+) => {
+    const tilesAddedToBeginningOfColumn = mapTileAddedToBoardEvents.filter(
+        (e) => e.position.column === c && e.position.row < 0
+    );
+
+    const tilesAddedToEndOfColumn = mapTileAddedToBoardEvents.filter(
+        (e) => e.position.column === c && e.position.row > 0
+    );
+
+    const oneOfCenterThreeColumns = [2, 3, 4].includes(c);
+
+    return [
+        ...(oneOfCenterThreeColumns
+            ? range(
+                  maxTilesAddedToBeginningOfCenterThreeColumns(
+                      mapTileAddedToBoardEvents
+                  ) - tilesAddedToBeginningOfColumn.length
+              )
+            : range(
+                  maxTilesAddedToBeginningOfCenterThreeColumns(
+                      mapTileAddedToBoardEvents
+                  ) +
+                      Math.max(
+                          tilesAddedToEndOfColumn.length -
+                              tilesAddedToBeginningOfColumn.length,
+                          0
+                      )
+              )
+        ).map((_, i) => (
+            <DummyTile key={`beginning of column dummy tile ${i}`} />
+        )),
+        ..._.sortBy(tilesAddedToBeginningOfColumn, (e) => e.position.row).map(
+            (e) => (
+                <HighlightableSystemTile
+                    key={`tile ${e.tileNumber}`}
+                    systemTileNumber={e.tileNumber}
+                    controllingPlayerColors={controllingPlayerColors(
+                        e.tileNumber,
+                        mapTileAddedToBoardEvents
+                    )}
+                    showMirageToken={false}
+                />
+            )
+        ),
+    ];
+};
+
+const tilesAtEndOfColumn = (
+    c: number,
+    mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[]
+) => {
+    const tilesAddedToBeginningOfColumn = mapTileAddedToBoardEvents.filter(
+        (e) => e.position.column === c && e.position.row < 0
+    );
+
+    const tilesAddedToEndOfColumn = mapTileAddedToBoardEvents.filter(
+        (e) => e.position.column === c && e.position.row > 0
+    );
+
+    const oneOfCenterThreeColumns = [2, 3, 4].includes(c);
+
+    return [
+        ..._.sortBy(tilesAddedToEndOfColumn, (e) => e.position.row).map((e) => (
+            <HighlightableSystemTile
+                key={`tile ${e.tileNumber}`}
+                systemTileNumber={e.tileNumber}
+                controllingPlayerColors={controllingPlayerColors(
+                    e.tileNumber,
+                    mapTileAddedToBoardEvents
+                )}
+                showMirageToken={false}
+            />
+        )),
+        ...(oneOfCenterThreeColumns
+            ? range(
+                  maxTilesAddedToEndOfCenterThreeColumns(
+                      mapTileAddedToBoardEvents
+                  ) - tilesAddedToEndOfColumn.length
+              )
+            : range(
+                  maxTilesAddedToEndOfCenterThreeColumns(
+                      mapTileAddedToBoardEvents
+                  ) +
+                      Math.max(
+                          tilesAddedToBeginningOfColumn.length -
+                              tilesAddedToEndOfColumn.length,
+                          0
+                      )
+              )
+        ).map((_, i) => <DummyTile key={`end of column dummy tile ${i}`} />),
+    ];
+};
+
 const ResourcesAndInfluenceStats = styled.div`
     display: flex;
     flex-direction: row;
@@ -223,7 +485,7 @@ const GalaxyContainer = styled.section`
 
 const StandardGalaxy = styled.div`
     display: flex;
-    aspect-ratio: 1 / ${hexagonWidthToHeightRatio};
+    // aspect-ratio: 1 / ${hexagonWidthToHeightRatio};
 `;
 
 const TileColumnRow = styled.div`
@@ -237,6 +499,13 @@ const TileColumnRow = styled.div`
 const Tile = styled.img`
     min-width: 0;
     min-height: 0;
+`;
+
+const DummyTile = styled.div`
+    min-width: 0;
+    min-height: 0;
+    aspect-ratio: ${hexagonWidthToHeightRatio} / 1;
+    flex-shrink: 0;
 `;
 
 const MirageTokenContainer = styled.div`
@@ -279,7 +548,7 @@ const ExtraTile = styled.img<ExtraTileProps>`
 `;
 
 type TileColumnProps = {
-    $columnIndex: number;
+    $firstColumn: boolean;
 };
 
 const TileColumn = styled.div<TileColumnProps>`
@@ -287,9 +556,9 @@ const TileColumn = styled.div<TileColumnProps>`
     flex-direction: column;
     justify-content: center;
 
-    margin-left: ${(props) => (props.$columnIndex > 0 ? '-4.599%' : '0')};
+    margin-left: ${(props) => (props.$firstColumn ? '0' : '-4.599%')};
 
-    ${Tile} {
+    ${Tile}, ${DummyTile} {
         width: 100%;
     }
 `;
