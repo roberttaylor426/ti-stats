@@ -39,7 +39,6 @@ import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
 
 /*
- Support tiles being added to edge of galaxy
  Introduce horizontal status pane
  Extract common scoreboard component
  Extract all pages into separate files
@@ -49,6 +48,7 @@ import { notUndefined, range } from './util';
  Pause timer after Strategy primary
  Can we keep track of votes?
  When a player captures Mecatol they should score a point
+ Mallice and Creuss tiles overlap certain tiles added to the galaxy
 */
 
 const GalaxyPage: React.FC = () => {
