@@ -85,6 +85,9 @@ const GalaxyPage: React.FC = () => {
                                         (e) => e.position.column < 0
                                     ) && columnIndex === 0
                                 }
+                                $numberOfColumns={numberOfColumns(
+                                    mapTileAddedToBoardEvents
+                                )}
                                 key={columnIndex}
                             >
                                 {tilesAtBeginningOfColumn(columnIndex, events)}
@@ -226,6 +229,12 @@ const maxTilesAddedToEndOfCenterThreeColumns = (
         )
     );
 
+const numberOfColumns = (events: MapTileAddedToBoardEvent[]): number =>
+    7 +
+    _.uniq(events.map((e) => e.position.column)).filter((c) =>
+        [-2, -1, 7, 8].includes(c)
+    ).length;
+
 const tileNumbersInColumnOutsideOfInitialGalaxy = (
     c: -2 | -1 | 7 | 8,
     mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[]
@@ -267,6 +276,7 @@ const columnOutsideOfInitialGalaxy = (
                         mapTileAddedToBoardEvents
                     ).every((tn) => tn === -1))
             }
+            $numberOfColumns={numberOfColumns(mapTileAddedToBoardEvents)}
             key={c}
         >
             {range(
@@ -495,6 +505,7 @@ const ExtraTile = styled.img<ExtraTileProps>`
 
 type TileColumnProps = {
     $firstColumn: boolean;
+    $numberOfColumns: number;
 };
 
 const TileColumn = styled.div<TileColumnProps>`
@@ -502,7 +513,8 @@ const TileColumn = styled.div<TileColumnProps>`
     flex-direction: column;
     justify-content: center;
 
-    margin-left: ${(props) => (props.$firstColumn ? '0' : '-4.599%')};
+    margin-left: ${(props) =>
+        props.$firstColumn ? '0' : `-${32 / props.$numberOfColumns}%`};
 
     ${Tile}, ${DummyTile} {
         width: 100%;
