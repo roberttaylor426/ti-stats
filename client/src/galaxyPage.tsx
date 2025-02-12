@@ -49,7 +49,6 @@ import { notUndefined, range } from './util';
  Pause timer after Strategy primary
  Can we keep track of votes?
  When a player captures Mecatol they should score a point
- Fix border controlling player border rendering so that they don't overlap on compressed galaxies
 */
 
 const GalaxyPage: React.FC = () => {
@@ -441,7 +440,6 @@ const GalaxyContainer = styled.section`
 
 const StandardGalaxy = styled.div`
     display: flex;
-    // aspect-ratio: 1 / ${hexagonWidthToHeightRatio};
 `;
 
 const TileColumnRow = styled.div`
