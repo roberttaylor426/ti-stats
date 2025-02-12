@@ -5,13 +5,13 @@ import _ from 'underscore';
 import { Event, factionSelections } from '../events';
 import {
     FactionSelection,
-    factionsWithFixedHomeworlds,
     homeworlds,
     isFactionSelectionWithCustomHomeworlds,
 } from '../factions';
 import {
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
+    isHomeworldSystemTile,
     isSystemTileNumber,
     isSystemWithPlanetsTile,
     malliceTileNumber,
@@ -201,11 +201,7 @@ const homeworldTilesForGalaxy = (
 const nonHomeworldTilesForGalaxy = (): SystemTile[] =>
     systemTiles
         .filter(
-            (st) =>
-                !isSystemWithPlanetsTile(st) ||
-                !factionsWithFixedHomeworlds.find((f) =>
-                    _.isEqual(homeworlds(f), st.planets)
-                )
+            (st) => !isSystemWithPlanetsTile(st) || !isHomeworldSystemTile(st)
         )
         .filter(
             (st) =>

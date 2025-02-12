@@ -124,19 +124,66 @@ type PlanetDestroyedEvent = {
     planet: PlanetName;
 };
 
+type MapTileAddedToBoardPosition =
+    | {
+          column: -2 | 8;
+          row: -1 | 0 | 1 | 2 | 3;
+      }
+    | {
+          column: -1 | 7;
+          row: -2 | -1 | 0 | 1 | 2 | 3 | 4;
+      }
+    | {
+          column: 0 | 6;
+          row: -2 | -1 | 4 | 5;
+      }
+    | {
+          column: 1 | 5;
+          row: -2 | -1 | 5 | 6;
+      }
+    | {
+          column: 2 | 4;
+          row: -2 | -1 | 6 | 7;
+      }
+    | {
+          column: 3;
+          row: -1 | 7;
+      };
+
+type ColumnForNewMapTile = -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type RowForNewMapTile = -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+const possibleRowsForNewMapTile = (
+    c: ColumnForNewMapTile | undefined
+): RowForNewMapTile[] => {
+    switch (c) {
+        case -2:
+        case 8:
+            return [-1, 0, 1, 2, 3];
+        case -1:
+        case 7:
+            return [-2, -1, 0, 1, 2, 3, 4];
+        case 0:
+        case 6:
+            return [-2, -1, 4, 5];
+        case 1:
+        case 5:
+            return [-2, -1, 5, 6];
+        case 2:
+        case 4:
+            return [-2, -1, 6, 7];
+        case 3:
+            return [-1, 7];
+        case undefined:
+            return [];
+    }
+};
+
 type MapTileAddedToBoardEvent = {
     type: 'MapTileAddedToBoard';
     time: number;
     tileNumber: SystemWithPlanetsTileNumber;
-    position:
-        | {
-              column: -2 | -1 | 7 | 8;
-              row: -1 | 0 | 1 | 2 | 3;
-          }
-        | {
-              row: -2 | -1 | 4 | 5 | 6 | 7;
-              column: -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
-          };
+    position: MapTileAddedToBoardPosition;
 };
 
 type AgendaPhaseStartedEvent = {
@@ -399,6 +446,7 @@ const systemTileNumbersInPlay = (events: Event[]): SystemTileNumber[] =>
         ...Object.values(
             _.last(events.filter(isMapTilesSelectedEvent))?.selections || {}
         ),
+        ...events.filter(isMapTileAddedToBoardEvent).map((e) => e.tileNumber),
         malliceTileNumber,
         factionsInGame(events).includes('The Ghosts of Creuss')
             ? ghostsOfCreussHomeTileNumber
@@ -598,6 +646,7 @@ const playerScore = (events: Event[], f: Faction): number =>
 
 export {
     ActionPhaseStartedEvent,
+    ColumnForNewMapTile,
     currentPlayerTurnInActionPhase,
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
@@ -632,6 +681,7 @@ export {
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
     MapTileAddedToBoardEvent,
+    MapTileAddedToBoardPosition,
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     PlanetlessSystemControlledEvent,
@@ -639,8 +689,10 @@ export {
     PlayerFinishedTurnEvent,
     playerScore,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
+    possibleRowsForNewMapTile,
     resourcesAndInfluenceForFaction,
     RoundStartedEvent,
+    RowForNewMapTile,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
     systemTileNumbersInPlay,

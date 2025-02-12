@@ -143,6 +143,7 @@ import tile4275 from './assets/tiles/ST_4275.webp';
 import tile4276 from './assets/tiles/ST_4276.webp';
 import {
     FactionSelection,
+    factionsWithFixedHomeworlds,
     homeworlds,
     isFactionSelectionWithCustomHomeworlds,
 } from './factions';
@@ -812,16 +813,6 @@ const systemTiles: SystemTile[] = [
         planets: ['Fakrenn'],
     },
     {
-        tileNumber: 4260,
-        image: tile4260,
-        planets: ['Fakrenn'],
-    },
-    {
-        tileNumber: 4260,
-        image: tile4260,
-        planets: ['Fakrenn'],
-    },
-    {
         tileNumber: 4261,
         image: tile4261,
         planets: ['San-vit', 'Lodran'],
@@ -914,6 +905,11 @@ const systemWithPlanetsTileDescription = (
             .find((st) => st.tileNumber === stn)?.planets || []
     ).join(', ');
 
+const isHomeworldSystemTile = (st: SystemWithPlanetsTile): boolean =>
+    !!factionsWithFixedHomeworlds.find((f) =>
+        _.isEqual(homeworlds(f), st.planets)
+    );
+
 const planetlessSystemTileDescription = (
     stn: PlanetlessSystemTileNumber
 ): string => {
@@ -977,6 +973,7 @@ export {
     factionSystemTileNumber,
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
+    isHomeworldSystemTile,
     isPlanetlessSystemTileNumber,
     isSystemTileNumber,
     isSystemWithPlanetsTile,

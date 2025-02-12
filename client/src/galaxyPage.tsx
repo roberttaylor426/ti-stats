@@ -20,6 +20,7 @@ import {
     systemTileNumbersInPlay,
 } from './events';
 import { Faction } from './factions';
+import { galaxyColumnCount, tileIndex, tilesPerColumn } from './galaxy';
 import { ResourcesAndInfluence } from './planets';
 import { hexPlayerColor, PlayerColor } from './playerColors';
 import { Scoreboard, ScoreboardRow } from './scoreboard';
@@ -63,33 +64,6 @@ const GalaxyPage: React.FC = () => {
             playerColor: playerFactionsAndColors(events)[f],
             resourcesAndInfluence: resourcesAndInfluenceForFaction(events, f),
         }));
-
-    // const mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[] = [
-    //     {
-    //         type: 'MapTileAddedToBoard',
-    //         tileNumber: 4259,
-    //         position: {
-    //             column: 2,
-    //             row: -1,
-    //         },
-    //     },
-    //     {
-    //         type: 'MapTileAddedToBoard',
-    //         tileNumber: 4254,
-    //         position: {
-    //             column: -1,
-    //             row: -1,
-    //         },
-    //     },
-    //     {
-    //         type: 'MapTileAddedToBoard',
-    //         tileNumber: 4263,
-    //         position: {
-    //             column: 7,
-    //             row: 2,
-    //         },
-    //     },
-    // ];
 
     const mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[] = events.filter(
         isMapTileAddedToBoardEvent
@@ -323,17 +297,6 @@ type FactionResourcesAndInfluence = {
     playerColor: PlayerColor;
     resourcesAndInfluence: ResourcesAndInfluence;
 };
-
-const galaxyColumnCount = 7;
-
-const tilesPerColumn = (index: number) =>
-    index > Math.floor(galaxyColumnCount / 2)
-        ? galaxyColumnCount - index + Math.floor(galaxyColumnCount / 2)
-        : galaxyColumnCount - (Math.floor(galaxyColumnCount / 2) - index);
-
-const tileIndex = (columnIndex: number, rowIndex: number): number =>
-    range(columnIndex).reduce((acc, n) => acc + tilesPerColumn(n), 0) +
-    rowIndex;
 
 const maxTilesAddedToBeginningOfCenterThreeColumns = (
     events: MapTileAddedToBoardEvent[]

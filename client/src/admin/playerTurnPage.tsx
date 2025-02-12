@@ -3,17 +3,22 @@ import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
 import {
+    ColumnForNewMapTile,
     currentPlayerTurnInActionPhase,
     Event,
     factionsInGame,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    isMapTileAddedToBoardEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
+    MapTileAddedToBoardPosition,
     MapTilesSelectedEvent,
     playerSelectedStrategyCardEventFromLastStrategyPhase,
+    possibleRowsForNewMapTile,
+    RowForNewMapTile,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
     systemTileNumbersInPlay,
@@ -21,14 +26,20 @@ import {
     technologiesResearchedByFaction,
 } from '../events';
 import { Faction, shortName } from '../factions';
+import { tileIndex } from '../galaxy';
 import { PlanetName, planets } from '../planets';
 import { StrategyCard } from '../strategyCards';
 import {
+    isHomeworldSystemTile,
     isPlanetlessSystemTileNumber,
+    isSystemWithPlanetsTile,
     PlanetlessSystemTileNumber,
     systemTileDescription,
+    systemTiles,
+    SystemWithPlanetsTileNumber,
 } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
+import { not, range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
 import { NumberInput } from './components/input';
@@ -79,6 +90,12 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         useState<Faction>();
 
     const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
+
+    const [columnToAddMapTile, setColumnToAddMapTile] =
+        useState<ColumnForNewMapTile>();
+    const [rowToAddMapTile, setRowToAddMapTile] = useState<RowForNewMapTile>();
+    const [systemTileToAddToMap, setSystemTileToAddToMap] =
+        useState<SystemWithPlanetsTileNumber>();
 
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
         const newEvent: Event = {
@@ -186,6 +203,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         return await publishNewEvents([newEvent]);
     };
 
+    const publishMapTileAddedToBoardEvent = async (
+        p: MapTileAddedToBoardPosition,
+        tn: SystemWithPlanetsTileNumber
+    ): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'MapTileAddedToBoard',
+            time: new Date().getTime(),
+            tileNumber: tn,
+            position: p,
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
     const planetsOnTheBoard: PlanetName[] = systemTileNumbersInPlay(events)
         .flatMap((stn) =>
             isPlanetlessSystemTileNumber(stn)
@@ -267,6 +298,14 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                   (t) => t.name
               )
             : [];
+
+    const columnToAddMapTileToDescription = (c: number): string => {
+        if ([-2, -1, 7, 8].includes(c)) {
+            return `${c}`;
+        }
+
+        return `${c} = ${systemTileDescription(mapTilesSelectedEvent.selections[tileIndex(c, 0)])}`;
+    };
 
     const strategyCardSelectedByActivePlayerInActionPhase =
         playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
@@ -526,6 +565,100 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     Destroy planet
                 </Button>
             </InputsRow>
+            {events.filter(isMapTileAddedToBoardEvent).length < 3 && (
+                <InputsColumn>
+                    <InputsRow>
+                        <Select
+                            onChange={(e) => {
+                                setColumnToAddMapTile(
+                                    Number.parseInt(
+                                        e.target.value
+                                    ) as ColumnForNewMapTile
+                                );
+                            }}
+                        >
+                            <option value={''}>--Column--</option>
+                            {range(11)
+                                .map((n) => n - 2)
+                                .map((n) => (
+                                    <option key={n} value={n}>
+                                        {columnToAddMapTileToDescription(n)}
+                                    </option>
+                                ))}
+                        </Select>
+                        <Select
+                            disabled={columnToAddMapTile === undefined}
+                            onChange={(e) => {
+                                setRowToAddMapTile(
+                                    Number.parseInt(
+                                        e.target.value
+                                    ) as RowForNewMapTile
+                                );
+                            }}
+                        >
+                            <option value={''}>--Row--</option>
+                            {possibleRowsForNewMapTile(columnToAddMapTile).map(
+                                (n) => (
+                                    <option key={n} value={n}>
+                                        {n}
+                                    </option>
+                                )
+                            )}
+                        </Select>
+                    </InputsRow>
+                    <InputsRow>
+                        <Select
+                            onChange={(e) => {
+                                setSystemTileToAddToMap(
+                                    Number.parseInt(
+                                        e.target.value
+                                    ) as SystemWithPlanetsTileNumber
+                                );
+                            }}
+                        >
+                            <option value={''}>--System tile--</option>
+                            {_.sortBy(
+                                systemTiles
+                                    .filter(isSystemWithPlanetsTile)
+                                    .filter(not(isHomeworldSystemTile))
+                                    .filter(
+                                        (st) =>
+                                            !systemTileNumbersInPlay(
+                                                events
+                                            ).includes(st.tileNumber)
+                                    ),
+                                (st) => st.tileNumber
+                            ).map((st) => (
+                                <option
+                                    key={st.tileNumber}
+                                    value={st.tileNumber}
+                                >
+                                    {systemTileDescription(st.tileNumber)}
+                                </option>
+                            ))}
+                        </Select>
+                        <Button
+                            onClick={async () => {
+                                if (
+                                    columnToAddMapTile !== undefined &&
+                                    rowToAddMapTile !== undefined &&
+                                    systemTileToAddToMap !== undefined
+                                ) {
+                                    await publishMapTileAddedToBoardEvent(
+                                        {
+                                            column: columnToAddMapTile,
+                                            row: rowToAddMapTile,
+                                        } as MapTileAddedToBoardPosition,
+                                        systemTileToAddToMap
+                                    );
+                                }
+                            }}
+                        >
+                            Add map tile to board
+                        </Button>
+                    </InputsRow>
+                </InputsColumn>
+            )}
             {!strategyCardPlayedByPlayerOnPreviousTurnThisRound(
                 events,
                 activePlayerInActionPhase
