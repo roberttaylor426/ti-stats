@@ -124,7 +124,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const publishMiragePlanetFoundEvent = async (
         stn: PlanetlessSystemTileNumber,
-        f: Faction | undefined
+        f: Faction
     ) => {
         const newEvent: Event = {
             type: 'MiragePlanetFound',
@@ -192,12 +192,14 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     };
 
     const publishPlanetDestroyedEvent = async (
-        p: PlanetName
+        p: PlanetName,
+        f: Faction
     ): Promise<boolean> => {
         const newEvent: Event = {
             type: 'PlanetDestroyed',
             time: new Date().getTime(),
             planet: p,
+            faction: f,
         };
 
         return await publishNewEvents([newEvent]);
@@ -335,7 +337,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                 </Select>
                 <Button
                     onClick={async () => {
-                        if (selectedPlanetToControl) {
+                        if (
+                            selectedPlanetToControl &&
+                            activePlayerInActionPhase !==
+                                factionCurrentlyControllingPlanet(
+                                    selectedPlanetToControl
+                                )
+                        ) {
                             await publishPlanetControlledEvent(
                                 selectedPlanetToControl,
                                 activePlayerInActionPhase
@@ -373,7 +381,12 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                 </Select>
                 <Button
                     onClick={async () => {
-                        if (selectedPlanetlessSystemToControl) {
+                        if (
+                            selectedPlanetlessSystemToControl &&
+                            factionCurrentlyControllingPlanetlessSystemTile(
+                                selectedPlanetlessSystemToControl
+                            ) !== activePlayerInActionPhase
+                        ) {
                             await publishPlanetlessSystemControlledEvent(
                                 selectedPlanetlessSystemToControl,
                                 activePlayerInActionPhase
@@ -558,7 +571,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                 <Button
                     onClick={async () => {
                         if (planetToDestroy) {
-                            await publishPlanetDestroyedEvent(planetToDestroy);
+                            await publishPlanetDestroyedEvent(
+                                planetToDestroy,
+                                activePlayerInActionPhase
+                            );
                         }
                     }}
                 >

@@ -14,6 +14,7 @@ import { GalaxyPage } from './galaxyPage';
 import { StatsPage } from './statsPage';
 import { StatusPage } from './statusPage';
 import { TechPage } from './techPage';
+import { TickerPage } from './tickerPage';
 
 const App: React.FC = () => (
     <>
@@ -41,6 +42,11 @@ const App: React.FC = () => (
                             key="tech"
                             path={'/tech'}
                             element={<TechPage />}
+                        />,
+                        <Route
+                            key="ticker"
+                            path={'/ticker'}
+                            element={<TickerPage />}
                         />,
                         <Route
                             key="admin"

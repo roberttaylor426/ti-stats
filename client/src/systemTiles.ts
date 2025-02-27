@@ -981,6 +981,7 @@ export {
     malliceTileNumber,
     mecatolRexTileNumber,
     PlanetlessSystemTile,
+    planetlessSystemTileDescription,
     PlanetlessSystemTileNumber,
     SystemTile,
     systemTile,
@@ -988,5 +989,6 @@ export {
     systemTileImage,
     SystemTileNumber,
     systemTiles,
+    systemWithPlanetsTileDescription,
     SystemWithPlanetsTileNumber,
 };

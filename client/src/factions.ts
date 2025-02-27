@@ -103,6 +103,129 @@ const factions = _.sortBy([
 
 const shortName = (f: Faction): string => f.replace('The ', '');
 
+// const superShortName = (f: Faction): string => {
+//     switch (f) {
+//         case 'Sardakk N’orr':
+//             return 'Sardakk';
+//         case 'The Arborec':
+//             return 'Arborec';
+//         case 'The Argent Flight':
+//             return 'Argent';
+//         case 'The Barony of Letnev':
+//             return 'Barony';
+//         case 'The Clan of Saar':
+//             return 'Saar';
+//         case 'The Embers of Muaat':
+//             return 'Muatt';
+//         case 'The Emirates of Hacan':
+//             return 'Hacan';
+//         case 'The Empyrean':
+//             return 'Empyrean';
+//         case 'The Federation of Sol':
+//             return 'Sol';
+//         case 'The Ghosts of Creuss':
+//             return 'Ghosts';
+//         case 'The L1Z1X Mindnet':
+//             return 'L1Z1X';
+//         case 'The Mahact Gene-Sorcerers':
+//             return 'Mahact';
+//         case 'The Mentak Coalition':
+//             return 'Mentak';
+//         case 'The Naalu Collective':
+//             return 'Naalu';
+//         case 'The Naaz-Rokha Alliance':
+//             return 'Naaz-Rokha';
+//         case 'The Nekro Virus':
+//             return 'Nekro';
+//         case 'The Nomad':
+//             return 'Nomad';
+//         case 'The Titans of Ul':
+//             return 'Titans';
+//         case 'The Universities of Jol-Nar':
+//             return 'Jol-Nar';
+//         case "The Vuil'Raith Cabal":
+//             return "Vuil'Raith";
+//         case 'The Winnu':
+//             return 'Winnu';
+//         case 'The Xxcha Kingdom':
+//             return 'Xxcha';
+//         case 'The Yin Brotherhood':
+//             return 'Yin';
+//         case 'The Yssaril Tribes':
+//             return 'Yssaril';
+//         case 'The Shipwrights of Ark':
+//             return 'Shipwrights';
+//         case 'The Celdauri Trade Confederation':
+//             return 'Celdauri';
+//         case 'The Savages of Cymiae':
+//             return 'Savages';
+//         case 'The Dih-Mohn Flotilla':
+//             return 'Dih-Mohn';
+//         case 'The Florzen Profiteers':
+//             return 'Florzen';
+//         case 'The Free Systems Compact':
+//             return 'Compact';
+//         case 'The Ghemina Raiders':
+//             return 'Ghemina';
+//         case 'The Augurs of Illyxum':
+//             return 'Augurs';
+//         case 'The Kollecc Society':
+//             return 'Kollecc';
+//         case 'The Kortali Tribunal':
+//             return 'Kortali';
+//         case 'The Li-Zho Dynasty':
+//             return 'Li-Zho';
+//         case "The L'tokk Khrask":
+//             return "L'tokk";
+//         case 'The Mirveda Protectorate':
+//             return 'Mirveda';
+//         case 'The Glimmer of Mortheus':
+//             return 'Glimmer';
+//         case 'The Myko-Mentori':
+//             return 'Myko-Mentori';
+//         case 'The Nivyn Star of Kings':
+//             return 'Nivyn';
+//         case 'The Olradin League':
+//             return 'Olradin';
+//         case 'The Zealots of Rhodun':
+//             return 'Zealots';
+//         case "Roh'Dhna Mechatronics":
+//             return "Roh'Dhna";
+//         case 'The Tnelis Syndicate':
+//             return 'Tnelis';
+//         case 'The Vaden Banking Clans':
+//             return 'Vaden';
+//         case 'The Vaylerian Scourge':
+//             return 'Vaylerian';
+//         case 'The Veldyr Sovereignty':
+//             return 'Veldyr';
+//         case 'The Zelian Purifier':
+//             return 'Zelian';
+//         case 'The Bentor Conglomerate':
+//             return 'Bentor';
+//         case 'The Cheiran Hordes':
+//             return 'Cheiran';
+//         case 'The Edyn Mandate':
+//             return 'Edyn';
+//         case 'The Ghoti Wayfarers':
+//             return 'Ghoti';
+//         case 'The GLEdge Union':
+//             return 'GLEdge';
+//         case 'The Berserkers of Kjalengard':
+//             return 'Berserkers';
+//         case 'The Monks of Kolume':
+//             return 'Monks';
+//         case 'The Kyro Sodality':
+//             return 'Kyro';
+//         case 'The Lanefir Remants':
+//             return 'Lanefir';
+//         case 'The Nokar Sellships':
+//             return 'Nokar';
+//         case 'The Council Keleres':
+//             return 'Keleres';
+//     }
+// };
+
 const homeworlds = (f: FactionWithFixedHomeworlds): PlanetName[] => {
     switch (f) {
         case 'Sardakk N’orr':

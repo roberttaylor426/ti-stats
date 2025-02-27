@@ -115,13 +115,14 @@ type MiragePlanetFoundEvent = {
     type: 'MiragePlanetFound';
     time: number;
     tileNumber: PlanetlessSystemTileNumber;
-    faction: Faction | undefined;
+    faction: Faction;
 };
 
 type PlanetDestroyedEvent = {
     type: 'PlanetDestroyed';
     time: number;
     planet: PlanetName;
+    faction: Faction;
 };
 
 type MapTileAddedToBoardPosition =
