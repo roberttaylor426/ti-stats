@@ -12,7 +12,7 @@ import AlarmClock from './assets/fonts/AlarmClock.ttf';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { GalaxyPage } from './galaxyPage';
 import { StatsPage } from './statsPage';
-import { StatusPage } from './statusPage';
+import { StatusPage2 } from './statusPage2';
 import { TechPage } from './techPage';
 import { TickerPage } from './tickerPage';
 
@@ -36,7 +36,7 @@ const App: React.FC = () => (
                         <Route
                             key="status"
                             path={'/status'}
-                            element={<StatusPage />}
+                            element={<StatusPage2 />}
                         />,
                         <Route
                             key="tech"
