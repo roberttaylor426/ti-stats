@@ -13,16 +13,13 @@ import {
     currentRoundNumber,
     Event,
     factionsInGame,
-    isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
-    isPlayerFinishedTurnEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isUnion,
     lastIndexOfEventType,
     playerScore,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
 } from './events';
 import { shortName, superShortName } from './factions';
 import { useEvents } from './useEvents';
@@ -33,11 +30,11 @@ const StatusPage2: React.FC = () => {
 
     const lastEvent = _.last(events);
 
-    const lastEventWhenPlayerTurnStarted = _.last(
-        events.filter(
-            isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
-        )
-    );
+    // const lastEventWhenPlayerTurnStarted = _.last(
+    //     events.filter(
+    //         isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
+    //     )
+    // );
 
     useEffect(() => {
         const interval = setInterval(
@@ -50,10 +47,10 @@ const StatusPage2: React.FC = () => {
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
-    const strategyCardSelectedByActivePlayerInActionPhase =
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
-            (e) => e.faction === activePlayerInActionPhase
-        )?.strategyCard;
+    // const strategyCardSelectedByActivePlayerInActionPhase =
+    //     playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
+    //         (e) => e.faction === activePlayerInActionPhase
+    //     )?.strategyCard;
 
     const winningPlayer = _.first(
         factionsInGame(events)
@@ -398,55 +395,22 @@ const PlayerTurn = styled.h1`
     text-align: center;
 `;
 
-const ScoresRow = styled.div`
-    display: flex;
-    justify-content: center;
-`;
-
-const ScoresContent = styled.div`
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    line-height: 1;
-
-    > * + * {
-        border-left: 0.125rem white solid;
-        padding-left: 2rem;
-    }
-`;
-
-const ScoreComponent = styled.h3`
-    font-size: 10vw;
-`;
-
-const VpScore = styled(ScoreComponent)`
-    color: white;
-`;
-
-const ResourcesScore = styled(ScoreComponent)`
-    color: yellow;
-`;
-
-const InfluenceScore = styled(ScoreComponent)`
-    color: ${accentColor};
-`;
-
-const StrategyCardContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 25vh;
-    filter: drop-shadow(1vh 0 1vh grey);
-
-    > * {
-        flex: 1 1 0;
-    }
-`;
-
-const StrategyCard = styled.img`
-    min-width: 0;
-    min-height: 0;
-`;
+// const StrategyCardContainer = styled.div`
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     height: 25vh;
+//     filter: drop-shadow(1vh 0 1vh grey);
+//
+//     > * {
+//         flex: 1 1 0;
+//     }
+// `;
+//
+// const StrategyCard = styled.img`
+//     min-width: 0;
+//     min-height: 0;
+// `;
 
 const TimeSpan = styled.span`
     font-family: 'Alarm Clock', 'sans-serif';
