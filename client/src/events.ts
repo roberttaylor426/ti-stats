@@ -198,6 +198,41 @@ type AgendaCardRevealedEvent = {
     card: AgendaCard;
 };
 
+type ObjectivesScoredDuringStatusPhaseEvent = {
+    type: 'ObjectivesScoredDuringStatusPhase';
+    time: number;
+};
+
+type PublicObjectivesRevealedDuringStatusPhaseEvent = {
+    type: 'PublicObjectivesRevealedDuringStatusPhase';
+    time: number;
+};
+
+type ActionCardsDrawnDuringStatusPhaseEvent = {
+    type: 'ActionCardsDrawnDuringStatusPhase';
+    time: number;
+};
+
+type CommandTokensRemovedDuringStatusPhaseEvent = {
+    type: 'CommandTokensRemovedDuringStatusPhase';
+    time: number;
+};
+
+type CommandTokensGainedAndRedistributedDuringStatusPhaseEvent = {
+    type: 'CommandTokensGainedAndRedistributedDuringStatusPhase';
+    time: number;
+};
+
+type CardsReadiedDuringStatusPhaseEvent = {
+    type: 'CardsReadiedDuringStatusPhase';
+    time: number;
+};
+
+type UnitsRepairedDuringStatusPhaseEvent = {
+    type: 'UnitsRepairedDuringStatusPhase';
+    time: number;
+};
+
 type RoundEndedEvent = {
     type: 'RoundEnded';
     time: number;
@@ -286,25 +321,32 @@ const isPlanetDestroyedEvent = (e: Event): e is PlanetDestroyedEvent =>
     e.type === 'PlanetDestroyed';
 
 type Event =
+    | ActionCardsDrawnDuringStatusPhaseEvent
     | ActionPhaseStartedEvent
     | AgendaCardRevealedEvent
     | AgendaPhaseStartedEvent
+    | CardsReadiedDuringStatusPhaseEvent
+    | CommandTokensGainedAndRedistributedDuringStatusPhaseEvent
+    | CommandTokensRemovedDuringStatusPhaseEvent
     | MapTileAddedToBoardEvent
     | MapTilesSelectedEvent
     | MiragePlanetFoundEvent
+    | ObjectivesScoredDuringStatusPhaseEvent
     | PlanetControlledEvent
     | PlanetDestroyedEvent
     | PlanetEnhancedEvent
     | PlanetlessSystemControlledEvent
     | PlayersAssignedFactionsAndColorsEvent
     | PlayerFinishedTurnEvent
+    | PlayerPlayedStrategyCardEvent
+    | PlayerResearchedTechnologyEvent
     | PlayerScoredVictoryPointEvent
     | PlayerSelectedStrategyCardEvent
+    | PublicObjectivesRevealedDuringStatusPhaseEvent
     | RoundEndedEvent
     | RoundStartedEvent
     | SpeakerAssignedEvent
-    | PlayerPlayedStrategyCardEvent
-    | PlayerResearchedTechnologyEvent;
+    | UnitsRepairedDuringStatusPhaseEvent;
 
 const playerFactionsAndColors = (
     events: Event[]

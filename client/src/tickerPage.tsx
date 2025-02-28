@@ -92,7 +92,26 @@ const TickerPage: React.FC = () => {
                                             ? 'All strategy cards picked'
                                             : activePlayerInActionPhase
                                               ? `${shortName(activePlayerInActionPhase)} turn`
-                                              : ''}
+                                              : _.last(events)?.type ===
+                                                  'PlayerFinishedTurn'
+                                                ? 'Score objectives, initiative order'
+                                                : _.last(events)?.type ===
+                                                    'ObjectivesScoredDuringStatusPhase'
+                                                  ? 'Reveal public objective'
+                                                  : _.last(events)?.type ===
+                                                      'PublicObjectivesRevealedDuringStatusPhase'
+                                                    ? 'Draw action cards'
+                                                    : _.last(events)?.type ===
+                                                        'ActionCardsDrawnDuringStatusPhase'
+                                                      ? 'Remove command tokens from board'
+                                                      : _.last(events)?.type ===
+                                                          'CommandTokensRemovedDuringStatusPhase'
+                                                        ? 'Gain and redistribute command tokens'
+                                                        : _.last(events)
+                                                                ?.type ===
+                                                            'CardsReadiedDuringStatusPhase'
+                                                          ? 'Repair units'
+                                                          : 'Return strategy cards'}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />
@@ -173,16 +192,23 @@ const generateMarqueeText = (events: Event[]) => {
     const singleMarqueeMessage = events
         .map((e) => {
             switch (e.type) {
-                case 'AgendaPhaseStarted':
+                case 'ActionCardsDrawnDuringStatusPhase':
                 case 'ActionPhaseStarted':
                 case 'AgendaCardRevealed':
+                case 'AgendaPhaseStarted':
+                case 'CardsReadiedDuringStatusPhase':
+                case 'CommandTokensGainedAndRedistributedDuringStatusPhase':
+                case 'CommandTokensRemovedDuringStatusPhase':
                 case 'MapTilesSelected':
+                case 'ObjectivesScoredDuringStatusPhase':
+                case 'PlanetEnhanced':
                 case 'PlayersAssignedFactionsAndColors':
                 case 'PlayerFinishedTurn':
                 case 'PlayerScoredVictoryPoint':
+                case 'PublicObjectivesRevealedDuringStatusPhase':
                 case 'RoundEnded':
                 case 'RoundStarted':
-                case 'PlanetEnhanced':
+                case 'UnitsRepairedDuringStatusPhase':
                     return '';
                 case 'MapTileAddedToBoard':
                     return `Star charts reveal new planets: ${systemWithPlanetsTileDescription(e.tileNumber)}`;

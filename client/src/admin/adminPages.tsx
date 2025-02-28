@@ -17,11 +17,11 @@ import {
 } from '../events';
 import { numberOfPlayersInGame } from '../playerColors';
 import { AgendaPhasePage } from './agendaPhasePage';
-import { EndOfRoundScoringPage } from './endOfRoundScoringPage';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { PlayerTurnPage } from './playerTurnPage';
 import { StartRoundPage } from './startRoundPage';
+import { StatusPhasePage } from './statusPhasePage';
 import { StrategyCardSelectionPage } from './strategyCardSelectionPage';
 import { TileSelectionPage } from './tileSelectionPage';
 import { UndoLastEventPage } from './undoLastEventPage';
@@ -121,7 +121,7 @@ const AdminPages: React.FC = () => {
                     mapTilesSelectedEvent={mapTilesSelectedEvent}
                 />
             ) : (
-                <EndOfRoundScoringPage {...adminPageProps} />
+                <StatusPhasePage {...adminPageProps} />
             )}
         </StyledAdminPage>
     );

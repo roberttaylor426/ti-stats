@@ -32,18 +32,28 @@ const UndoLastEventPage: React.FC<AdminPageProps> = ({
 
 const humanReadableEventLabel = (e: Event): string => {
     switch (e.type) {
+        case 'ActionCardsDrawnDuringStatusPhase':
+            return 'Action cards drawn during status phase';
         case 'ActionPhaseStarted':
             return 'Action phase started';
         case 'AgendaPhaseStarted':
             return 'Agenda phase started';
         case 'AgendaCardRevealed':
             return 'Agenda card revealed';
+        case 'CardsReadiedDuringStatusPhase':
+            return 'Cards readied during status phase';
+        case 'CommandTokensGainedAndRedistributedDuringStatusPhase':
+            return 'Command tokens gained and redistributed during status phase';
+        case 'CommandTokensRemovedDuringStatusPhase':
+            return 'Command tokens removed during status phase';
         case 'MapTileAddedToBoard':
             return 'Map tile added to board';
         case 'MapTilesSelected':
             return 'Map tiles selected';
         case 'MiragePlanetFound':
             return 'Mirage found';
+        case 'ObjectivesScoredDuringStatusPhase':
+            return 'Objectives scored during status phase';
         case 'PlanetControlled':
             return `Planet controlled - ${e.planet}`;
         case 'PlanetDestroyed':
@@ -64,12 +74,16 @@ const humanReadableEventLabel = (e: Event): string => {
             return `Player scored victory point - ${e.faction}`;
         case 'PlayerSelectedStrategyCard':
             return `Player selected strategy card - ${e.faction} / ${e.strategyCard}`;
+        case 'PublicObjectivesRevealedDuringStatusPhase':
+            return 'Public objectives revealed during status phase';
         case 'RoundEnded':
             return 'Round ended';
         case 'RoundStarted':
             return 'Round started';
         case 'SpeakerAssigned':
             return 'Speaker assigned';
+        case 'UnitsRepairedDuringStatusPhase':
+            return 'Units repaired during status phase';
     }
 };
 
