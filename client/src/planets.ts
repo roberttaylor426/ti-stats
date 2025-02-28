@@ -185,12 +185,18 @@ const planetNames = [
 
 type PlanetName = (typeof planetNames)[number];
 
+type PlanetTrait = 'cultural' | 'hazardous' | 'industrial';
+
 type ResourcesAndInfluence = {
     resources: number;
     influence: number;
 };
 
-const planets: Record<PlanetName, ResourcesAndInfluence> = {
+type PlanetMeta = ResourcesAndInfluence & {
+    trait?: PlanetTrait;
+};
+
+const planets: Record<PlanetName, PlanetMeta> = {
     Jord: {
         resources: 4,
         influence: 2,
@@ -298,130 +304,162 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     Wellon: {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     'Vefut II': {
         resources: 2,
         influence: 2,
+        trait: 'hazardous',
     },
     Thibah: {
         resources: 1,
         influence: 1,
+        trait: 'industrial',
     },
     "Tar'mann": {
         resources: 1,
         influence: 1,
+        trait: 'industrial',
     },
     Saudor: {
         resources: 2,
         influence: 2,
+        trait: 'industrial',
     },
     'Mehar Xull': {
         resources: 1,
         influence: 3,
+        trait: 'hazardous',
     },
     Quann: {
         resources: 2,
         influence: 1,
+        trait: 'cultural',
     },
     Lodor: {
         resources: 3,
         influence: 1,
+        trait: 'cultural',
     },
     'New Albion': {
         resources: 1,
         influence: 1,
+        trait: 'industrial',
     },
     Starpoint: {
         resources: 3,
         influence: 1,
+        trait: 'hazardous',
     },
     "Tequ'ran": {
         resources: 2,
         influence: 0,
+        trait: 'hazardous',
     },
     Torkan: {
         resources: 0,
         influence: 3,
+        trait: 'cultural',
     },
     "Qucen'n": {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     Rarron: {
         resources: 0,
         influence: 3,
+        trait: 'cultural',
     },
     Mellon: {
         resources: 0,
         influence: 2,
+        trait: 'cultural',
     },
     Zohbat: {
         resources: 3,
         influence: 1,
+        trait: 'hazardous',
     },
     Lazar: {
         resources: 1,
         influence: 0,
+        trait: 'industrial',
     },
     Sakulag: {
         resources: 2,
         influence: 1,
+        trait: 'hazardous',
     },
     'Dal Bootha': {
         resources: 0,
         influence: 2,
+        trait: 'cultural',
     },
     Xxehan: {
         resources: 1,
         influence: 1,
+        trait: 'cultural',
     },
     Corneeq: {
         resources: 1,
         influence: 2,
+        trait: 'cultural',
     },
     Resculon: {
         resources: 2,
         influence: 0,
+        trait: 'cultural',
     },
     Centauri: {
         resources: 1,
         influence: 3,
+        trait: 'cultural',
     },
     Gral: {
         resources: 1,
         influence: 1,
+        trait: 'industrial',
     },
     Bereg: {
         resources: 3,
         influence: 1,
+        trait: 'hazardous',
     },
     'Lirta IV': {
         resources: 2,
         influence: 3,
+        trait: 'hazardous',
     },
     Arnor: {
         resources: 2,
         influence: 1,
+        trait: 'industrial',
     },
     Lor: {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     Arinam: {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     Meer: {
         resources: 0,
         influence: 4,
+        trait: 'hazardous',
     },
     Abyz: {
         resources: 3,
         influence: 0,
+        trait: 'hazardous',
     },
     Fria: {
         resources: 2,
         influence: 0,
+        trait: 'hazardous',
     },
     Creuss: {
         resources: 4,
@@ -470,122 +508,152 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     'Archon Vail': {
         resources: 1,
         influence: 3,
+        trait: 'hazardous',
     },
     Perimeter: {
         resources: 2,
         influence: 1,
+        trait: 'industrial',
     },
     Ang: {
         resources: 2,
         influence: 0,
+        trait: 'industrial',
     },
     'Sem-lore': {
         resources: 3,
         influence: 2,
+        trait: 'cultural',
     },
     Vorhal: {
         resources: 0,
         influence: 2,
+        trait: 'cultural',
     },
     Atlas: {
         resources: 3,
         influence: 1,
+        trait: 'hazardous',
     },
     Primor: {
         resources: 2,
         influence: 1,
+        trait: 'cultural',
     },
     "Hope's End": {
         resources: 3,
         influence: 0,
+        trait: 'hazardous',
     },
     Cormund: {
         resources: 2,
         influence: 0,
+        trait: 'hazardous',
     },
     Everra: {
         resources: 3,
         influence: 1,
+        trait: 'cultural',
     },
     Accoen: {
         resources: 2,
         influence: 3,
+        trait: 'industrial',
     },
     'Jeol Ir': {
         resources: 2,
         influence: 3,
+        trait: 'industrial',
     },
     Kraag: {
         resources: 2,
         influence: 1,
+        trait: 'hazardous',
     },
     Siig: {
         resources: 0,
         influence: 2,
+        trait: 'hazardous',
     },
     "Ba'kal": {
         resources: 3,
         influence: 2,
+        trait: 'industrial',
     },
     'Alio Prima': {
         resources: 1,
         influence: 1,
+        trait: 'cultural',
     },
     Lisis: {
         resources: 2,
         influence: 2,
+        trait: 'industrial',
     },
     Velnor: {
         resources: 2,
         influence: 1,
+        trait: 'industrial',
     },
     Cealdri: {
         resources: 0,
         influence: 2,
+        trait: 'cultural',
     },
     Xanhact: {
         resources: 0,
         influence: 1,
+        trait: 'hazardous',
     },
     'Vega Major': {
         resources: 2,
         influence: 1,
+        trait: 'cultural',
     },
     'Vega Minor': {
         resources: 1,
         influence: 2,
+        trait: 'cultural',
     },
     Abaddon: {
         resources: 1,
         influence: 0,
+        trait: 'cultural',
     },
     Loki: {
         resources: 1,
         influence: 2,
+        trait: 'cultural',
     },
     Ashtroth: {
         resources: 2,
         influence: 0,
+        trait: 'hazardous',
     },
     'Rigel I': {
         resources: 0,
         influence: 1,
+        trait: 'hazardous',
     },
     'Rigel II': {
         resources: 1,
         influence: 2,
+        trait: 'hazardous',
     },
     'Rigel III': {
         resources: 1,
         influence: 1,
+        trait: 'hazardous',
     },
     Mallice: {
         resources: 0,
         influence: 3,
+        trait: 'cultural',
     },
     Mirage: {
         resources: 1,
         influence: 2,
+        trait: 'cultural',
     },
     'Custodia Vigilia': {
         resources: 2,
@@ -594,110 +662,137 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     'Etir V': {
         resources: 4,
         influence: 0,
+        trait: 'hazardous',
     },
     Echo: {
         resources: 1,
         influence: 2,
+        trait: 'hazardous',
     },
     Fakrenn: {
         resources: 2,
         influence: 2,
+        trait: 'hazardous',
     },
     Prism: {
         resources: 0,
         influence: 3,
+        trait: 'industrial',
     },
     Silence: {
         resources: 2,
         influence: 2,
+        trait: 'industrial',
     },
     Tarrock: {
         resources: 3,
         influence: 0,
+        trait: 'industrial',
     },
     Troac: {
         resources: 0,
         influence: 4,
+        trait: 'cultural',
     },
     Vioss: {
         resources: 3,
         influence: 3,
+        trait: 'cultural',
     },
     'San-vit': {
         resources: 3,
         influence: 1,
+        trait: 'cultural',
     },
     Lodran: {
         resources: 0,
         influence: 2,
+        trait: 'hazardous',
     },
     Dorvok: {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     Derbrae: {
         resources: 2,
         influence: 3,
+        trait: 'cultural',
     },
     Moln: {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     Rysaa: {
         resources: 2,
         influence: 0,
+        trait: 'hazardous',
     },
     Salin: {
         resources: 1,
         influence: 2,
+        trait: 'hazardous',
     },
     Gwiyun: {
         resources: 2,
         influence: 2,
+        trait: 'hazardous',
     },
     Inan: {
         resources: 1,
         influence: 2,
+        trait: 'industrial',
     },
     Swog: {
         resources: 1,
         influence: 0,
+        trait: 'industrial',
     },
     Detic: {
         resources: 3,
         influence: 2,
+        trait: 'cultural',
     },
     Lliot: {
         resources: 0,
         influence: 1,
+        trait: 'cultural',
     },
     Qaak: {
         resources: 1,
         influence: 1,
+        trait: 'cultural',
     },
     Larred: {
         resources: 1,
         influence: 1,
+        trait: 'industrial',
     },
     Nairb: {
         resources: 1,
         influence: 1,
+        trait: 'hazardous',
     },
     Sierpen: {
         resources: 2,
         influence: 0,
+        trait: 'cultural',
     },
     Mandle: {
         resources: 1,
         influence: 1,
+        trait: 'industrial',
     },
     Regnem: {
         resources: 0,
         influence: 2,
+        trait: 'hazardous',
     },
     Domna: {
         resources: 2,
         influence: 1,
+        trait: 'hazardous',
     },
     Rhune: {
         resources: 3,
@@ -921,4 +1016,11 @@ const planets: Record<PlanetName, ResourcesAndInfluence> = {
     },
 };
 
-export { PlanetName, planetNames, planets, ResourcesAndInfluence };
+export {
+    PlanetMeta,
+    PlanetName,
+    planetNames,
+    planets,
+    PlanetTrait,
+    ResourcesAndInfluence,
+};

@@ -686,6 +686,7 @@ export {
     MapTilesSelectedEvent,
     PlanetControlledEvent,
     PlanetlessSystemControlledEvent,
+    planetsControlledByFaction,
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
     playerScore,
