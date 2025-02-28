@@ -518,6 +518,9 @@ const findNextUnpassedPlayerInActionPhase = (
     );
 };
 
+const hasGameStarted = (events: Event[]): boolean =>
+    !!events.find(isRoundStartedEvent);
+
 const currentRoundNumber = (events: Event[]): number =>
     events.filter(isRoundEndedEvent).length + 1;
 
@@ -655,6 +658,7 @@ export {
     Event,
     factionSelections,
     factionsInGame,
+    hasGameStarted,
     hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTile,

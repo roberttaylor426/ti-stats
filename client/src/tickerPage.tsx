@@ -6,8 +6,10 @@ import _ from 'underscore';
 import { accentColor } from './colors';
 import {
     currentPlayerTurnInActionPhase,
+    currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
+    hasGameStarted,
     isRoundStartedEvent,
 } from './events';
 import { Faction, shortName } from './factions';
@@ -37,8 +39,8 @@ const TickerPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // const activePlayerInStrategyPhase =
-    //     currentPlayerTurnInStrategyPhase(events);
+    const activePlayerInStrategyPhase =
+        currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
     // const strategyCardSelectedByActivePlayerInActionPhase =
     //     playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
@@ -56,28 +58,50 @@ const TickerPage: React.FC = () => {
 
     return (
         <StyledTickerPage>
-            {lastEvent && activePlayerInActionPhase ? (
+            {lastEvent ? (
                 <Ticker>
                     <TickerRow>
                         <RoundAndPhase>
-                            <RoundAndPhaseColumn>
-                                <SubTitle>ACTION</SubTitle>
-                                <SubTitle>PHASE</SubTitle>
+                            <RoundAndPhaseColumn
+                                $invisible={!hasGameStarted(events)}
+                            >
+                                <SubTitle $invisible={!hasGameStarted(events)}>
+                                    {activePlayerInActionPhase
+                                        ? 'ACTION'
+                                        : activePlayerInStrategyPhase ||
+                                            _.last(events)?.type ===
+                                                'PlayerSelectedStrategyCard'
+                                          ? 'STRATEGY'
+                                          : 'STATUS'}
+                                </SubTitle>
+                                <SubTitle $invisible={!hasGameStarted(events)}>
+                                    PHASE
+                                </SubTitle>
                             </RoundAndPhaseColumn>
                             <RoundAndPhaseColumnTriangle />
                         </RoundAndPhase>
                         <TickerContent>
                             <TickerText>
                                 <KeyTitle>
-                                    {`${shortName(activePlayerInActionPhase)}`}{' '}
-                                    turn
+                                    {!hasGameStarted(events)
+                                        ? 'Pax Magnifica, Bellum Gloriosum'
+                                        : activePlayerInStrategyPhase
+                                          ? `${shortName(activePlayerInStrategyPhase)} pick`
+                                          : _.last(events)?.type ===
+                                              'PlayerSelectedStrategyCard'
+                                            ? 'All strategy cards picked'
+                                            : activePlayerInActionPhase
+                                              ? `${shortName(activePlayerInActionPhase)} turn`
+                                              : ''}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />
                         </TickerContent>
                         <Times>
                             <TimeSpan>
-                                {timeElapsedLabel(lastEvent, currentTime)}
+                                {hasGameStarted(events)
+                                    ? timeElapsedLabel(lastEvent, currentTime)
+                                    : noTimeElapsedString}
                             </TimeSpan>
                             <TotalTime
                                 events={events}
@@ -87,16 +111,24 @@ const TickerPage: React.FC = () => {
                     </TickerRow>
                     <ScrollingTickerContainer>
                         <ScrollingTicker>
-                            <ScrollingTickerText>
+                            <ScrollingTickerText
+                                $invisible={!hasGameStarted(events)}
+                            >
                                 {generateMarqueeText(events)}&nbsp;++&nbsp;
                             </ScrollingTickerText>
-                            <ScrollingTickerText>
+                            <ScrollingTickerText
+                                $invisible={!hasGameStarted(events)}
+                            >
                                 {generateMarqueeText(events)}&nbsp;++&nbsp;
                             </ScrollingTickerText>
                         </ScrollingTicker>
                         <ScrollingTickerRoundOverlayContainer>
-                            <ScrollingTickerRoundOverlay>
-                                <Title>{`Round ${currentRoundNumber(events)}`}</Title>
+                            <ScrollingTickerRoundOverlay
+                                $invisible={!hasGameStarted(events)}
+                            >
+                                <Title
+                                    $invisible={!hasGameStarted(events)}
+                                >{`Round ${currentRoundNumber(events)}`}</Title>
                             </ScrollingTickerRoundOverlay>
                             <ScrollingTickerRoundOverlayTriangle />
                         </ScrollingTickerRoundOverlayContainer>
@@ -198,12 +230,13 @@ const RoundAndPhase = styled.div`
     filter: drop-shadow(4vh 0 4vh grey);
 `;
 
-const RoundAndPhaseColumn = styled.div`
+const RoundAndPhaseColumn = styled.div<DisplayProps>`
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: ${accentColor};
-    text-shadow: black 1vh 1vh 2vh;
+    text-shadow: ${(props) =>
+        props.$invisible ? 'none' : 'black 1vh 1vh 2vh'};
     padding: 5vh;
 `;
 
@@ -254,8 +287,8 @@ const ScrollingTicker = styled.div`
     overflow: hidden;
 `;
 
-const ScrollingTickerText = styled.span`
-    color: black;
+const ScrollingTickerText = styled.span<DisplayProps>`
+    color: ${(props) => (props.$invisible ? 'transparent' : 'black')};
     font-size: 15vh;
     max-width: none !important;
     animation: marquee 120s linear infinite;
@@ -275,10 +308,11 @@ const ScrollingTickerRoundOverlayContainer = styled.div`
     filter: drop-shadow(4vh 0 4vh grey);
 `;
 
-const ScrollingTickerRoundOverlay = styled.div`
+const ScrollingTickerRoundOverlay = styled.div<DisplayProps>`
     display: flex;
     background-color: red;
-    text-shadow: black 1vh 1vh 2vh;
+    text-shadow: ${(props) =>
+        props.$invisible ? 'none' : 'black 1vh 1vh 2vh'};
     padding: 2vh 5vh;
 `;
 
@@ -341,15 +375,21 @@ const StyledTickerPage = styled.div`
     }
 `;
 
-const Title = styled.h1`
+type DisplayProps = {
+    $invisible: boolean;
+};
+
+const Title = styled.h1<DisplayProps>`
     font-size: 20vh;
     text-align: center;
+    color: ${(props) => (props.$invisible ? 'transparent' : 'white')};
 `;
 
-const SubTitle = styled.h2`
+const SubTitle = styled.h2<DisplayProps>`
     font-size: 25vh;
     text-align: center;
     text-transform: uppercase;
+    color: ${(props) => (props.$invisible ? 'transparent' : 'white')};
 `;
 
 const KeyTitle = styled.h1`
@@ -375,6 +415,8 @@ const TimeSpan = styled.span`
     color: red;
 `;
 
+const noTimeElapsedString = '00:00:00';
+
 type TotalTimeProps = {
     events: Event[];
     currentTime: number;
@@ -382,10 +424,12 @@ type TotalTimeProps = {
 
 const TotalTime: React.FC<TotalTimeProps> = ({ events, currentTime }) => (
     <TotalTimeSpan>
-        {timeElapsedLabel(
-            _.first(events.filter(isRoundStartedEvent))!,
-            currentTime
-        )}
+        {hasGameStarted(events)
+            ? timeElapsedLabel(
+                  _.first(events.filter(isRoundStartedEvent))!,
+                  currentTime
+              )
+            : noTimeElapsedString}
     </TotalTimeSpan>
 );
 
