@@ -10,7 +10,10 @@ import {
     currentRoundNumber,
     Event,
     hasGameStarted,
+    isActionPhaseStartedEvent,
+    isPlayerFinishedTurnEvent,
     isRoundStartedEvent,
+    isUnion,
 } from './events';
 import { Faction, shortName } from './factions';
 import {
@@ -25,11 +28,11 @@ const TickerPage: React.FC = () => {
 
     const lastEvent = _.last(events);
 
-    // const lastEventWhenPlayerTurnStarted = _.last(
-    //     events.filter(
-    //         isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
-    //     )
-    // );
+    const lastEventWhenPlayerTurnStarted = _.last(
+        events.filter(
+            isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
+        )
+    );
 
     useEffect(() => {
         const interval = setInterval(
@@ -87,28 +90,27 @@ const TickerPage: React.FC = () => {
                                         ? 'Pax Magnifica, Bellum Gloriosum'
                                         : activePlayerInStrategyPhase
                                           ? `${shortName(activePlayerInStrategyPhase)} pick`
-                                          : _.last(events)?.type ===
+                                          : lastEvent.type ===
                                               'PlayerSelectedStrategyCard'
                                             ? 'All strategy cards picked'
                                             : activePlayerInActionPhase
                                               ? `${shortName(activePlayerInActionPhase)} turn`
-                                              : _.last(events)?.type ===
+                                              : lastEvent.type ===
                                                   'PlayerFinishedTurn'
                                                 ? 'Score objectives, initiative order'
-                                                : _.last(events)?.type ===
+                                                : lastEvent.type ===
                                                     'ObjectivesScoredDuringStatusPhase'
                                                   ? 'Reveal public objective'
-                                                  : _.last(events)?.type ===
+                                                  : lastEvent.type ===
                                                       'PublicObjectivesRevealedDuringStatusPhase'
                                                     ? 'Draw action cards'
-                                                    : _.last(events)?.type ===
+                                                    : lastEvent.type ===
                                                         'ActionCardsDrawnDuringStatusPhase'
                                                       ? 'Remove command tokens from board'
-                                                      : _.last(events)?.type ===
+                                                      : lastEvent.type ===
                                                           'CommandTokensRemovedDuringStatusPhase'
                                                         ? 'Gain and redistribute command tokens'
-                                                        : _.last(events)
-                                                                ?.type ===
+                                                        : lastEvent?.type ===
                                                             'CardsReadiedDuringStatusPhase'
                                                           ? 'Repair units'
                                                           : 'Return strategy cards'}
@@ -119,7 +121,13 @@ const TickerPage: React.FC = () => {
                         <Times>
                             <TimeSpan>
                                 {hasGameStarted(events)
-                                    ? timeElapsedLabel(lastEvent, currentTime)
+                                    ? timeElapsedLabel(
+                                          activePlayerInActionPhase &&
+                                              lastEventWhenPlayerTurnStarted
+                                              ? lastEventWhenPlayerTurnStarted
+                                              : lastEvent,
+                                          currentTime
+                                      )
                                     : noTimeElapsedString}
                             </TimeSpan>
                             <TotalTime

@@ -49,14 +49,12 @@ import { notUndefined, range } from './util';
  Can we keep track of votes?
  When a player captures Mecatol they should score a point
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
- Show times on the action phase status panel
  Redevise the Strategy phase view of the status panel
  Redevise the Status phase view of the status panel
  Agenda phase of ticker panel
  Status phase of ticker panel
  Strategy phase of ticker panel
  Rename stuff in statusPage and tickerPage
- After end of round 1, show times taken on status page during agenda phase
 */
 
 const GalaxyPage: React.FC = () => {
