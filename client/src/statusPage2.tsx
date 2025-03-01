@@ -380,11 +380,11 @@ const StatusPage2: React.FC = () => {
                                                     )}`
                                                         .replace(/ /g, '')
                                                         .replace(/hours/, 'h')
+                                                        .replace(/hour/, 'h')
                                                         .replace(/minutes/, 'm')
-                                                        .replace(
-                                                            'seconds',
-                                                            's'
-                                                        )}
+                                                        .replace(/minute/, 'm')
+                                                        .replace('seconds', 's')
+                                                        .replace('second', 's')}
                                                     position={avTimesTakenPositionLabel(
                                                         timesTakenForEachFaction,
                                                         activePlayerInActionPhase
@@ -419,11 +419,11 @@ const StatusPage2: React.FC = () => {
                                                     )}`
                                                         .replace(/ /g, '')
                                                         .replace(/hours/, 'h')
+                                                        .replace(/hour/, 'h')
                                                         .replace(/minutes/, 'm')
-                                                        .replace(
-                                                            'seconds',
-                                                            's'
-                                                        )}
+                                                        .replace(/minute/, 'm')
+                                                        .replace('seconds', 's')
+                                                        .replace('second', 's')}
                                                     position={maxTimesTakenPositionLabel(
                                                         timesTakenForEachFaction,
                                                         activePlayerInActionPhase
@@ -437,11 +437,7 @@ const StatusPage2: React.FC = () => {
                             )}
                         </ColumnWithTitleContainer>
                     ) : (
-                        <SpreadColumnContainer>
-                            <TitleContainer>
-                                <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                                <SubTitle>{`${isUnion(isAgendaPhaseStartedEvent, isAgendaCardRevealedEvent)(lastEvent) ? 'Agenda' : 'Status'} Phase`}</SubTitle>
-                            </TitleContainer>
+                        <SpaceAroundColumn>
                             {isUnion(
                                 isAgendaPhaseStartedEvent,
                                 isAgendaCardRevealedEvent
@@ -458,16 +454,7 @@ const StatusPage2: React.FC = () => {
                                     />
                                 </AgendaCardContainer>
                             )}
-                            <BottomContainer>
-                                <TimeSpan>
-                                    {timeElapsedLabel(lastEvent, currentTime)}
-                                </TimeSpan>
-                                <TotalTime
-                                    events={events}
-                                    currentTime={currentTime}
-                                />
-                            </BottomContainer>
-                        </SpreadColumnContainer>
+                        </SpaceAroundColumn>
                     )
                 ) : (
                     <HoldingScreen currentTime={currentTime} />
@@ -942,7 +929,8 @@ const AgendaCardContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 45vh;
+    height: 50vh;
+    filter: drop-shadow(1vh 0 1vh grey);
 
     > * {
         flex: 1 1 0;
