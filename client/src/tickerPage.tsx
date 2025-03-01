@@ -11,6 +11,8 @@ import {
     Event,
     hasGameStarted,
     isActionPhaseStartedEvent,
+    isAgendaCardRevealedEvent,
+    isAgendaPhaseStartedEvent,
     isPlayerFinishedTurnEvent,
     isRoundStartedEvent,
     isUnion,
@@ -75,7 +77,12 @@ const TickerPage: React.FC = () => {
                                             _.last(events)?.type ===
                                                 'PlayerSelectedStrategyCard'
                                           ? 'STRATEGY'
-                                          : 'STATUS'}
+                                          : isUnion(
+                                                  isAgendaPhaseStartedEvent,
+                                                  isAgendaCardRevealedEvent
+                                              )(lastEvent)
+                                            ? 'AGENDA'
+                                            : 'STATUS'}
                                 </SubTitle>
                                 <SubTitle $invisible={!hasGameStarted(events)}>
                                     PHASE
