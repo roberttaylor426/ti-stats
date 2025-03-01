@@ -20,6 +20,7 @@ import {
     isUnion,
     playerFactionsAndColors,
     playerScore,
+    timesTakenPerPlayer,
 } from './events';
 import { Faction } from './factions';
 import { hexPlayerColor } from './playerColors';
@@ -68,50 +69,6 @@ const StatsPage: React.FC = () => {
             ),
         ]
     );
-
-    const timesTakenPerPlayerPerTurn: Record<Faction, number[]> = events.reduce(
-        (acc, n) => {
-            if (n.type === 'ActionPhaseStarted') {
-                return {
-                    ...acc,
-                    playerTurnStartedTime: n.time,
-                };
-            }
-            if (n.type === 'PlayerFinishedTurn') {
-                return {
-                    playerTurnTimes: {
-                        ...acc.playerTurnTimes,
-                        [n.faction]: [
-                            ...acc.playerTurnTimes[n.faction],
-                            n.time - acc.playerTurnStartedTime,
-                        ],
-                    },
-                    playerTurnStartedTime: n.time,
-                };
-            }
-
-            return acc;
-        },
-        {
-            playerTurnStartedTime: 0,
-            playerTurnTimes: factionsInGame(events).reduce(
-                (acc, n) => ({ ...acc, [n]: [] }),
-                {} as Record<Faction, number[]>
-            ),
-        }
-    ).playerTurnTimes;
-
-    const timesTakenPerPlayer = factionsInGame(events).map((f) => ({
-        faction: f,
-        playerColor: playerFactionsAndColors(events)[f],
-        maxTimeTakenInMillis: timesTakenPerPlayerPerTurn[f].reduce(
-            (acc, n) => Math.max(acc, n),
-            0
-        ),
-        avTimeTakenInMillis:
-            timesTakenPerPlayerPerTurn[f].reduce((acc, n) => acc + n, 0) /
-            timesTakenPerPlayerPerTurn[f].length,
-    }));
 
     const roundEndedEvents = events.filter(isRoundEndedEvent);
 
@@ -228,7 +185,7 @@ const StatsPage: React.FC = () => {
                             <StatsTitle>Average time taken per turn</StatsTitle>
                             <StatsContainer>
                                 {_.sortBy(
-                                    timesTakenPerPlayer,
+                                    timesTakenPerPlayer(events),
                                     (ps) => ps.avTimeTakenInMillis
                                 )
                                     .reverse()
@@ -260,7 +217,7 @@ const StatsPage: React.FC = () => {
                             <StatsTitle>Max time taken on a turn</StatsTitle>
                             <StatsContainer>
                                 {_.sortBy(
-                                    timesTakenPerPlayer,
+                                    timesTakenPerPlayer(events),
                                     (ps) => ps.maxTimeTakenInMillis
                                 )
                                     .reverse()

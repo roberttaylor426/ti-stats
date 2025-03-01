@@ -1,4 +1,4 @@
-import { intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { formatDate } from 'date-fns/format';
 import React, { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
@@ -25,6 +25,8 @@ import {
     playerSelectedStrategyCardEventFromLastStrategyPhase,
     resourcesAndInfluenceForFaction,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
+    TimesTaken,
+    timesTakenPerPlayer,
 } from './events';
 import { Faction, shortName, superShortName } from './factions';
 import {
@@ -48,6 +50,7 @@ const StatusPage2: React.FC = () => {
     const resourcesAndInfluenceNodeRef = useRef(null);
     const strategyCardNodeRef = useRef(null);
     const planetsNodeRef = useRef(null);
+    const timeTakenNodeRef = useRef(null);
 
     const lastEvent = _.last(events);
 
@@ -101,6 +104,8 @@ const StatusPage2: React.FC = () => {
         }),
         {} as Record<Faction, ResourcesAndInfluence>
     );
+
+    const timesTakenForEachFaction = timesTakenPerPlayer(events);
 
     const winningPlayer = _.first(
         factions
@@ -191,7 +196,7 @@ const StatusPage2: React.FC = () => {
                                         actionPhaseDisplayMode ===
                                         'resources and influence'
                                     }
-                                    timeout={500}
+                                    timeout={cssTransitionTimeout}
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
@@ -208,7 +213,7 @@ const StatusPage2: React.FC = () => {
                                                     mode={'large'}
                                                     title={'Resources'}
                                                     stat={`${resourcesAndInfluenceForEachFaction[activePlayerInActionPhase].resources}`}
-                                                    position={resourcesPosition(
+                                                    position={resourcesPositionLabel(
                                                         resourcesAndInfluenceForEachFaction,
                                                         activePlayerInActionPhase
                                                     )}
@@ -219,7 +224,7 @@ const StatusPage2: React.FC = () => {
                                                     mode={'large'}
                                                     title={'Influence'}
                                                     stat={`${resourcesAndInfluenceForEachFaction[activePlayerInActionPhase].influence}`}
-                                                    position={influencePosition(
+                                                    position={influencePositionLabel(
                                                         resourcesAndInfluenceForEachFaction,
                                                         activePlayerInActionPhase
                                                     )}
@@ -237,7 +242,7 @@ const StatusPage2: React.FC = () => {
                                         actionPhaseDisplayMode ===
                                         'strategy card'
                                     }
-                                    timeout={500}
+                                    timeout={cssTransitionTimeout}
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
@@ -263,15 +268,17 @@ const StatusPage2: React.FC = () => {
                                         )}
                                     </SpaceAroundColumn>
                                 </CSSTransition>
-                            ) : (
+                            ) : actionPhaseDisplayModeVisible === 'planets' ? (
                                 <CSSTransition
                                     nodeRef={planetsNodeRef}
                                     in={actionPhaseDisplayMode === 'planets'}
-                                    timeout={500}
+                                    timeout={cssTransitionTimeout}
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
-                                            'resources and influence'
+                                            currentRoundNumber(events) > 1
+                                                ? 'time taken'
+                                                : 'resources and influence'
                                         )
                                     }
                                 >
@@ -283,7 +290,7 @@ const StatusPage2: React.FC = () => {
                                                         mode={'small'}
                                                         title={'Planets'}
                                                         stat={`${planetsControlledByEachFaction[activePlayerInActionPhase].length}`}
-                                                        position={planetsControlledPosition(
+                                                        position={planetsControlledPositionLabel(
                                                             planetsControlledByEachFaction,
                                                             activePlayerInActionPhase,
                                                             'any'
@@ -295,7 +302,7 @@ const StatusPage2: React.FC = () => {
                                                         mode={'small'}
                                                         title={'Hazardous'}
                                                         stat={`${planetsControlledByEachFaction[activePlayerInActionPhase].filter((p) => planets[p].trait === 'hazardous').length}`}
-                                                        position={planetsControlledPosition(
+                                                        position={planetsControlledPositionLabel(
                                                             planetsControlledByEachFaction,
                                                             activePlayerInActionPhase,
                                                             'hazardous'
@@ -310,7 +317,7 @@ const StatusPage2: React.FC = () => {
                                                         mode={'small'}
                                                         title={'Cultural'}
                                                         stat={`${planetsControlledByEachFaction[activePlayerInActionPhase].filter((p) => planets[p].trait === 'cultural').length}`}
-                                                        position={planetsControlledPosition(
+                                                        position={planetsControlledPositionLabel(
                                                             planetsControlledByEachFaction,
                                                             activePlayerInActionPhase,
                                                             'cultural'
@@ -322,7 +329,7 @@ const StatusPage2: React.FC = () => {
                                                         mode={'small'}
                                                         title={'Industrial'}
                                                         stat={`${planetsControlledByEachFaction[activePlayerInActionPhase].filter((p) => planets[p].trait === 'industrial').length}`}
-                                                        position={planetsControlledPosition(
+                                                        position={planetsControlledPositionLabel(
                                                             planetsControlledByEachFaction,
                                                             activePlayerInActionPhase,
                                                             'industrial'
@@ -332,6 +339,101 @@ const StatusPage2: React.FC = () => {
                                                 </InnerStatsColumn>
                                             </StatsColumn>
                                         </StatsRow>
+                                    </SpaceAroundColumn>
+                                </CSSTransition>
+                            ) : (
+                                <CSSTransition
+                                    nodeRef={planetsNodeRef}
+                                    in={actionPhaseDisplayMode === 'time taken'}
+                                    timeout={cssTransitionTimeout}
+                                    classNames={'fadein'}
+                                    onExited={() =>
+                                        setActionPhaseDisplayModeVisible(
+                                            'resources and influence'
+                                        )
+                                    }
+                                >
+                                    <SpaceAroundColumn ref={timeTakenNodeRef}>
+                                        <StatsColumn>
+                                            <InnerStatsColumn>
+                                                <Stat
+                                                    mode={'small'}
+                                                    title={
+                                                        'Av. time taken per turn'
+                                                    }
+                                                    stat={`${formatDuration(
+                                                        intervalToDuration({
+                                                            start: 0,
+                                                            end:
+                                                                timesTakenForEachFaction.find(
+                                                                    (t) =>
+                                                                        t.faction ===
+                                                                        activePlayerInActionPhase
+                                                                )
+                                                                    ?.avTimeTakenInMillis ||
+                                                                0,
+                                                        }),
+                                                        {
+                                                            zero: true,
+                                                            format: [
+                                                                'hours',
+                                                                'minutes',
+                                                                'seconds',
+                                                            ],
+                                                        }
+                                                    )}`
+                                                        .replace(/minutes/, 'm')
+                                                        .replace(/ /g, '')
+                                                        .replace(
+                                                            'seconds',
+                                                            's'
+                                                        )}
+                                                    position={avTimesTakenPositionLabel(
+                                                        timesTakenForEachFaction,
+                                                        activePlayerInActionPhase
+                                                    )}
+                                                    color={'yellow'}
+                                                />
+
+                                                <Stat
+                                                    mode={'small'}
+                                                    title={
+                                                        'Max time taken per turn'
+                                                    }
+                                                    stat={`${formatDuration(
+                                                        intervalToDuration({
+                                                            start: 0,
+                                                            end:
+                                                                timesTakenForEachFaction.find(
+                                                                    (t) =>
+                                                                        t.faction ===
+                                                                        activePlayerInActionPhase
+                                                                )
+                                                                    ?.maxTimeTakenInMillis ||
+                                                                0,
+                                                        }),
+                                                        {
+                                                            format: [
+                                                                'hours',
+                                                                'minutes',
+                                                                'seconds',
+                                                            ],
+                                                        }
+                                                    )}`
+                                                        .replace(/minutes/, 'm')
+                                                        .replace(/ /g, '')
+                                                        .replace(
+                                                            'seconds',
+                                                            's'
+                                                        )}
+                                                    position={maxTimesTakenPositionLabel(
+                                                        timesTakenForEachFaction,
+                                                        activePlayerInActionPhase
+                                                    )}
+                                                    color={'yellow'}
+                                                />
+                                            </InnerStatsColumn>
+                                        </StatsColumn>
                                     </SpaceAroundColumn>
                                 </CSSTransition>
                             )}
@@ -383,11 +485,12 @@ const actionPhaseDisplayModes = [
     'resources and influence',
     'strategy card',
     'planets',
+    'time taken',
 ] as const;
 
 type ActionPhaseDisplayMode = (typeof actionPhaseDisplayModes)[number];
 
-const planetsControlledPosition = (
+const planetsControlledPositionLabel = (
     planetsControlledByEachFaction: Record<Faction, PlanetName[]>,
     faction: Faction,
     planetTrait: PlanetTrait | 'any'
@@ -414,11 +517,11 @@ const planetsControlledPosition = (
     const numberOfFactionsControllingMorePlanets = factionsInGame.reduce(
         (acc, n) =>
             acc +
-            (n === faction ||
-            numberOfPlanetsControlledByEachFaction[faction] >=
-                numberOfPlanetsControlledByEachFaction[n]
-                ? 0
-                : 1),
+            (n !== faction &&
+            numberOfPlanetsControlledByEachFaction[n] >
+                numberOfPlanetsControlledByEachFaction[faction]
+                ? 1
+                : 0),
         0
     );
 
@@ -428,7 +531,7 @@ const planetsControlledPosition = (
     );
 };
 
-const resourcesPosition = (
+const resourcesPositionLabel = (
     resourcesForEachFaction: Record<Faction, ResourcesAndInfluence>,
     faction: Faction
 ): string => {
@@ -443,11 +546,11 @@ const resourcesPosition = (
     const numberOfFactionsWithMoreResources = factionsInGame.reduce(
         (acc, n) =>
             acc +
-            (n === faction ||
-            resourcesForEachFaction[faction].resources >=
-                resourcesForEachFaction[n].resources
-                ? 0
-                : 1),
+            (n !== faction &&
+            resourcesForEachFaction[n].resources >
+                resourcesForEachFaction[faction].resources
+                ? 1
+                : 0),
         0
     );
 
@@ -457,7 +560,7 @@ const resourcesPosition = (
     );
 };
 
-const influencePosition = (
+const influencePositionLabel = (
     resourcesForEachFaction: Record<Faction, ResourcesAndInfluence>,
     faction: Faction
 ): string => {
@@ -472,17 +575,81 @@ const influencePosition = (
     const numberOfFactionsWithMoreInfluence = factionsInGame.reduce(
         (acc, n) =>
             acc +
-            (n === faction ||
-            resourcesForEachFaction[faction].influence >=
-                resourcesForEachFaction[n].influence
-                ? 0
-                : 1),
+            (n !== faction &&
+            resourcesForEachFaction[n].influence >
+                resourcesForEachFaction[faction].influence
+                ? 1
+                : 0),
         0
     );
 
     return positionLabel(
         numberOfFactionsWithMoreInfluence,
         anotherFactionHasTheSameAmountOfInfluence
+    );
+};
+
+const avTimesTakenPositionLabel = (
+    timesTaken: TimesTaken[],
+    faction: Faction
+): string => {
+    const factionsInGame = timesTaken.map((tt) => tt.faction);
+
+    const anotherFactionHasTheSameAvTime = factionsInGame.some(
+        (f) =>
+            f !== faction &&
+            timesTaken.find((tt) => tt.faction === f)?.avTimeTakenInMillis ===
+                timesTaken.find((tt) => tt.faction === faction)
+                    ?.avTimeTakenInMillis
+    );
+    const numberOfFactionsWithLessAvTime = factionsInGame.reduce(
+        (acc, n) =>
+            acc +
+            (n !== faction &&
+            (timesTaken.find((tt) => tt.faction === n)?.avTimeTakenInMillis ||
+                0) <
+                (timesTaken.find((tt) => tt.faction === faction)
+                    ?.avTimeTakenInMillis || 0)
+                ? 1
+                : 0),
+        0
+    );
+
+    return positionLabel(
+        numberOfFactionsWithLessAvTime,
+        anotherFactionHasTheSameAvTime
+    );
+};
+
+const maxTimesTakenPositionLabel = (
+    timesTaken: TimesTaken[],
+    faction: Faction
+): string => {
+    const factionsInGame = timesTaken.map((tt) => tt.faction);
+
+    const anotherFactionHasTheSameMaxTime = factionsInGame.some(
+        (f) =>
+            f !== faction &&
+            timesTaken.find((tt) => tt.faction === f)?.maxTimeTakenInMillis ===
+                timesTaken.find((tt) => tt.faction === faction)
+                    ?.maxTimeTakenInMillis
+    );
+    const numberOfFactionsWithLessMaxTime = factionsInGame.reduce(
+        (acc, n) =>
+            acc +
+            (n !== faction &&
+            (timesTaken.find((tt) => tt.faction === n)?.maxTimeTakenInMillis ||
+                0) <
+                (timesTaken.find((tt) => tt.faction === faction)
+                    ?.maxTimeTakenInMillis || 0)
+                ? 1
+                : 0),
+        0
+    );
+
+    return positionLabel(
+        numberOfFactionsWithLessMaxTime,
+        anotherFactionHasTheSameMaxTime
     );
 };
 
@@ -786,5 +953,7 @@ const AgendaCard = styled.img`
     min-width: 0;
     min-height: 0;
 `;
+
+const cssTransitionTimeout = 500;
 
 export { StatusPage2 };

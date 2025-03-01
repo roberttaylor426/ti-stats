@@ -684,6 +684,63 @@ const resourcesAndInfluenceForFaction = (
         );
 };
 
+const timesTakenPerPlayerPerTurn = (
+    events: Event[]
+): Record<Faction, number[]> =>
+    events.reduce(
+        (acc, n) => {
+            if (n.type === 'ActionPhaseStarted') {
+                return {
+                    ...acc,
+                    playerTurnStartedTime: n.time,
+                };
+            }
+            if (n.type === 'PlayerFinishedTurn') {
+                return {
+                    playerTurnTimes: {
+                        ...acc.playerTurnTimes,
+                        [n.faction]: [
+                            ...acc.playerTurnTimes[n.faction],
+                            n.time - acc.playerTurnStartedTime,
+                        ],
+                    },
+                    playerTurnStartedTime: n.time,
+                };
+            }
+
+            return acc;
+        },
+        {
+            playerTurnStartedTime: 0,
+            playerTurnTimes: factionsInGame(events).reduce(
+                (acc, n) => ({ ...acc, [n]: [] }),
+                {} as Record<Faction, number[]>
+            ),
+        }
+    ).playerTurnTimes;
+
+type TimesTaken = {
+    faction: Faction;
+    playerColor: PlayerColor;
+    maxTimeTakenInMillis: number;
+    avTimeTakenInMillis: number;
+};
+
+const timesTakenPerPlayer = (events: Event[]): TimesTaken[] => {
+    const timesTakenPerTurn = timesTakenPerPlayerPerTurn(events);
+    return factionsInGame(events).map((f) => ({
+        faction: f,
+        playerColor: playerFactionsAndColors(events)[f],
+        maxTimeTakenInMillis: timesTakenPerTurn[f].reduce(
+            (acc, n) => Math.max(acc, n),
+            0
+        ),
+        avTimeTakenInMillis:
+            timesTakenPerTurn[f].reduce((acc, n) => acc + n, 0) /
+            timesTakenPerTurn[f].length,
+    }));
+};
+
 const playerScore = (events: Event[], f: Faction): number =>
     events
         .filter(isPlayerScoredVictoryPointEvent)
@@ -746,4 +803,6 @@ export {
     systemTileNumbersInPlay,
     systemTilePlanets,
     technologiesResearchedByFaction,
+    TimesTaken,
+    timesTakenPerPlayer,
 };

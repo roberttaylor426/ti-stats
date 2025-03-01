@@ -56,6 +56,7 @@ import { notUndefined, range } from './util';
  Status phase of ticker panel
  Strategy phase of ticker panel
  Rename stuff in statusPage and tickerPage
+ After end of round 1, show times taken on status page during agenda phase
 */
 
 const GalaxyPage: React.FC = () => {
