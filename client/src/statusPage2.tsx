@@ -156,32 +156,28 @@ const StatusPage2: React.FC = () => {
                             </BottomContainer>
                         </SpreadColumnContainer>
                     ) : isRoundEndedPageShown(events) ? (
-                        <SpreadColumnContainer>
+                        <ColumnWithTitleContainer>
                             <TitleContainer>
-                                <Title>{`Round ${currentRoundNumber(events) - 1} complete`}</Title>
+                                <SubTitle>{`Round ${currentRoundNumber(events)}`}</SubTitle>
                             </TitleContainer>
-                            <CentralContainer>
-                                <Title>Time taken:</Title>
-                                <TimeSpan>
-                                    {timeElapsedBetweenEvents(
-                                        _.last(
-                                            events.filter(isRoundStartedEvent)
-                                        )!,
-                                        lastEvent
-                                    )}
-                                </TimeSpan>
-                            </CentralContainer>
-                            <BottomContainer>
-                                <TotalTimeSpan>
-                                    {timeElapsedLabel(
-                                        _.first(
-                                            events.filter(isRoundStartedEvent)
-                                        )!,
-                                        currentTime
-                                    )}
-                                </TotalTimeSpan>
-                            </BottomContainer>
-                        </SpreadColumnContainer>
+                            <SpaceAroundColumn>
+                                <CentralContainer>
+                                    <StatTitle $mode={'large'}>
+                                        Time taken:
+                                    </StatTitle>
+                                    <TimeSpan>
+                                        {timeElapsedBetweenEvents(
+                                            _.last(
+                                                events.filter(
+                                                    isRoundStartedEvent
+                                                )
+                                            )!,
+                                            lastEvent
+                                        )}
+                                    </TimeSpan>
+                                </CentralContainer>
+                            </SpaceAroundColumn>
+                        </ColumnWithTitleContainer>
                     ) : activePlayerInActionPhase ? (
                         <ColumnWithTitleContainer>
                             <TitleContainer>
@@ -382,8 +378,9 @@ const StatusPage2: React.FC = () => {
                                                             ],
                                                         }
                                                     )}`
-                                                        .replace(/minutes/, 'm')
                                                         .replace(/ /g, '')
+                                                        .replace(/hours/, 'h')
+                                                        .replace(/minutes/, 'm')
                                                         .replace(
                                                             'seconds',
                                                             's'
@@ -420,8 +417,9 @@ const StatusPage2: React.FC = () => {
                                                             ],
                                                         }
                                                     )}`
-                                                        .replace(/minutes/, 'm')
                                                         .replace(/ /g, '')
+                                                        .replace(/hours/, 'h')
+                                                        .replace(/minutes/, 'm')
                                                         .replace(
                                                             'seconds',
                                                             's'
@@ -862,8 +860,10 @@ const StatPosition = styled.span<StatModeProps>`
 const CentralContainer = styled.div`
     display: flex;
     flex-direction: column;
+    background-color: #000000bb;
+    padding: 2vh 3vh;
     align-items: center;
-    gap: 1rem;
+    gap: 1vh;
 `;
 
 const BottomContainer = styled.div`

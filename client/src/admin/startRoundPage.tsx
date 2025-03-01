@@ -67,7 +67,7 @@ const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
                 onClick={publishRoundStartedEvent}
                 disabled={events.filter(isSpeakerAssignedEvent).length === 0}
             >
-                {`Start Round ${currentRoundNumber}`}
+                {`Start Round ${currentRoundNumber + 1}`}
             </Button>
         </StyledStartRoundPage>
     );

@@ -564,7 +564,7 @@ const hasGameStarted = (events: Event[]): boolean =>
     !!events.find(isRoundStartedEvent);
 
 const currentRoundNumber = (events: Event[]): number =>
-    events.filter(isRoundEndedEvent).length + 1;
+    events.filter(isRoundStartedEvent).length;
 
 const planetDestroyedEvents = (events: Event[]) =>
     events.filter(isPlanetDestroyedEvent);
