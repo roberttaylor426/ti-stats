@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
+import { agendaCardBoldText } from './agendaCards';
 import { accentColor } from './colors';
 import {
     currentPlayerTurnInActionPhase,
@@ -117,10 +118,19 @@ const TickerPage: React.FC = () => {
                                                       : lastEvent.type ===
                                                           'CommandTokensRemovedDuringStatusPhase'
                                                         ? 'Gain and redistribute command tokens'
-                                                        : lastEvent?.type ===
+                                                        : lastEvent.type ===
                                                             'CardsReadiedDuringStatusPhase'
                                                           ? 'Repair units'
-                                                          : 'Return strategy cards'}
+                                                          : lastEvent.type ===
+                                                              'UnitsRepairedDuringStatusPhase'
+                                                            ? 'Return strategy cards'
+                                                            : lastEvent.type ===
+                                                                'AgendaPhaseStarted'
+                                                              ? 'Speaker to reveal an agenda card'
+                                                              : lastEvent.type ===
+                                                                  'AgendaCardRevealed'
+                                                                ? `${agendaCardBoldText[lastEvent.card]}`
+                                                                : ''}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />

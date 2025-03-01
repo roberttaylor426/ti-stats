@@ -158,4 +158,68 @@ const agendaCardFaces: Record<AgendaCard, string> = {
     'Wormhole Research': wormholeResearch,
 };
 
-export { AgendaCard, agendaCardBack, agendaCardFaces, agendaCards };
+const voteForOrAgainst = 'Vote for or against';
+const electPlayer = 'Elect player';
+const electPlanet = 'Elect planet';
+const electLaw = 'Elect law';
+
+const agendaCardBoldText: Record<AgendaCard, string> = {
+    'Anti-Intellectual Revolution': voteForOrAgainst,
+    'Archived Secret': electPlayer,
+    'Armed Forces Standardization': electPlayer,
+    'Arms Reduction': voteForOrAgainst,
+    'Articles of War': voteForOrAgainst,
+    'Checks and Balances': voteForOrAgainst,
+    'Clandestine Operations': voteForOrAgainst,
+    'Classified Document Leaks': 'Elect scored secret objective',
+    'Colonial Redistribution': 'Elect non-home planet other than Mecatol Rex',
+    'Committee Formation': electPlayer,
+    'Compensated Disarmament': electPlanet,
+    'Conventions of War': voteForOrAgainst,
+    'Covert Legislation': 'Vote for outcomes of next agenda card',
+    'Economic Equality': voteForOrAgainst,
+    'Enforced Travel Ban': voteForOrAgainst,
+    'Executive Sanctions': voteForOrAgainst,
+    'Fleet Regulations': voteForOrAgainst,
+    'Galactic Crisis Pact': 'Elect strategy card',
+    'Homeland Defense Act': voteForOrAgainst,
+    'Imperial Arbiter': electPlayer,
+    'Incentive Program': voteForOrAgainst,
+    'Ixthian Artifact': voteForOrAgainst,
+    'Judicial Abolishment': electLaw,
+    'Minister of Antiquities': electPlayer,
+    'Minister of Commerce': electPlayer,
+    'Minister of Exploration': electPlayer,
+    'Minister of Industry': electPlayer,
+    'Minister of Peace': electPlayer,
+    'Minister of Policy': electPlayer,
+    'Minister of Sciences': electPlayer,
+    'Minister of War': electPlayer,
+    'Miscount Disclosed': electLaw,
+    Mutiny: voteForOrAgainst,
+    'New Constitution': voteForOrAgainst,
+    'Nexus Sovereignty': voteForOrAgainst,
+    'Political Censure': electPlayer,
+    'Prophecy of Ixth': electPlayer,
+    'Public Execution': electPlayer,
+    'Publicize Weapon Schematics': voteForOrAgainst,
+    'Rearmament Agreement': voteForOrAgainst,
+    'Regulated Conscription': voteForOrAgainst,
+    'Representative Government': voteForOrAgainst,
+    'Research Grant Reallocation': electPlayer,
+    'Search Warrant': electPlayer,
+    'Seed of an Empire': voteForOrAgainst,
+    'Shared Research': voteForOrAgainst,
+    'Swords to Plowshares': voteForOrAgainst,
+    'Unconventional Measures': voteForOrAgainst,
+    'Wormhole Reconstruction': voteForOrAgainst,
+    'Wormhole Research': voteForOrAgainst,
+};
+
+export {
+    AgendaCard,
+    agendaCardBack,
+    agendaCardBoldText,
+    agendaCardFaces,
+    agendaCards,
+};
