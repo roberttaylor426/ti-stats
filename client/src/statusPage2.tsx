@@ -54,12 +54,6 @@ const StatusPage2: React.FC = () => {
 
     const lastEvent = _.last(events);
 
-    // const lastEventWhenPlayerTurnStarted = _.last(
-    //     events.filter(
-    //         isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
-    //     )
-    // );
-
     useEffect(() => {
         const interval = setInterval(
             () => setCurrentTime(new Date().getTime()),
@@ -71,14 +65,11 @@ const StatusPage2: React.FC = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setActionPhaseDisplayMode(
-                actionPhaseDisplayModes[
-                    (actionPhaseDisplayModes.indexOf(actionPhaseDisplayMode) +
-                        1) %
-                        actionPhaseDisplayModes.length
-                ]
+                nextDisplayMode(actionPhaseDisplayMode, events)
             );
         }, 10_000);
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [actionPhaseDisplayMode]);
 
     const activePlayerInStrategyPhase =
@@ -474,6 +465,17 @@ const actionPhaseDisplayModes = [
 ] as const;
 
 type ActionPhaseDisplayMode = (typeof actionPhaseDisplayModes)[number];
+
+const nextDisplayMode = (
+    currentDisplayMode: ActionPhaseDisplayMode,
+    events: Event[]
+): ActionPhaseDisplayMode =>
+    actionPhaseDisplayModes[
+        (actionPhaseDisplayModes.indexOf(currentDisplayMode) + 1) %
+            (currentRoundNumber(events) > 1
+                ? actionPhaseDisplayModes.length
+                : actionPhaseDisplayModes.length - 1)
+    ];
 
 const planetsControlledPositionLabel = (
     planetsControlledByEachFaction: Record<Faction, PlanetName[]>,
@@ -944,4 +946,4 @@ const AgendaCard = styled.img`
 
 const cssTransitionTimeout = 500;
 
-export { StatusPage2 };
+export { ActionPhaseDisplayMode, nextDisplayMode, StatusPage2 };
