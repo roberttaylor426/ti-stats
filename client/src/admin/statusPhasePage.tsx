@@ -16,7 +16,8 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
 
     const lastEvent = _.last(events);
     const statusPhaseStage: StatusPhaseStage =
-        lastEvent?.type === 'PlayerFinishedTurn'
+        lastEvent?.type === 'PlayerFinishedTurn' ||
+        lastEvent?.type === 'PlayerScoredVictoryPoint'
             ? 'score objectives'
             : lastEvent?.type === 'ObjectivesScoredDuringStatusPhase'
               ? 'reveal public objectives'
@@ -119,6 +120,7 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
             <PageTitle {...props} title={'Status phase'} />
             {statusPhaseStage === 'score objectives' ? (
                 <>
+                    <span>Score objectives in intiative order</span>
                     <VpScoringContainer {...props} />
                     <Button onClick={publishObjectivesScoredEvent}>
                         {'Objectives scored'}
