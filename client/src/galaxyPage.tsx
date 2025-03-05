@@ -39,7 +39,6 @@ import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
 
 /*
- Introduce horizontal status pane
  Extract common scoreboard component
  Extract all pages into separate files
  Support tile changes in game (Creuss, Muaat heroes)
@@ -49,10 +48,6 @@ import { notUndefined, range } from './util';
  Can we keep track of votes?
  When a player captures Mecatol they should score a point
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
- Redevise the Status phase view of the status panel
- Agenda phase of ticker panel
- Status phase of ticker panel
- Strategy phase of ticker panel
  Rename stuff in statusPage and tickerPage
 */
 
