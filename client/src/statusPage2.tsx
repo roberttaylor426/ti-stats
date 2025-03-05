@@ -187,7 +187,10 @@ const StatusPage2: React.FC = () => {
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
-                                            'strategy card'
+                                            nextDisplayMode(
+                                                actionPhaseDisplayModeVisible,
+                                                events
+                                            )
                                         )
                                     }
                                 >
@@ -233,7 +236,10 @@ const StatusPage2: React.FC = () => {
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
-                                            'planets'
+                                            nextDisplayMode(
+                                                actionPhaseDisplayModeVisible,
+                                                events
+                                            )
                                         )
                                     }
                                 >
@@ -263,9 +269,10 @@ const StatusPage2: React.FC = () => {
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
-                                            currentRoundNumber(events) > 1
-                                                ? 'time taken'
-                                                : 'resources and influence'
+                                            nextDisplayMode(
+                                                actionPhaseDisplayModeVisible,
+                                                events
+                                            )
                                         )
                                     }
                                 >
@@ -336,7 +343,10 @@ const StatusPage2: React.FC = () => {
                                     classNames={'fadein'}
                                     onExited={() =>
                                         setActionPhaseDisplayModeVisible(
-                                            'resources and influence'
+                                            nextDisplayMode(
+                                                actionPhaseDisplayModeVisible,
+                                                events
+                                            )
                                         )
                                     }
                                 >
