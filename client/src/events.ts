@@ -747,6 +747,16 @@ const playerScore = (events: Event[], f: Faction): number =>
         .filter((e) => e.faction === f)
         .reduce((acc, n) => acc + n.delta, 0);
 
+const isItAgendaPhase = (events: Event[]) => {
+    const lastAgendaPhaseStartedIndex = lastIndexOfEventType(
+        events,
+        isAgendaPhaseStartedEvent
+    );
+    const lastRoundEndedIndex = lastIndexOfEventType(events, isRoundEndedEvent);
+
+    return lastAgendaPhaseStartedIndex > lastRoundEndedIndex;
+};
+
 export {
     ActionPhaseStartedEvent,
     ColumnForNewMapTile,
@@ -765,6 +775,7 @@ export {
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isItAgendaPhase,
     isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,
     isPlanetControlledEvent,

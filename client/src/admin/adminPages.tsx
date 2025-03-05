@@ -8,7 +8,7 @@ import {
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
-    isAgendaPhaseStartedEvent,
+    isItAgendaPhase,
     isMapTilesSelectedEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
@@ -109,7 +109,7 @@ const AdminPages: React.FC = () => {
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
                 />
-            ) : isAgendaPhasePageVisible(events) ? (
+            ) : isItAgendaPhase(events) ? (
                 <AgendaPhasePage
                     {...adminPageProps}
                     currentRoundNumber={currentRoundNumber(events)}
@@ -147,16 +147,6 @@ const isStartRoundPageVisible = (events: Event[]) => {
 const isSelectStrategyCardPageVisible = (events: Event[]) =>
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events).length <
     numberOfPlayersInGame;
-
-const isAgendaPhasePageVisible = (events: Event[]) => {
-    const lastAgendaPhaseStartedIndex = lastIndexOfEventType(
-        events,
-        isAgendaPhaseStartedEvent
-    );
-    const lastRoundEndedIndex = lastIndexOfEventType(events, isRoundEndedEvent);
-
-    return lastAgendaPhaseStartedIndex > lastRoundEndedIndex;
-};
 
 const StyledAdminPage = styled.div`
     display: flex;

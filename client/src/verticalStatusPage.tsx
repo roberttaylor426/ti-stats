@@ -1,5 +1,4 @@
 import { formatDuration, intervalToDuration } from 'date-fns';
-import { formatDate } from 'date-fns/format';
 import React, { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import styled, { css } from 'styled-components';
@@ -16,6 +15,7 @@ import {
     factionsInGame,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isItAgendaPhase,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isUnion,
@@ -35,12 +35,12 @@ import {
     PlanetTrait,
     ResourcesAndInfluence,
 } from './planets';
+import { numberOfPlayersInGame } from './playerColors';
 import { strategyCardImage } from './strategyCards';
 import { useEvents } from './useEvents';
 
 const VerticalStatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
-    const [currentTime, setCurrentTime] = useState(new Date().getTime());
     const [actionPhaseDisplayMode, setActionPhaseDisplayMode] =
         useState<ActionPhaseDisplayMode>('resources and influence');
 
@@ -53,14 +53,6 @@ const VerticalStatusPage: React.FC = () => {
     const timeTakenNodeRef = useRef(null);
 
     const lastEvent = _.last(events);
-
-    useEffect(() => {
-        const interval = setInterval(
-            () => setCurrentTime(new Date().getTime()),
-            1_000
-        );
-        return () => clearInterval(interval);
-    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -493,29 +485,22 @@ const VerticalStatusPage: React.FC = () => {
                         </ColumnWithTitleContainer>
                     ) : (
                         <SpaceAroundColumn>
-                            {isUnion(
-                                isAgendaPhaseStartedEvent,
-                                isAgendaCardRevealedEvent
-                            )(lastEvent) && (
+                            {isItAgendaPhase(events) && (
                                 <AgendaCardContainer>
                                     <AgendaCard
-                                        src={
-                                            isAgendaPhaseStartedEvent(lastEvent)
-                                                ? agendaCardBack
-                                                : agendaCardFaces[
-                                                      lastEvent.card
-                                                  ]
-                                        }
+                                        src={agendaCardImageToShowDuringAgendaPhase(
+                                            events
+                                        )}
                                     />
                                 </AgendaCardContainer>
                             )}
                         </SpaceAroundColumn>
                     )
                 ) : (
-                    <HoldingScreen currentTime={currentTime} />
+                    <h1>TODO</h1>
                 )
             ) : (
-                <HoldingScreen currentTime={currentTime} />
+                <h1>TODO</h1>
             )}
         </StyledStatusPage>
     );
@@ -666,7 +651,7 @@ const avTimesTakenPositionLabel = (
         0
     );
 
-    return positionLabel(
+    return timeBasedPositionLabel(
         numberOfFactionsWithLessAvTime,
         anotherFactionHasTheSameAvTime
     );
@@ -698,7 +683,7 @@ const maxTimesTakenPositionLabel = (
         0
     );
 
-    return positionLabel(
+    return timeBasedPositionLabel(
         numberOfFactionsWithLessMaxTime,
         anotherFactionHasTheSameMaxTime
     );
@@ -713,6 +698,22 @@ const positionLabel = (
     );
 
     return anotherFactionHasTheSameAmount ? `${position}=` : position;
+};
+
+const timeBasedPositionLabel = (
+    numberOfFactionsWithMore: number,
+    anotherFactionHasTheSameAmount: boolean
+) => {
+    const label = positionLabel(
+        numberOfFactionsWithMore,
+        anotherFactionHasTheSameAmount
+    );
+
+    return label === '1st'
+        ? 'Fastest'
+        : label === `${numberOfPlayersInGame}th`
+          ? 'Slowest'
+          : `${label} fastest`;
 };
 
 const positionGivenNumberOfFactionsAhead = (n: number) =>
@@ -978,21 +979,6 @@ const TotalTimeSpan = styled(TimeSpan)`
     color: red;
 `;
 
-type HoldingScreenProps = {
-    currentTime: number;
-};
-
-const HoldingScreen: React.FC<HoldingScreenProps> = ({ currentTime }) => (
-    <SpreadColumnContainer>
-        <div />
-        <Title>{'Pax Magnifica Bellum Gloriosum'}</Title>
-        <SubTitle>
-            {formatDate(new Date(currentTime), 'PPP').replace(/,/g, '')}
-        </SubTitle>
-        <div />
-    </SpreadColumnContainer>
-);
-
 const AgendaCardContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -1009,6 +995,19 @@ const AgendaCard = styled.img`
     min-width: 0;
     min-height: 0;
 `;
+
+const agendaCardImageToShowDuringAgendaPhase = (events: Event[]): string => {
+    const lastAgendaPhaseEvent = _.last(
+        events.filter(
+            isUnion(isAgendaPhaseStartedEvent, isAgendaCardRevealedEvent)
+        )
+    );
+
+    return !!lastAgendaPhaseEvent &&
+        isAgendaCardRevealedEvent(lastAgendaPhaseEvent)
+        ? agendaCardFaces[lastAgendaPhaseEvent.card]
+        : agendaCardBack;
+};
 
 const cssTransitionTimeout = 500;
 
