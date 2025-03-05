@@ -11,9 +11,9 @@ import { AdminPages } from './admin/adminPages';
 import AlarmClock from './assets/fonts/AlarmClock.ttf';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { GalaxyPage } from './galaxyPage';
+import { HorizontalStatusPage } from './horizontalStatusPage';
 import { StatsPage } from './statsPage';
 import { TechPage } from './techPage';
-import { TickerPage } from './tickerPage';
 import { VerticalStatusPage } from './verticalStatusPage';
 
 const App: React.FC = () => (
@@ -46,7 +46,7 @@ const App: React.FC = () => (
                         <Route
                             key="ticker"
                             path={'/ticker'}
-                            element={<TickerPage />}
+                            element={<HorizontalStatusPage />}
                         />,
                         <Route
                             key="admin"

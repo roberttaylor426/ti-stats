@@ -14,6 +14,7 @@ import {
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isItAgendaPhase,
     isPlayerFinishedTurnEvent,
     isRoundStartedEvent,
     isUnion,
@@ -25,7 +26,7 @@ import {
 } from './systemTiles';
 import { useEvents } from './useEvents';
 
-const TickerPage: React.FC = () => {
+const HorizontalStatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
     const [currentTime, setCurrentTime] = useState(new Date().getTime());
 
@@ -78,10 +79,7 @@ const TickerPage: React.FC = () => {
                                             _.last(events)?.type ===
                                                 'PlayerSelectedStrategyCard'
                                           ? 'STRATEGY'
-                                          : isUnion(
-                                                  isAgendaPhaseStartedEvent,
-                                                  isAgendaCardRevealedEvent
-                                              )(lastEvent)
+                                          : isItAgendaPhase(events)
                                             ? 'AGENDA'
                                             : 'STATUS'}
                                 </SubTitle>
@@ -124,13 +122,13 @@ const TickerPage: React.FC = () => {
                                                           : lastEvent.type ===
                                                               'UnitsRepairedDuringStatusPhase'
                                                             ? 'Return strategy cards'
-                                                            : lastEvent.type ===
-                                                                'AgendaPhaseStarted'
-                                                              ? 'Speaker to reveal an agenda card'
-                                                              : lastEvent.type ===
-                                                                  'AgendaCardRevealed'
-                                                                ? `${agendaCardBoldText[lastEvent.card]}`
-                                                                : ''}
+                                                            : isItAgendaPhase(
+                                                                    events
+                                                                )
+                                                              ? agendaCardTextToShowDuringAgendaPhase(
+                                                                    events
+                                                                )
+                                                              : ''}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />
@@ -488,4 +486,17 @@ const TotalTimeSpan = styled(TimeSpan)`
     color: ${accentColor};
 `;
 
-export { TickerPage };
+const agendaCardTextToShowDuringAgendaPhase = (events: Event[]): string => {
+    const lastAgendaPhaseEvent = _.last(
+        events.filter(
+            isUnion(isAgendaPhaseStartedEvent, isAgendaCardRevealedEvent)
+        )
+    );
+
+    return !!lastAgendaPhaseEvent &&
+        isAgendaCardRevealedEvent(lastAgendaPhaseEvent)
+        ? agendaCardBoldText[lastAgendaPhaseEvent.card]
+        : 'Speaker to reveal an agenda card';
+};
+
+export { HorizontalStatusPage };
