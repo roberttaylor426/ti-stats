@@ -72,20 +72,29 @@ const HorizontalStatusPage: React.FC = () => {
                             <RoundAndPhaseColumn
                                 $invisible={!hasGameStarted(events)}
                             >
-                                <SubTitle $invisible={!hasGameStarted(events)}>
-                                    {activePlayerInActionPhase
-                                        ? 'ACTION'
-                                        : activePlayerInStrategyPhase ||
-                                            _.last(events)?.type ===
-                                                'PlayerSelectedStrategyCard'
-                                          ? 'STRATEGY'
-                                          : isItAgendaPhase(events)
-                                            ? 'AGENDA'
-                                            : 'STATUS'}
-                                </SubTitle>
-                                <SubTitle $invisible={!hasGameStarted(events)}>
-                                    PHASE
-                                </SubTitle>
+                                {(activePlayerInActionPhase
+                                    ? 'ACTION PHASE'
+                                    : activePlayerInStrategyPhase ||
+                                        _.last(events)?.type ===
+                                            'PlayerSelectedStrategyCard'
+                                      ? 'STRATEGY PHASE'
+                                      : _.last(events)?.type === 'RoundEnded'
+                                        ? 'ROUND END'
+                                        : isItAgendaPhase(events)
+                                          ? 'AGENDA PHASE'
+                                          : 'STATUS PHASE'
+                                )
+                                    .split(' ')
+                                    .map((s, i) => (
+                                            <SubTitle
+                                                key={i}
+                                                $invisible={
+                                                    !hasGameStarted(events)
+                                                }
+                                            >
+                                                {s}
+                                            </SubTitle>
+                                        ))}
                             </RoundAndPhaseColumn>
                             <RoundAndPhaseColumnTriangle />
                         </RoundAndPhase>
