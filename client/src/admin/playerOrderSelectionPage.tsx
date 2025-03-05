@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {
     Event,
     factionsInGame,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
 } from '../events';
 import { Faction } from '../factions';
 import { initiative } from '../strategyCards';
@@ -20,7 +20,7 @@ type Props = {
 const PlayerOrderSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
     const { currentRoundNumber, events, publishNewEvents } = props;
     const factionsInInitiativeOrder = _.sortBy(
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events),
+        playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events),
         (e) =>
             e.faction === 'The Naalu Collective'
                 ? 0

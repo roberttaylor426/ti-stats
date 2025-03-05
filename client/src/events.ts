@@ -453,7 +453,7 @@ const currentPlayerTurnInStrategyPhase = (
     const playerOrder = currentStrategyPhasePlayerOrder(events);
 
     const playerSelectedStrategyCardEvents =
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events);
+        playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events);
 
     if (
         playerSelectedStrategyCardEvents.length >= numberOfPlayersInGame ||
@@ -471,7 +471,7 @@ const currentPlayerTurnInStrategyPhase = (
     ];
 };
 
-const playerSelectedStrategyCardEventFromLastStrategyPhase = (
+const playerSelectedStrategyCardEventsFromStrategyPhaseThisRound = (
     events: Event[]
 ): PlayerSelectedStrategyCardEvent[] => {
     const lastRoundStartedIndex = lastIndexOfEventType(
@@ -793,7 +793,7 @@ export {
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
     playerScore,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
     resourcesAndInfluenceForFaction,
     RoundStartedEvent,

@@ -21,7 +21,7 @@ import {
     isUnion,
     lastIndexOfEventType,
     playerScore,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     resourcesAndInfluenceForFaction,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
 } from './events';
@@ -54,7 +54,7 @@ const StatusPage: React.FC = () => {
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
     const strategyCardSelectedByActivePlayerInActionPhase =
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
+        playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events).find(
             (e) => e.faction === activePlayerInActionPhase
         )?.strategyCard;
 

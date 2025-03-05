@@ -13,7 +13,7 @@ import {
     isRoundEndedEvent,
     isRoundStartedEvent,
     lastIndexOfEventType,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
 } from '../events';
 import { numberOfPlayersInGame } from '../playerColors';
 import { AgendaPhasePage } from './agendaPhasePage';
@@ -145,7 +145,7 @@ const isStartRoundPageVisible = (events: Event[]) => {
 };
 
 const isSelectStrategyCardPageVisible = (events: Event[]) =>
-    playerSelectedStrategyCardEventFromLastStrategyPhase(events).length <
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events).length <
     numberOfPlayersInGame;
 
 const isAgendaPhasePageVisible = (events: Event[]) => {

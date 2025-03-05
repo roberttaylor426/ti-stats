@@ -3,7 +3,7 @@ import _ from 'underscore';
 
 import {
     Event,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
 } from '../events';
 import { Faction } from '../factions';
 import { initiative, StrategyCard, strategyCards } from '../strategyCards';
@@ -21,7 +21,7 @@ const StrategyCardSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
     const [selectedStrategyCard, setSelectedStrategyCard] =
         useState<StrategyCard>();
     const playerSelectedStrategyCardEvents =
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events);
+        playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events);
 
     const publishPlayerSelectedStrategyCardEvent = async (
         f: Faction,

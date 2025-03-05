@@ -12,9 +12,9 @@ import AlarmClock from './assets/fonts/AlarmClock.ttf';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { GalaxyPage } from './galaxyPage';
 import { StatsPage } from './statsPage';
-import { StatusPage2 } from './statusPage2';
 import { TechPage } from './techPage';
 import { TickerPage } from './tickerPage';
+import { VerticalStatusPage } from './verticalStatusPage';
 
 const App: React.FC = () => (
     <>
@@ -36,7 +36,7 @@ const App: React.FC = () => (
                         <Route
                             key="status"
                             path={'/status'}
-                            element={<StatusPage2 />}
+                            element={<VerticalStatusPage />}
                         />,
                         <Route
                             key="tech"

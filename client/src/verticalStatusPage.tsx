@@ -22,13 +22,13 @@ import {
     lastIndexOfEventType,
     planetsControlledByFaction,
     playerScore,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     resourcesAndInfluenceForFaction,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     TimesTaken,
     timesTakenPerPlayer,
 } from './events';
-import { Faction, shortName, superShortName } from './factions';
+import { Faction, superShortName } from './factions';
 import {
     PlanetName,
     planets,
@@ -38,7 +38,7 @@ import {
 import { strategyCardImage } from './strategyCards';
 import { useEvents } from './useEvents';
 
-const StatusPage2: React.FC = () => {
+const VerticalStatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
     const [currentTime, setCurrentTime] = useState(new Date().getTime());
     const [actionPhaseDisplayMode, setActionPhaseDisplayMode] =
@@ -76,7 +76,7 @@ const StatusPage2: React.FC = () => {
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
     const strategyCardSelectedByActivePlayerInActionPhase =
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
+        playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events).find(
             (e) => e.faction === activePlayerInActionPhase
         )?.strategyCard;
 
@@ -126,26 +126,80 @@ const StatusPage2: React.FC = () => {
                 ) : events.filter(isRoundStartedEvent).length > 0 ? (
                     activePlayerInStrategyPhase ||
                     _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
-                        <SpreadColumnContainer>
-                            <TitleContainer>
-                                <Title>{`Round ${currentRoundNumber(events)}`}</Title>
-                                <SubTitle>Strategy Phase</SubTitle>
-                            </TitleContainer>
-                            {activePlayerInStrategyPhase && (
-                                <CentralContainer>
-                                    <PlayerTurn>{`${shortName(activePlayerInStrategyPhase)}`}</PlayerTurn>
-                                </CentralContainer>
-                            )}
-                            <BottomContainer>
-                                <TimeSpan>
-                                    {timeElapsedLabel(lastEvent, currentTime)}
-                                </TimeSpan>
-                                <TotalTime
-                                    events={events}
-                                    currentTime={currentTime}
-                                />
-                            </BottomContainer>
-                        </SpreadColumnContainer>
+                        <StrategyCardGrid>
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Leadership',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find(
+                                        (e) => e.strategyCard === 'Leadership'
+                                    )
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Diplomacy',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find(
+                                        (e) => e.strategyCard === 'Diplomacy'
+                                    )
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Politics',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find((e) => e.strategyCard === 'Politics')
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Construction',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find(
+                                        (e) => e.strategyCard === 'Construction'
+                                    )
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Trade',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find((e) => e.strategyCard === 'Trade')
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Warfare',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find((e) => e.strategyCard === 'Warfare')
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Technology',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find(
+                                        (e) => e.strategyCard === 'Technology'
+                                    )
+                                )}
+                            />
+                            <StrategyCard
+                                src={strategyCardImage(
+                                    'Imperial',
+                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                        events
+                                    ).find((e) => e.strategyCard === 'Imperial')
+                                )}
+                            />
+                        </StrategyCardGrid>
                     ) : isRoundEndedPageShown(events) ? (
                         <ColumnWithTitleContainer>
                             <TitleContainer>
@@ -247,7 +301,7 @@ const StatusPage2: React.FC = () => {
                                         ref={strategyCardNodeRef}
                                     >
                                         {strategyCardSelectedByActivePlayerInActionPhase && (
-                                            <StrategyCardContainer>
+                                            <ActionPhaseStrategyCardContainer>
                                                 <StrategyCard
                                                     src={strategyCardImage(
                                                         strategyCardSelectedByActivePlayerInActionPhase,
@@ -257,7 +311,7 @@ const StatusPage2: React.FC = () => {
                                                         )
                                                     )}
                                                 />
-                                            </StrategyCardContainer>
+                                            </ActionPhaseStrategyCardContainer>
                                         )}
                                     </SpaceAroundColumn>
                                 </CSSTransition>
@@ -787,6 +841,22 @@ const SpaceAroundColumn = styled.div`
     ${fadeInCss};
 `;
 
+const StrategyCardGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    grid-gap: 1vh;
+    margin: 1vh;
+    overflow-y: hidden;
+    filter: drop-shadow(1vh 0 1vh grey);
+
+    > * {
+        object-fit: contain;
+        height: 100%;
+        max-width: 100%;
+    }
+`;
+
 const StatsColumn = styled.div`
     display: flex;
     flex-direction: column;
@@ -865,21 +935,7 @@ const CentralContainer = styled.div`
     gap: 1vh;
 `;
 
-const BottomContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-top: ${accentColor}88 solid 1px;
-    background-color: black;
-    padding: 0.5rem 0;
-`;
-
-const PlayerTurn = styled.h1`
-    font-size: 16vw;
-    text-align: center;
-`;
-
-const StrategyCardContainer = styled.div`
+const ActionPhaseStrategyCardContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -956,4 +1012,4 @@ const AgendaCard = styled.img`
 
 const cssTransitionTimeout = 500;
 
-export { ActionPhaseDisplayMode, nextDisplayMode, StatusPage2 };
+export { ActionPhaseDisplayMode, nextDisplayMode, VerticalStatusPage };

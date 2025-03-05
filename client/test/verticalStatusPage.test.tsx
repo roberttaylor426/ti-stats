@@ -1,5 +1,8 @@
 import { Event } from '../src/events';
-import { ActionPhaseDisplayMode, nextDisplayMode } from '../src/statusPage2';
+import {
+    ActionPhaseDisplayMode,
+    nextDisplayMode,
+} from '../src/verticalStatusPage';
 
 describe('vertical status page', () => {
     describe('action phase', () => {

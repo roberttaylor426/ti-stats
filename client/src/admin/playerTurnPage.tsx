@@ -16,7 +16,7 @@ import {
     latestPlanetlessSystemControlledEventsBySystem,
     MapTileAddedToBoardPosition,
     MapTilesSelectedEvent,
-    playerSelectedStrategyCardEventFromLastStrategyPhase,
+    playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
     RowForNewMapTile,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
@@ -310,7 +310,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     };
 
     const strategyCardSelectedByActivePlayerInActionPhase =
-        playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
+        playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events).find(
             (e) => e.faction === activePlayerInActionPhase
         )?.strategyCard;
 
