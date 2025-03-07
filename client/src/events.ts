@@ -314,9 +314,14 @@ const isPlayerSelectedStrategyCardEvent = (
 ): e is PlayerSelectedStrategyCardEvent =>
     e.type === 'PlayerSelectedStrategyCard';
 
-const isStrategyCardPlayedEvent = (
+const isPlayerPlayedStrategyCardEvent = (
     e: Event
 ): e is PlayerPlayedStrategyCardEvent => e.type === 'PlayerPlayedStrategyCard';
+
+const isPlayerCompletedStrategyCardPrimaryActionEvent = (
+    e: Event
+): e is PlayerCompletedStrategyCardPrimaryActionEvent =>
+    e.type === 'PlayerCompletedStrategyCardPrimaryAction';
 
 const isRoundEndedEvent = (e: Event): e is RoundEndedEvent =>
     e.type === 'RoundEnded';
@@ -641,7 +646,7 @@ const strategyCardPlayedByPlayerOnPreviousTurnThisRound = (
     );
 
     return !!eventsThisRoundBeforeStartOfTurn
-        .filter(isStrategyCardPlayedEvent)
+        .filter(isPlayerPlayedStrategyCardEvent)
         .find((e) => e.faction === faction);
 };
 
@@ -657,7 +662,23 @@ const strategyCardPlayedByPlayerThisTurn = (
     const eventsThisTurn = events.slice(lastPlayerFinishedTurnIndex + 1);
 
     return !!eventsThisTurn
-        .filter(isStrategyCardPlayedEvent)
+        .filter(isPlayerPlayedStrategyCardEvent)
+        .find((e) => e.faction === faction);
+};
+
+const strategyCardPrimaryActionsCompletedByPlayerThisTurn = (
+    events: Event[],
+    faction: Faction
+): boolean => {
+    const lastPlayerFinishedTurnIndex = lastIndexOfEventType(
+        events,
+        isPlayerFinishedTurnEvent
+    );
+
+    const eventsThisTurn = events.slice(lastPlayerFinishedTurnIndex + 1);
+
+    return !!eventsThisTurn
+        .filter(isPlayerCompletedStrategyCardPrimaryActionEvent)
         .find((e) => e.faction === faction);
 };
 
@@ -808,13 +829,13 @@ export {
     isPlanetEnhancedEvent,
     isPlanetlessSystemControlledEvent,
     isPlayerFinishedTurnEvent,
+    isPlayerPlayedStrategyCardEvent,
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
     isPlayerSelectedStrategyCardEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isSpeakerAssignedEvent,
-    isStrategyCardPlayedEvent,
     isTechnologyResearchedEvent,
     isUnion,
     lastIndexOfEventType,
@@ -836,6 +857,7 @@ export {
     RowForNewMapTile,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
+    strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,
     systemTilePlanets,
     technologiesResearchedByFaction,

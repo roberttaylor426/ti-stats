@@ -521,7 +521,7 @@ const VerticalStatusPage: React.FC = () => {
                         </SpaceAroundColumn>
                     )
                 ) : (
-                    <h1>TODO</h1>
+                    <></>
                 )
             ) : (
                 <h1>TODO</h1>

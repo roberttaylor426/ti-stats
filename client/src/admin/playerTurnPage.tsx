@@ -21,6 +21,7 @@ import {
     RowForNewMapTile,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     strategyCardPlayedByPlayerThisTurn,
+    strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,
     systemTilePlanets,
     technologiesResearchedByFaction,
@@ -172,6 +173,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     ) => {
         const newEvent: Event = {
             type: 'PlayerPlayedStrategyCard',
+            time: new Date().getTime(),
+            strategyCard: sc,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishPlayerCompletedStrategyCardPrimaryActionEvent = async (
+        sc: StrategyCard,
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'PlayerCompletedStrategyCardPrimaryAction',
             time: new Date().getTime(),
             strategyCard: sc,
             faction: f,
@@ -695,6 +710,26 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                         >
                             Play strategy card
                         </Button>
+
+                        {strategyCardPlayedByPlayerThisTurn(
+                            events,
+                            activePlayerInActionPhase
+                        ) &&
+                            !strategyCardPrimaryActionsCompletedByPlayerThisTurn(
+                                events,
+                                activePlayerInActionPhase
+                            ) && (
+                                <Button
+                                    onClick={() =>
+                                        publishPlayerCompletedStrategyCardPrimaryActionEvent(
+                                            strategyCardSelectedByActivePlayerInActionPhase,
+                                            activePlayerInActionPhase
+                                        )
+                                    }
+                                >
+                                    Strategy card primary action completed
+                                </Button>
+                            )}
                     </InputsColumn>
                 )}
             <InputsColumn>
