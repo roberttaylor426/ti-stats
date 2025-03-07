@@ -203,8 +203,8 @@ type ObjectivesScoredDuringStatusPhaseEvent = {
     time: number;
 };
 
-type PublicObjectivesRevealedDuringStatusPhaseEvent = {
-    type: 'PublicObjectivesRevealedDuringStatusPhase';
+type PublicObjectiveRevealedDuringStatusPhaseEvent = {
+    type: 'PublicObjectiveRevealedDuringStatusPhase';
     time: number;
 };
 
@@ -342,7 +342,7 @@ type Event =
     | PlayerResearchedTechnologyEvent
     | PlayerScoredVictoryPointEvent
     | PlayerSelectedStrategyCardEvent
-    | PublicObjectivesRevealedDuringStatusPhaseEvent
+    | PublicObjectiveRevealedDuringStatusPhaseEvent
     | RoundEndedEvent
     | RoundStartedEvent
     | SpeakerAssignedEvent

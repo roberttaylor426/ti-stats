@@ -86,15 +86,13 @@ const HorizontalStatusPage: React.FC = () => {
                                 )
                                     .split(' ')
                                     .map((s, i) => (
-                                            <SubTitle
-                                                key={i}
-                                                $invisible={
-                                                    !hasGameStarted(events)
-                                                }
-                                            >
-                                                {s}
-                                            </SubTitle>
-                                        ))}
+                                        <SubTitle
+                                            key={i}
+                                            $invisible={!hasGameStarted(events)}
+                                        >
+                                            {s}
+                                        </SubTitle>
+                                    ))}
                             </RoundAndPhaseColumn>
                             <RoundAndPhaseColumnTriangle />
                         </RoundAndPhase>
@@ -117,7 +115,7 @@ const HorizontalStatusPage: React.FC = () => {
                                                     'ObjectivesScoredDuringStatusPhase'
                                                   ? 'Reveal public objective'
                                                   : lastEvent.type ===
-                                                      'PublicObjectivesRevealedDuringStatusPhase'
+                                                      'PublicObjectiveRevealedDuringStatusPhase'
                                                     ? 'Draw action cards'
                                                     : lastEvent.type ===
                                                         'ActionCardsDrawnDuringStatusPhase'
@@ -237,7 +235,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'PlayersAssignedFactionsAndColors':
                 case 'PlayerFinishedTurn':
                 case 'PlayerScoredVictoryPoint':
-                case 'PublicObjectivesRevealedDuringStatusPhase':
+                case 'PublicObjectiveRevealedDuringStatusPhase':
                 case 'RoundEnded':
                 case 'RoundStarted':
                 case 'UnitsRepairedDuringStatusPhase':

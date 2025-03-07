@@ -20,8 +20,8 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
         lastEvent?.type === 'PlayerScoredVictoryPoint'
             ? 'score objectives'
             : lastEvent?.type === 'ObjectivesScoredDuringStatusPhase'
-              ? 'reveal public objectives'
-              : lastEvent?.type === 'PublicObjectivesRevealedDuringStatusPhase'
+              ? 'reveal public objective'
+              : lastEvent?.type === 'PublicObjectiveRevealedDuringStatusPhase'
                 ? 'draw action cards'
                 : lastEvent?.type === 'ActionCardsDrawnDuringStatusPhase'
                   ? 'remove command tokens'
@@ -43,9 +43,9 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
         await publishNewEvents([newEvent]);
     };
 
-    const publishPublicObjectivesRevealedEvent = async () => {
+    const publishPublicObjectiveRevealedEvent = async () => {
         const newEvent: Event = {
-            type: 'PublicObjectivesRevealedDuringStatusPhase',
+            type: 'PublicObjectiveRevealedDuringStatusPhase',
             time: new Date().getTime(),
         };
 
@@ -126,10 +126,10 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
                         {'Objectives scored'}
                     </Button>
                 </>
-            ) : statusPhaseStage === 'reveal public objectives' ? (
+            ) : statusPhaseStage === 'reveal public objective' ? (
                 <>
                     <span>Reveal public objective</span>
-                    <Button onClick={publishPublicObjectivesRevealedEvent}>
+                    <Button onClick={publishPublicObjectiveRevealedEvent}>
                         {'Public objective revealed'}
                     </Button>
                 </>
@@ -192,7 +192,7 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
 
 type StatusPhaseStage =
     | 'score objectives'
-    | 'reveal public objectives'
+    | 'reveal public objective'
     | 'draw action cards'
     | 'remove command tokens'
     | 'gain and redistribute command tokens'

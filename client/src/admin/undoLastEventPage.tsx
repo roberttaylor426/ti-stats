@@ -74,7 +74,7 @@ const humanReadableEventLabel = (e: Event): string => {
             return `Player scored victory point - ${e.faction}`;
         case 'PlayerSelectedStrategyCard':
             return `Player selected strategy card - ${e.faction} / ${e.strategyCard}`;
-        case 'PublicObjectivesRevealedDuringStatusPhase':
+        case 'PublicObjectiveRevealedDuringStatusPhase':
             return 'Public objectives revealed during status phase';
         case 'RoundEnded':
             return 'Round ended';
