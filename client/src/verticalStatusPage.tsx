@@ -28,7 +28,7 @@ import {
     TimesTaken,
     timesTakenPerPlayer,
 } from './events';
-import { Faction, superShortName } from './factions';
+import { Faction, factionSheetImage, superShortName } from './factions';
 import {
     PlanetName,
     planets,
@@ -100,7 +100,15 @@ const VerticalStatusPage: React.FC = () => {
     );
 
     return (
-        <StyledStatusPage>
+        <StyledVerticalStatusPage
+            backgroundImage={
+                activePlayerInActionPhase
+                    ? factionSheetImage(activePlayerInActionPhase)
+                    : activePlayerInStrategyPhase
+                      ? factionSheetImage(activePlayerInStrategyPhase)
+                      : galaxyPhoto
+            }
+        >
             {lastEvent ? (
                 winningPlayer ? (
                     <SpreadColumnContainer>
@@ -502,7 +510,7 @@ const VerticalStatusPage: React.FC = () => {
             ) : (
                 <h1>TODO</h1>
             )}
-        </StyledStatusPage>
+        </StyledVerticalStatusPage>
     );
 };
 
@@ -762,12 +770,16 @@ const timeComponent = (n: number | undefined): string => {
     return `${n}`;
 };
 
-const StyledStatusPage = styled.div`
+type StyledVerticalStatusPageProps = {
+    backgroundImage: string;
+};
+
+const StyledVerticalStatusPage = styled.div<StyledVerticalStatusPageProps>`
     display: grid;
     grid-template-areas: 'layer';
     line-height: 1.1;
     background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-        url(${galaxyPhoto});
+        url(${(props) => props.backgroundImage});
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom left;

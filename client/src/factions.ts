@@ -1,5 +1,11 @@
 import _ from 'underscore';
 
+import cabal from './assets/factionSheets/cabal.webp';
+import dihmon from './assets/factionSheets/dih.webp';
+import berserkers from './assets/factionSheets/kjal.webp';
+import l1z1x from './assets/factionSheets/l1z1x.webp';
+import rohdna from './assets/factionSheets/rohdna.webp';
+import tnelis from './assets/factionSheets/tnelis.webp';
 import { PlanetName } from './planets';
 import {
     aiDevelopmentAlgorithm,
@@ -347,6 +353,129 @@ const homeworlds = (f: FactionWithFixedHomeworlds): PlanetName[] => {
     }
 };
 
+const factionSheetImage = (f: Faction): string => {
+    switch (f) {
+        case 'Sardakk N’orr':
+            return '';
+        case 'The Arborec':
+            return '';
+        case 'The Argent Flight':
+            return '';
+        case 'The Barony of Letnev':
+            return '';
+        case 'The Clan of Saar':
+            return '';
+        case 'The Embers of Muaat':
+            return '';
+        case 'The Emirates of Hacan':
+            return '';
+        case 'The Empyrean':
+            return '';
+        case 'The Federation of Sol':
+            return '';
+        case 'The Ghosts of Creuss':
+            return '';
+        case 'The L1Z1X Mindnet':
+            return l1z1x;
+        case 'The Mahact Gene-Sorcerers':
+            return '';
+        case 'The Mentak Coalition':
+            return '';
+        case 'The Naalu Collective':
+            return '';
+        case 'The Naaz-Rokha Alliance':
+            return '';
+        case 'The Nekro Virus':
+            return '';
+        case 'The Nomad':
+            return '';
+        case 'The Titans of Ul':
+            return '';
+        case 'The Universities of Jol-Nar':
+            return '';
+        case "The Vuil'Raith Cabal":
+            return cabal;
+        case 'The Winnu':
+            return '';
+        case 'The Xxcha Kingdom':
+            return '';
+        case 'The Yin Brotherhood':
+            return '';
+        case 'The Yssaril Tribes':
+            return '';
+        case 'The Shipwrights of Ark':
+            return '';
+        case 'The Celdauri Trade Confederation':
+            return '';
+        case 'The Savages of Cymiae':
+            return '';
+        case 'The Dih-Mohn Flotilla':
+            return dihmon;
+        case 'The Florzen Profiteers':
+            return '';
+        case 'The Free Systems Compact':
+            return '';
+        case 'The Ghemina Raiders':
+            return '';
+        case 'The Augurs of Illyxum':
+            return '';
+        case 'The Kollecc Society':
+            return '';
+        case 'The Kortali Tribunal':
+            return '';
+        case 'The Li-Zho Dynasty':
+            return '';
+        case "The L'tokk Khrask":
+            return '';
+        case 'The Mirveda Protectorate':
+            return '';
+        case 'The Glimmer of Mortheus':
+            return '';
+        case 'The Myko-Mentori':
+            return '';
+        case 'The Nivyn Star of Kings':
+            return '';
+        case 'The Olradin League':
+            return '';
+        case 'The Zealots of Rhodun':
+            return '';
+        case "Roh'Dhna Mechatronics":
+            return rohdna;
+        case 'The Tnelis Syndicate':
+            return tnelis;
+        case 'The Vaden Banking Clans':
+            return '';
+        case 'The Vaylerian Scourge':
+            return '';
+        case 'The Veldyr Sovereignty':
+            return '';
+        case 'The Zelian Purifier':
+            return '';
+        case 'The Bentor Conglomerate':
+            return '';
+        case 'The Cheiran Hordes':
+            return '';
+        case 'The Edyn Mandate':
+            return '';
+        case 'The Ghoti Wayfarers':
+            return '';
+        case 'The GLEdge Union':
+            return '';
+        case 'The Berserkers of Kjalengard':
+            return berserkers;
+        case 'The Monks of Kolume':
+            return '';
+        case 'The Kyro Sodality':
+            return '';
+        case 'The Lanefir Remants':
+            return '';
+        case 'The Nokar Sellships':
+            return '';
+        case 'The Council Keleres':
+            return '';
+    }
+};
+
 type FactionSelectionWithCustomHomeworlds = {
     faction: FactionWithDynamicHomeworlds;
     homeworldsOf: FactionWithFixedHomeworlds;
@@ -492,6 +621,7 @@ export {
     Faction,
     factions,
     FactionSelection,
+    factionSheetImage,
     factionsWithDynamicHomeworlds,
     factionsWithFixedHomeworlds,
     FactionWithDynamicHomeworlds,
