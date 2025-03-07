@@ -128,9 +128,9 @@ const StatusPhasePage: React.FC<AdminPageProps> = (props) => {
                 </>
             ) : statusPhaseStage === 'reveal public objectives' ? (
                 <>
-                    <span>Reveal public objectives</span>
+                    <span>Reveal public objective</span>
                     <Button onClick={publishPublicObjectivesRevealedEvent}>
-                        {'Public objectives revealed'}
+                        {'Public objective revealed'}
                     </Button>
                 </>
             ) : statusPhaseStage === 'draw action cards' ? (
