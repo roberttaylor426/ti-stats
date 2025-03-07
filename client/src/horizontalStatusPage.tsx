@@ -103,7 +103,7 @@ const HorizontalStatusPage: React.FC = () => {
                                     {!hasGameStarted(events)
                                         ? 'Pax Magnifica, Bellum Gloriosum'
                                         : winningPlayer
-                                          ? `${shortName(winningPlayer.faction)} wins!`
+                                          ? `${winningPlayer.faction} win!`
                                           : activePlayerInStrategyPhase
                                             ? `${shortName(activePlayerInStrategyPhase)} pick`
                                             : lastEvent.type ===
