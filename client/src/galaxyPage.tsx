@@ -72,7 +72,13 @@ const GalaxyPage: React.FC = () => {
     return (
         <StyledGalaxy>
             <Stars />
-            <GalaxyContainer>
+            <GalaxyContainer
+                $tilesToOffsetBy={calculateTileOffset(
+                    tilesAddedToBeginningOfColumn,
+                    numberOfDummyTilesAtBeginningOfColumn,
+                    events
+                )}
+            >
                 <StandardGalaxy>
                     <TileColumnRow>
                         {columnOutsideOfInitialGalaxy(-2, events)}
@@ -128,7 +134,13 @@ const GalaxyPage: React.FC = () => {
                     </TileColumnRow>
                 </StandardGalaxy>
             </GalaxyContainer>
-            <ExtraTiles>
+            <ExtraTiles
+                $tilesToOffsetBy={calculateTileOffset(
+                    tilesAddedToEndOfColumn,
+                    numberOfDummyTilesAtEndOfColumn,
+                    events
+                )}
+            >
                 <MalliceTile
                     controllingPlayerColor={
                         latestPlanetControlledEventsByPlanet(events)
@@ -197,6 +209,19 @@ const GalaxyPage: React.FC = () => {
         </StyledGalaxy>
     );
 };
+
+const calculateTileOffset = (
+    tilesAdded: (n: number, events: Event[]) => MapTileAddedToBoardEvent[],
+    numberOfDummyTiles: (n: number, events: Event[]) => number,
+    events: Event[]
+): number =>
+    tilesAdded(3, events).length >=
+    Math.max(...[2, 4].map((n) => numberOfDummyTiles(n, events)))
+        ? 0
+        : Math.max(...[1, 5].map((n) => tilesAdded(n, events).length)) >
+            Math.max(...[2, 4].map((n) => tilesAdded(n, events).length))
+          ? 1
+          : 0.5;
 
 type FactionResourcesAndInfluence = {
     faction: Faction;
@@ -316,7 +341,10 @@ const columnOutsideOfInitialGalaxy = (
     );
 };
 
-const tilesAtBeginningOfColumn = (c: number, events: Event[]) => {
+const numberOfDummyTilesAtBeginningOfColumn = (
+    c: number,
+    events: Event[]
+): number => {
     const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
 
     const tilesAddedToBeginningOfColumn = mapTileAddedToBoardEvents.filter(
@@ -329,43 +357,66 @@ const tilesAtBeginningOfColumn = (c: number, events: Event[]) => {
 
     const oneOfCenterThreeColumns = [2, 3, 4].includes(c);
 
-    return [
-        ...(oneOfCenterThreeColumns
-            ? range(
-                  maxTilesAddedToBeginningOfCenterThreeColumns(
-                      mapTileAddedToBoardEvents
-                  ) - tilesAddedToBeginningOfColumn.length
-              )
-            : range(
-                  maxTilesAddedToBeginningOfCenterThreeColumns(
-                      mapTileAddedToBoardEvents
-                  ) +
-                      Math.max(
-                          tilesAddedToEndOfColumn.length -
-                              tilesAddedToBeginningOfColumn.length,
-                          0
-                      )
-              )
-        ).map((_, i) => (
-            <DummyTile key={`beginning of column dummy tile ${i}`} />
-        )),
-        ..._.sortBy(tilesAddedToBeginningOfColumn, (e) => e.position.row).map(
-            (e) => (
-                <HighlightableSystemTile
-                    key={`tile ${e.tileNumber}`}
-                    systemTileNumber={e.tileNumber}
-                    controllingPlayerColors={controllingPlayerColors(
-                        e.tileNumber,
-                        events
-                    )}
-                    showMirageToken={false}
-                />
-            )
-        ),
-    ];
+    return oneOfCenterThreeColumns
+        ? maxTilesAddedToBeginningOfCenterThreeColumns(
+              mapTileAddedToBoardEvents
+          ) - tilesAddedToBeginningOfColumn.length
+        : maxTilesAddedToBeginningOfCenterThreeColumns(
+              mapTileAddedToBoardEvents
+          ) +
+              Math.max(
+                  tilesAddedToEndOfColumn.length -
+                      tilesAddedToBeginningOfColumn.length,
+                  0
+              );
 };
 
-const tilesAtEndOfColumn = (c: number, events: Event[]) => {
+const tilesAddedToBeginningOfColumn = (
+    c: number,
+    events: Event[]
+): MapTileAddedToBoardEvent[] => {
+    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
+
+    return mapTileAddedToBoardEvents.filter(
+        (e) => e.position.column === c && e.position.row < 0
+    );
+};
+
+const tilesAtBeginningOfColumn = (c: number, events: Event[]) => [
+    ...range(numberOfDummyTilesAtBeginningOfColumn(c, events)).map((_, i) => (
+        <DummyTile key={`beginning of column dummy tile ${i}`} />
+    )),
+    ..._.sortBy(
+        tilesAddedToBeginningOfColumn(c, events),
+        (e) => e.position.row
+    ).map((e) => (
+        <HighlightableSystemTile
+            key={`tile ${e.tileNumber}`}
+            systemTileNumber={e.tileNumber}
+            controllingPlayerColors={controllingPlayerColors(
+                e.tileNumber,
+                events
+            )}
+            showMirageToken={false}
+        />
+    )),
+];
+
+const tilesAddedToEndOfColumn = (
+    c: number,
+    events: Event[]
+): MapTileAddedToBoardEvent[] => {
+    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
+
+    return mapTileAddedToBoardEvents.filter(
+        (e) => e.position.column === c && e.position.row > 0
+    );
+};
+
+const numberOfDummyTilesAtEndOfColumn = (
+    c: number,
+    events: Event[]
+): number => {
     const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
 
     const tilesAddedToBeginningOfColumn = mapTileAddedToBoardEvents.filter(
@@ -378,8 +429,20 @@ const tilesAtEndOfColumn = (c: number, events: Event[]) => {
 
     const oneOfCenterThreeColumns = [2, 3, 4].includes(c);
 
-    return [
-        ..._.sortBy(tilesAddedToEndOfColumn, (e) => e.position.row).map((e) => (
+    return oneOfCenterThreeColumns
+        ? maxTilesAddedToEndOfCenterThreeColumns(mapTileAddedToBoardEvents) -
+              tilesAddedToEndOfColumn.length
+        : maxTilesAddedToEndOfCenterThreeColumns(mapTileAddedToBoardEvents) +
+              Math.max(
+                  tilesAddedToBeginningOfColumn.length -
+                      tilesAddedToEndOfColumn.length,
+                  0
+              );
+};
+
+const tilesAtEndOfColumn = (c: number, events: Event[]) => [
+    ..._.sortBy(tilesAddedToEndOfColumn(c, events), (e) => e.position.row).map(
+        (e) => (
             <HighlightableSystemTile
                 key={`tile ${e.tileNumber}`}
                 systemTileNumber={e.tileNumber}
@@ -389,26 +452,12 @@ const tilesAtEndOfColumn = (c: number, events: Event[]) => {
                 )}
                 showMirageToken={false}
             />
-        )),
-        ...(oneOfCenterThreeColumns
-            ? range(
-                  maxTilesAddedToEndOfCenterThreeColumns(
-                      mapTileAddedToBoardEvents
-                  ) - tilesAddedToEndOfColumn.length
-              )
-            : range(
-                  maxTilesAddedToEndOfCenterThreeColumns(
-                      mapTileAddedToBoardEvents
-                  ) +
-                      Math.max(
-                          tilesAddedToBeginningOfColumn.length -
-                              tilesAddedToEndOfColumn.length,
-                          0
-                      )
-              )
-        ).map((_, i) => <DummyTile key={`end of column dummy tile ${i}`} />),
-    ];
-};
+        )
+    ),
+    ...range(numberOfDummyTilesAtEndOfColumn(c, events)).map((_, i) => (
+        <DummyTile key={`end of column dummy tile ${i}`} />
+    )),
+];
 
 const ResourcesAndInfluenceStats = styled.div`
     display: flex;
@@ -433,9 +482,14 @@ const StyledGalaxy = styled.div`
     }
 `;
 
-const GalaxyContainer = styled.section`
+type GalaxyContainerProps = {
+    $tilesToOffsetBy: number;
+};
+
+const GalaxyContainer = styled.section<GalaxyContainerProps>`
     display: flex;
     justify-content: center;
+    margin-top: -${(props) => `${props.$tilesToOffsetBy * 16}vw`};
 `;
 
 const StandardGalaxy = styled.div`
@@ -519,11 +573,15 @@ const TileColumn = styled.div<TileColumnProps>`
     }
 `;
 
-const ExtraTiles = styled.div`
+type ExtraTilesProps = {
+    $tilesToOffsetBy: number;
+};
+
+const ExtraTiles = styled.div<ExtraTilesProps>`
     display: flex;
-    margin-top: -4rem;
     justify-content: space-around;
     align-items: center;
+    margin-top: -${(props) => `${props.$tilesToOffsetBy * 16}vw`};
 
     @media (orientation: portrait) {
         flex-direction: row;

@@ -101,7 +101,7 @@ const VerticalStatusPage: React.FC = () => {
 
     return (
         <StyledVerticalStatusPage
-            backgroundImage={
+            $backgroundImage={
                 activePlayerInActionPhase
                     ? factionSheetImage(activePlayerInActionPhase)
                     : activePlayerInStrategyPhase
@@ -771,7 +771,7 @@ const timeComponent = (n: number | undefined): string => {
 };
 
 type StyledVerticalStatusPageProps = {
-    backgroundImage: string;
+    $backgroundImage: string;
 };
 
 const StyledVerticalStatusPage = styled.div<StyledVerticalStatusPageProps>`
@@ -779,7 +779,7 @@ const StyledVerticalStatusPage = styled.div<StyledVerticalStatusPageProps>`
     grid-template-areas: 'layer';
     line-height: 1.1;
     background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-        url(${(props) => props.backgroundImage});
+        url(${(props) => props.$backgroundImage});
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom left;
