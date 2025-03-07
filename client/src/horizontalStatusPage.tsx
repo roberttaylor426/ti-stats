@@ -242,6 +242,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'ObjectivesScoredDuringStatusPhase':
                 case 'PlanetEnhanced':
                 case 'PlayersAssignedFactionsAndColors':
+                case 'PlayerCompletedStrategyCardPrimaryAction':
                 case 'PlayerFinishedTurn':
                 case 'PlayerScoredVictoryPoint':
                 case 'PublicObjectiveRevealedDuringStatusPhase':

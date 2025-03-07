@@ -75,6 +75,13 @@ type PlayerPlayedStrategyCardEvent = {
     faction: Faction;
 };
 
+type PlayerCompletedStrategyCardPrimaryActionEvent = {
+    type: 'PlayerCompletedStrategyCardPrimaryAction';
+    time: number;
+    strategyCard: StrategyCard;
+    faction: Faction;
+};
+
 type PlayerFinishedTurnEvent = {
     type: 'PlayerFinishedTurn';
     time: number;
@@ -337,6 +344,7 @@ type Event =
     | PlanetEnhancedEvent
     | PlanetlessSystemControlledEvent
     | PlayersAssignedFactionsAndColorsEvent
+    | PlayerCompletedStrategyCardPrimaryActionEvent
     | PlayerFinishedTurnEvent
     | PlayerPlayedStrategyCardEvent
     | PlayerResearchedTechnologyEvent
@@ -695,7 +703,7 @@ const timesTakenPerPlayerPerTurn = (
                     playerTurnStartedTime: n.time,
                 };
             }
-            if (n.type === 'PlayerFinishedTurn') {
+            if (n.type === 'PlayerCompletedStrategyCardPrimaryAction') {
                 return {
                     playerTurnTimes: {
                         ...acc.playerTurnTimes,
@@ -705,12 +713,29 @@ const timesTakenPerPlayerPerTurn = (
                         ],
                     },
                     playerTurnStartedTime: n.time,
+                    strategyCardSecondaryActionsInProgress: true,
+                };
+            }
+            if (n.type === 'PlayerFinishedTurn') {
+                return {
+                    playerTurnTimes: acc.strategyCardSecondaryActionsInProgress
+                        ? acc.playerTurnTimes
+                        : {
+                              ...acc.playerTurnTimes,
+                              [n.faction]: [
+                                  ...acc.playerTurnTimes[n.faction],
+                                  n.time - acc.playerTurnStartedTime,
+                              ],
+                          },
+                    playerTurnStartedTime: n.time,
+                    strategyCardSecondaryActionsInProgress: false,
                 };
             }
 
             return acc;
         },
         {
+            strategyCardSecondaryActionsInProgress: false,
             playerTurnStartedTime: 0,
             playerTurnTimes: factionsInGame(events).reduce(
                 (acc, n) => ({ ...acc, [n]: [] }),

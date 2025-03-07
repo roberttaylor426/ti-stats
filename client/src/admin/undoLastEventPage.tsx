@@ -54,6 +54,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Mirage found';
         case 'ObjectivesScoredDuringStatusPhase':
             return 'Objectives scored during status phase';
+        case 'PlayerCompletedStrategyCardPrimaryAction':
+            return `Player completed strategy card primary action - ${e.faction}`;
         case 'PlanetControlled':
             return `Planet controlled - ${e.planet}`;
         case 'PlanetDestroyed':
