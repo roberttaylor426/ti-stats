@@ -22,7 +22,9 @@ const VpScoringContainer: React.FC<Props & AdminPageProps> = ({
     events,
     publishNewEvents,
 }) => {
-    const [playerToScoreVps, setPlayerToScoreVps] = useState<Faction>();
+    const [playerToScoreVps, setPlayerToScoreVps] = useState<
+        Faction | undefined
+    >(defaultFaction);
     const [vpsToAdd, setVpsToAdd] = useState<number>(0);
 
     const publishVpScoredEvent = async (

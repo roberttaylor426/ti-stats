@@ -10,14 +10,17 @@ import {
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
+    factionsInGame,
     hasGameStarted,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
     isItAgendaPhase,
     isPlayerFinishedTurnEvent,
+    isPlayerScoredVictoryPointEvent,
     isRoundStartedEvent,
     isUnion,
+    playerScore,
 } from './events';
 import { Faction, shortName } from './factions';
 import {
@@ -50,8 +53,19 @@ const HorizontalStatusPage: React.FC = () => {
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
 
+    const winningPlayer = _.first(
+        factionsInGame(events)
+            .map((f) => ({
+                faction: f,
+                score: playerScore(events, f),
+                asOf: _.last(events.filter(isPlayerScoredVictoryPointEvent))
+                    ?.time,
+            }))
+            .filter((fs) => fs.score >= 10)
+    );
+
     return (
-        <StyledTickerPage>
+        <StyledHorizontalStatusPage>
             {lastEvent ? (
                 <Ticker>
                     <TickerRow>
@@ -88,41 +102,43 @@ const HorizontalStatusPage: React.FC = () => {
                                 <KeyTitle>
                                     {!hasGameStarted(events)
                                         ? 'Pax Magnifica, Bellum Gloriosum'
-                                        : activePlayerInStrategyPhase
-                                          ? `${shortName(activePlayerInStrategyPhase)} pick`
-                                          : lastEvent.type ===
-                                              'PlayerSelectedStrategyCard'
-                                            ? 'All strategy cards picked'
-                                            : activePlayerInActionPhase
-                                              ? `${shortName(activePlayerInActionPhase)} turn`
-                                              : lastEvent.type ===
-                                                  'PlayerFinishedTurn'
-                                                ? 'Score objectives, initiative order'
+                                        : winningPlayer
+                                          ? `${shortName(winningPlayer.faction)} wins!`
+                                          : activePlayerInStrategyPhase
+                                            ? `${shortName(activePlayerInStrategyPhase)} pick`
+                                            : lastEvent.type ===
+                                                'PlayerSelectedStrategyCard'
+                                              ? 'All strategy cards picked'
+                                              : activePlayerInActionPhase
+                                                ? `${shortName(activePlayerInActionPhase)} turn`
                                                 : lastEvent.type ===
-                                                    'ObjectivesScoredDuringStatusPhase'
-                                                  ? 'Reveal public objective'
+                                                    'PlayerFinishedTurn'
+                                                  ? 'Score objectives, initiative order'
                                                   : lastEvent.type ===
-                                                      'PublicObjectiveRevealedDuringStatusPhase'
-                                                    ? 'Draw action cards'
+                                                      'ObjectivesScoredDuringStatusPhase'
+                                                    ? 'Reveal public objective'
                                                     : lastEvent.type ===
-                                                        'ActionCardsDrawnDuringStatusPhase'
-                                                      ? 'Remove command tokens from board'
+                                                        'PublicObjectiveRevealedDuringStatusPhase'
+                                                      ? 'Draw action cards'
                                                       : lastEvent.type ===
-                                                          'CommandTokensRemovedDuringStatusPhase'
-                                                        ? 'Gain and redistribute command tokens'
+                                                          'ActionCardsDrawnDuringStatusPhase'
+                                                        ? 'Remove command tokens from board'
                                                         : lastEvent.type ===
-                                                            'CardsReadiedDuringStatusPhase'
-                                                          ? 'Repair units'
+                                                            'CommandTokensRemovedDuringStatusPhase'
+                                                          ? 'Gain and redistribute command tokens'
                                                           : lastEvent.type ===
-                                                              'UnitsRepairedDuringStatusPhase'
-                                                            ? 'Return strategy cards'
-                                                            : isItAgendaPhase(
-                                                                    events
-                                                                )
-                                                              ? agendaCardTextToShowDuringAgendaPhase(
-                                                                    events
-                                                                )
-                                                              : ''}
+                                                              'CardsReadiedDuringStatusPhase'
+                                                            ? 'Repair units'
+                                                            : lastEvent.type ===
+                                                                'UnitsRepairedDuringStatusPhase'
+                                                              ? 'Return strategy cards'
+                                                              : isItAgendaPhase(
+                                                                      events
+                                                                  )
+                                                                ? agendaCardTextToShowDuringAgendaPhase(
+                                                                      events
+                                                                  )
+                                                                : ''}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />
@@ -135,13 +151,19 @@ const HorizontalStatusPage: React.FC = () => {
                                               lastEventWhenPlayerTurnStarted
                                               ? lastEventWhenPlayerTurnStarted
                                               : lastEvent,
-                                          currentTime
+                                          winningPlayer?.asOf
+                                              ? winningPlayer.asOf
+                                              : currentTime
                                       )
                                     : noTimeElapsedString}
                             </TimeSpan>
                             <TotalTime
                                 events={events}
-                                currentTime={currentTime}
+                                currentTime={
+                                    winningPlayer?.asOf
+                                        ? winningPlayer.asOf
+                                        : currentTime
+                                }
                             />
                         </Times>
                     </TickerRow>
@@ -173,7 +195,7 @@ const HorizontalStatusPage: React.FC = () => {
             ) : (
                 <h1>TODO</h1>
             )}
-        </StyledTickerPage>
+        </StyledHorizontalStatusPage>
     );
 };
 
@@ -395,7 +417,7 @@ const timeComponent = (n: number | undefined): string => {
     return `${n}`;
 };
 
-const StyledTickerPage = styled.div`
+const StyledHorizontalStatusPage = styled.div`
     display: grid;
     grid-template-areas: 'layer';
     line-height: 1.1;

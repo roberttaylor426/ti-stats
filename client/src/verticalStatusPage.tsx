@@ -16,6 +16,7 @@ import {
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
     isItAgendaPhase,
+    isPlayerScoredVictoryPointEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isUnion,
@@ -28,7 +29,12 @@ import {
     TimesTaken,
     timesTakenPerPlayer,
 } from './events';
-import { Faction, factionSheetImage, superShortName } from './factions';
+import {
+    Faction,
+    factionQuote,
+    factionSheetImage,
+    superShortName,
+} from './factions';
 import {
     PlanetName,
     planets,
@@ -95,6 +101,8 @@ const VerticalStatusPage: React.FC = () => {
             .map((f) => ({
                 faction: f,
                 score: playerScore(events, f),
+                asOf: _.last(events.filter(isPlayerScoredVictoryPointEvent))
+                    ?.time,
             }))
             .filter((fs) => fs.score >= 10)
     );
@@ -102,27 +110,35 @@ const VerticalStatusPage: React.FC = () => {
     return (
         <StyledVerticalStatusPage
             $backgroundImage={
-                activePlayerInActionPhase
-                    ? factionSheetImage(activePlayerInActionPhase)
-                    : activePlayerInStrategyPhase
-                      ? factionSheetImage(activePlayerInStrategyPhase)
-                      : galaxyPhoto
+                winningPlayer
+                    ? factionSheetImage(winningPlayer.faction)
+                    : activePlayerInActionPhase
+                      ? factionSheetImage(activePlayerInActionPhase)
+                      : activePlayerInStrategyPhase
+                        ? factionSheetImage(activePlayerInStrategyPhase)
+                        : galaxyPhoto
             }
         >
             {lastEvent ? (
                 winningPlayer ? (
-                    <SpreadColumnContainer>
-                        <div />
-                        <Title>{`${winningPlayer.faction} wins!`}</Title>
-                        <CentralContainer>
-                            <Title>Time taken:</Title>
-                            <TotalTime
-                                events={events}
-                                currentTime={lastEvent.time}
-                            />
-                        </CentralContainer>
-                        <div />
-                    </SpreadColumnContainer>
+                    <SpaceAroundColumn>
+                        <TitleContainer>
+                            <CentralContainer>
+                                <WinningFactionQuote>{`"${factionQuote(winningPlayer.faction)}"`}</WinningFactionQuote>
+                            </CentralContainer>
+                        </TitleContainer>
+                        <SpaceAroundColumn>
+                            <CentralContainer>
+                                <StatTitle $mode={'large'}>
+                                    Time taken:
+                                </StatTitle>
+                                <TotalTime
+                                    events={events}
+                                    currentTime={lastEvent.time}
+                                />
+                            </CentralContainer>
+                        </SpaceAroundColumn>
+                    </SpaceAroundColumn>
                 ) : events.filter(isRoundStartedEvent).length > 0 ? (
                     activePlayerInStrategyPhase ||
                     _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
@@ -789,12 +805,6 @@ const StyledVerticalStatusPage = styled.div<StyledVerticalStatusPageProps>`
     }
 `;
 
-const SpreadColumnContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0;
-`;
-
 const ColumnWithTitleContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -808,15 +818,6 @@ const ColumnWithTitleContainer = styled.div`
 const TitleContainer = styled.div`
     display: flex;
     flex-direction: column;
-`;
-
-const Title = styled.h1`
-    font-size: 6vh;
-    padding: 0 0.5rem;
-    background-color: ${accentColor};
-    text-align: center;
-    text-transform: uppercase;
-    text-shadow: 0.3vh 0.3vh 0.6vh black;
 `;
 
 const SubTitle = styled.h2`
@@ -924,6 +925,11 @@ const StyledStat = styled.div<StatModeProps>`
 
 const StatTitle = styled.span<StatModeProps>`
     font-size: ${(props) => (props.$mode === 'large' ? '5vh' : '4vh')};
+`;
+
+const WinningFactionQuote = styled.i`
+    font-size: 4vh;
+    text-align: center;
 `;
 
 type StatValueProps = StatModeProps & {
