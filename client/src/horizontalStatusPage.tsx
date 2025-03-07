@@ -49,19 +49,6 @@ const HorizontalStatusPage: React.FC = () => {
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
-    // const strategyCardSelectedByActivePlayerInActionPhase =
-    //     playerSelectedStrategyCardEventFromLastStrategyPhase(events).find(
-    //         (e) => e.faction === activePlayerInActionPhase
-    //     )?.strategyCard;
-
-    // const winningPlayer = _.first(
-    //     factionsInGame(events)
-    //         .map((f) => ({
-    //             faction: f,
-    //             score: playerScore(events, f),
-    //         }))
-    //         .filter((fs) => fs.score >= 10)
-    // );
 
     return (
         <StyledTickerPage>
@@ -377,19 +364,6 @@ const ScrollingTickerRoundOverlayTriangle = styled.div`
     background-color: red;
     clip-path: polygon(0 0, 0 100%, 100% 0);
 `;
-
-// const isRoundEndedPageShown = (events: Event[]): boolean => {
-//     const lastRoundEndedIndex = lastIndexOfEventType(events, isRoundEndedEvent);
-//     const lastRoundStartedIndex = lastIndexOfEventType(
-//         events,
-//         isRoundStartedEvent
-//     );
-//
-//     return lastRoundEndedIndex > lastRoundStartedIndex;
-// };
-//
-// const timeElapsedBetweenEvents = (e1: Event, e2: Event): string =>
-//     timeElapsedLabel(e1, e2.time);
 
 const timeElapsedLabel = (e: Event, currentTime: number): string =>
     `${timeComponent(
