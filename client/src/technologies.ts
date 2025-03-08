@@ -517,6 +517,54 @@ const technologies: Technology[] = [
         faction: 'The Nomad',
         image: plasmaScoringImage,
     },
+    {
+        name: 'Impressment Programs',
+        type: 'Cybernetic',
+        faction: 'The Dih-Mohn Flotilla',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Aegis II',
+        type: 'Unit',
+        faction: 'The Dih-Mohn Flotilla',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Contractual Obligations',
+        type: 'Cybernetic',
+        faction: "Roh'Dhna Mechatronics",
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Terrafactory II',
+        type: 'Unit',
+        faction: "Roh'Dhna Mechatronics",
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Zhrgar Stimulants',
+        type: 'Biotic',
+        faction: 'The Berserkers of Kjalengard',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Star Dragon II',
+        type: 'Unit',
+        faction: 'The Berserkers of Kjalengard',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Daedalon Flight System',
+        type: 'Cybernetic',
+        faction: 'The Tnelis Syndicate',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Blockade Runner II',
+        type: 'Unit',
+        faction: 'The Tnelis Syndicate',
+        image: plasmaScoringImage,
+    },
 ];
 
 const hexColorForTechnologyType = (t: TechnologyType): string => {
