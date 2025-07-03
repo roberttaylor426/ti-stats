@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import tile0 from './assets/tiles/ST_0.webp';
 import tile1 from './assets/tiles/ST_1.webp';
 import tile2 from './assets/tiles/ST_2.webp';
@@ -142,10 +140,8 @@ import tile4274 from './assets/tiles/ST_4274.webp';
 import tile4275 from './assets/tiles/ST_4275.webp';
 import tile4276 from './assets/tiles/ST_4276.webp';
 import {
-    FactionSelection,
     factionsWithFixedHomeworlds,
-    homeworlds,
-    isFactionSelectionWithCustomHomeworlds,
+    factionWithFixedHomeworldsSystemTile,
 } from './factions';
 import { PlanetName } from './planets';
 
@@ -210,90 +206,357 @@ const mecatolRexTileNumber = 18;
 const ghostsOfCreussHomeTileNumber = 51;
 const malliceTileNumber = 82;
 
+const federationOfSolSystemTile: SystemTile = {
+    tileNumber: 1,
+    image: tile1,
+    planets: ['Jord'],
+};
+const mentakCoalitionSystemTile: SystemTile = {
+    tileNumber: 2,
+    image: tile2,
+    planets: ['Moll Primus'],
+};
+const yinBrotherhoodSystemTile: SystemTile = {
+    tileNumber: 3,
+    image: tile3,
+    planets: ['Darien'],
+};
+const embersOfMuattSystemTile: SystemTile = {
+    tileNumber: 4,
+    image: tile4,
+    planets: ['Muaat'],
+};
+const arborecSystemTile: SystemTile = {
+    tileNumber: 5,
+    image: tile5,
+    planets: ['Nestphar'],
+};
+const l1z1xMindnetSystemTile: SystemTile = {
+    tileNumber: 6,
+    image: tile6,
+    planets: ['[0.0.0]'],
+};
+const winnuSystemTile: SystemTile = {
+    tileNumber: 7,
+    image: tile7,
+    planets: ['Winnu'],
+};
+const nekroVirusSystemTile: SystemTile = {
+    tileNumber: 8,
+    image: tile8,
+    planets: ['Mordai II'],
+};
+const naaluCollectiveSystemTile: SystemTile = {
+    tileNumber: 9,
+    image: tile9,
+    planets: ['Maaluuk', 'Druaa'],
+};
+const baronyOfLetnevSystemTile: SystemTile = {
+    tileNumber: 10,
+    image: tile10,
+    planets: ['Arc Prime', 'Wren Terra'],
+};
+const clanOfSaarSystemTile: SystemTile = {
+    tileNumber: 11,
+    image: tile11,
+    planets: ['Lisis II', 'Ragh'],
+};
+const universitiesOfJolNarSystemTile: SystemTile = {
+    tileNumber: 12,
+    image: tile12,
+    planets: ['Jol', 'Nar'],
+};
+const saardakkNorrSystemTile: SystemTile = {
+    tileNumber: 13,
+    image: tile13,
+    planets: ["Tren'lak", 'Quinarra'],
+};
+const xxchaKingdomSystemTile: SystemTile = {
+    tileNumber: 14,
+    image: tile14,
+    planets: ['Archon Ren', 'Archon Tau'],
+};
+const yssarilTribesSystemTile: SystemTile = {
+    tileNumber: 15,
+    image: tile15,
+    planets: ['Retillion', 'Shalloq'],
+};
+const emiratesOfHacanSystemTile: SystemTile = {
+    tileNumber: 16,
+    image: tile16,
+    planets: ['Arretze', 'Hercant', 'Kamdorn'],
+};
+const mahactGeneSorcerorsSystemTile: SystemTile = {
+    tileNumber: 52,
+    image: tile52,
+    planets: ['Ixth'],
+};
+const nomadSystemTile: SystemTile = {
+    tileNumber: 53,
+    image: tile53,
+    planets: ['Arcturus'],
+};
+const vuilraithCabalSystemTile: SystemTile = {
+    tileNumber: 54,
+    image: tile54,
+    planets: ['Acheron'],
+};
+const titansOfUlSystemTile: SystemTile = {
+    tileNumber: 55,
+    image: tile55,
+    planets: ['Elysium'],
+};
+const empyreanSystemTile: SystemTile = {
+    tileNumber: 56,
+    image: tile56,
+    planets: ['The Dark'],
+};
+const naazRohkaAllianceSystemTile: SystemTile = {
+    tileNumber: 57,
+    image: tile57,
+    planets: ['Naazir', 'Rohka'],
+};
+const argentFlightSystemTile: SystemTile = {
+    tileNumber: 58,
+    image: tile58,
+    planets: ['Valk', 'Avar', 'Ylir'],
+};
+const veldyrSovereigntySystemTile: SystemTile = {
+    tileNumber: 3201,
+    image: tile3201,
+    planets: ['Rhune'],
+};
+const freeSystemsCompactSystemTile: SystemTile = {
+    tileNumber: 3202,
+    image: tile3202,
+    planets: ['Idyn', 'Kroll', 'Cyrra'],
+};
+const liZhoDynastySystemTile: SystemTile = {
+    tileNumber: 3203,
+    image: tile3203,
+    planets: ['Pax', 'Vess', 'Kyr'],
+};
+const kortaliTribunalSystemTile: SystemTile = {
+    tileNumber: 3204,
+    image: tile3204,
+    planets: ['Ogdun', 'Brthkul'],
+};
+const gheminaRaidersSystemTile: SystemTile = {
+    tileNumber: 3205,
+    image: tile3205,
+    planets: ['Drah', 'Trykk'],
+};
+const vadenBankingClansSystemTile: SystemTile = {
+    tileNumber: 3206,
+    image: tile3206,
+    planets: ['Vadarian', 'Norvus'],
+};
+const glimmerOfMortheusSystemTile: SystemTile = {
+    tileNumber: 3207,
+    image: tile3207,
+    planets: ['Biaheo', 'Empero'],
+};
+const augursOfIllyxumSystemTile: SystemTile = {
+    tileNumber: 3208,
+    image: tile3208,
+    planets: ['Chrion', 'Demis'],
+};
+const shipwrightsOfArkSystemTile: SystemTile = {
+    tileNumber: 3209,
+    image: tile3209,
+    planets: ['Axis'],
+};
+const olradinLeagueSystemTile: SystemTile = {
+    tileNumber: 3210,
+    image: tile3210,
+    planets: ['Sanctuary'],
+};
+const mykoMentoriSystemTile: SystemTile = {
+    tileNumber: 3211,
+    image: tile3211,
+    planets: ['Shi-Halaum'],
+};
+const tnelisSyndicateSystemTile: SystemTile = {
+    tileNumber: 3212,
+    image: tile3212,
+    planets: ['Discordia'],
+};
+const savagesOfCymiaeSystemTile: SystemTile = {
+    tileNumber: 3213,
+    image: tile3213,
+    planets: ['Cymiae'],
+};
+const rohDhnaMechatronicsSystemTile: SystemTile = {
+    tileNumber: 3214,
+    image: tile3214,
+    planets: ['Prind'],
+};
+const zelianPurifierSystemTile: SystemTile = {
+    tileNumber: 3215,
+    image: tile3215,
+    planets: ['Zelian', 'Gen'],
+};
+const vaylerianScourgeSystemTile: SystemTile = {
+    tileNumber: 3216,
+    image: tile3216,
+    planets: ['Vaylar'],
+};
+const florzenProfiteersSystemTile: SystemTile = {
+    tileNumber: 3217,
+    image: tile3217,
+    planets: ['Delmor', 'Kyd'],
+};
+const dihMohnFlotillaSystemTile: SystemTile = {
+    tileNumber: 3218,
+    image: tile3218,
+    planets: ['Abyssus'],
+};
+const celdauriTradeConfederationSystemTile: SystemTile = {
+    tileNumber: 3219,
+    image: tile3219,
+    planets: ['Louk', 'Auldane'],
+};
+const nivynStarOfKingsSystemTile: SystemTile = {
+    tileNumber: 3220,
+    image: tile3220,
+    planets: ['Ellas'],
+};
+const mirvedaProtectorateSystemTile: SystemTile = {
+    tileNumber: 3221,
+    image: tile3221,
+    planets: ['Aldra', 'Beata'],
+};
+const ltokkKhraskSystemTile: SystemTile = {
+    tileNumber: 3222,
+    image: tile3222,
+    planets: ['Bohl-Dhur'],
+};
+const kolleccSocietySystemTile: SystemTile = {
+    tileNumber: 3223,
+    image: tile3223,
+    planets: ['Susuros'],
+};
+const zealotsOfRhodunSystemTile: SystemTile = {
+    tileNumber: 3224,
+    image: tile3224,
+    planets: ['Poh', 'Orad'],
+};
+const berserkersOfKjalengardSystemTile: SystemTile = {
+    tileNumber: 3226,
+    image: tile3226,
+    planets: ['Kjalengard', 'Hulgade'],
+};
+const bentorConglomerateSystemTile: SystemTile = {
+    tileNumber: 3227,
+    image: tile3227,
+    planets: ['Benc', 'Hau'],
+};
+const nokarSellshipsSystemTile: SystemTile = {
+    tileNumber: 3228,
+    image: tile3228,
+    planets: ['Zarr', 'Nokk'],
+};
+const gledgeUnionSystemTile: SystemTile = {
+    tileNumber: 3229,
+    image: tile3229,
+    planets: ['Last Stop'],
+};
+const lanefirRemnantsSystemTile: SystemTile = {
+    tileNumber: 3230,
+    image: tile3230,
+    planets: ["Aysis' Rest", 'Solitude'],
+};
+const kyroSodalitySystemTile: SystemTile = {
+    tileNumber: 3231,
+    image: tile3231,
+    planets: ['Avicenna'],
+};
+const monksOfKolumeSystemTile: SystemTile = {
+    tileNumber: 3233,
+    image: tile3233,
+    planets: ['Alesna', 'Azle'],
+};
+const cheiranHordesSystemTile: SystemTile = {
+    tileNumber: 3234,
+    image: tile3234,
+    planets: ['Gghurn Theta', 'Arche'],
+};
+const edynMandateSystemTile: SystemTile = {
+    tileNumber: 3235,
+    image: tile3235,
+    planets: ['Edyn', 'Ekko', 'Okke'],
+};
+const ghotiWayferersSystemTile: SystemTile = {
+    tileNumber: 3232,
+    image: tile3232,
+};
+const ghostsOfCreussSystemTile: SystemTile = {
+    tileNumber: ghostsOfCreussGalaxyTileNumber,
+    image: tile17,
+};
 const systemTiles: SystemTile[] = [
+    federationOfSolSystemTile,
+    mentakCoalitionSystemTile,
+    yinBrotherhoodSystemTile,
+    embersOfMuattSystemTile,
+    arborecSystemTile,
+    l1z1xMindnetSystemTile,
+    winnuSystemTile,
+    nekroVirusSystemTile,
+    naaluCollectiveSystemTile,
+    baronyOfLetnevSystemTile,
+    clanOfSaarSystemTile,
+    universitiesOfJolNarSystemTile,
+    saardakkNorrSystemTile,
+    xxchaKingdomSystemTile,
+    yssarilTribesSystemTile,
+    emiratesOfHacanSystemTile,
+    mahactGeneSorcerorsSystemTile,
+    nomadSystemTile,
+    vuilraithCabalSystemTile,
+    titansOfUlSystemTile,
+    empyreanSystemTile,
+    naazRohkaAllianceSystemTile,
+    argentFlightSystemTile,
+    veldyrSovereigntySystemTile,
+    freeSystemsCompactSystemTile,
+    liZhoDynastySystemTile,
+    kortaliTribunalSystemTile,
+    gheminaRaidersSystemTile,
+    vadenBankingClansSystemTile,
+    glimmerOfMortheusSystemTile,
+    augursOfIllyxumSystemTile,
+    shipwrightsOfArkSystemTile,
+    olradinLeagueSystemTile,
+    mykoMentoriSystemTile,
+    tnelisSyndicateSystemTile,
+    savagesOfCymiaeSystemTile,
+    rohDhnaMechatronicsSystemTile,
+    zelianPurifierSystemTile,
+    vaylerianScourgeSystemTile,
+    florzenProfiteersSystemTile,
+    dihMohnFlotillaSystemTile,
+    celdauriTradeConfederationSystemTile,
+    nivynStarOfKingsSystemTile,
+    mirvedaProtectorateSystemTile,
+    ltokkKhraskSystemTile,
+    kolleccSocietySystemTile,
+    zealotsOfRhodunSystemTile,
+    berserkersOfKjalengardSystemTile,
+    bentorConglomerateSystemTile,
+    nokarSellshipsSystemTile,
+    gledgeUnionSystemTile,
+    lanefirRemnantsSystemTile,
+    kyroSodalitySystemTile,
+    monksOfKolumeSystemTile,
+    cheiranHordesSystemTile,
+    edynMandateSystemTile,
+    ghotiWayferersSystemTile,
+    ghostsOfCreussSystemTile,
     {
-        tileNumber: 1,
-        image: tile1,
-        planets: homeworlds('The Federation of Sol'),
-    },
-    {
-        tileNumber: 2,
-        image: tile2,
-        planets: homeworlds('The Mentak Coalition'),
-    },
-    {
-        tileNumber: 3,
-        image: tile3,
-        planets: homeworlds('The Yin Brotherhood'),
-    },
-    {
-        tileNumber: 4,
-        image: tile4,
-        planets: homeworlds('The Embers of Muaat'),
-    },
-    {
-        tileNumber: 5,
-        image: tile5,
-        planets: homeworlds('The Arborec'),
-    },
-    {
-        tileNumber: 6,
-        image: tile6,
-        planets: homeworlds('The L1Z1X Mindnet'),
-    },
-    {
-        tileNumber: 7,
-        image: tile7,
-        planets: homeworlds('The Winnu'),
-    },
-    {
-        tileNumber: 8,
-        image: tile8,
-        planets: homeworlds('The Nekro Virus'),
-    },
-    {
-        tileNumber: 9,
-        image: tile9,
-        planets: homeworlds('The Naalu Collective'),
-    },
-    {
-        tileNumber: 10,
-        image: tile10,
-        planets: homeworlds('The Barony of Letnev'),
-    },
-    {
-        tileNumber: 11,
-        image: tile11,
-        planets: homeworlds('The Clan of Saar'),
-    },
-    {
-        tileNumber: 12,
-        image: tile12,
-        planets: homeworlds('The Universities of Jol-Nar'),
-    },
-    {
-        tileNumber: 13,
-        image: tile13,
-        planets: homeworlds('Sardakk N’orr'),
-    },
-    {
-        tileNumber: 14,
-        image: tile14,
-        planets: homeworlds('The Xxcha Kingdom'),
-    },
-    {
-        tileNumber: 15,
-        image: tile15,
-        planets: homeworlds('The Yssaril Tribes'),
-    },
-    {
-        tileNumber: 16,
-        image: tile16,
-        planets: homeworlds('The Emirates of Hacan'),
-    },
-    {
-        tileNumber: ghostsOfCreussGalaxyTileNumber,
-        image: tile17,
+        tileNumber: ghostsOfCreussHomeTileNumber,
+        image: tile51,
+        planets: ['Creuss'],
     },
     {
         tileNumber: mecatolRexTileNumber,
@@ -449,46 +712,6 @@ const systemTiles: SystemTile[] = [
         image: tile50,
     },
     {
-        tileNumber: ghostsOfCreussHomeTileNumber,
-        image: tile51,
-        planets: homeworlds('The Ghosts of Creuss'),
-    },
-    {
-        tileNumber: 52,
-        image: tile52,
-        planets: homeworlds('The Mahact Gene-Sorcerers'),
-    },
-    {
-        tileNumber: 53,
-        image: tile53,
-        planets: homeworlds('The Nomad'),
-    },
-    {
-        tileNumber: 54,
-        image: tile54,
-        planets: homeworlds("The Vuil'Raith Cabal"),
-    },
-    {
-        tileNumber: 55,
-        image: tile55,
-        planets: homeworlds('The Titans of Ul'),
-    },
-    {
-        tileNumber: 56,
-        image: tile56,
-        planets: homeworlds('The Empyrean'),
-    },
-    {
-        tileNumber: 57,
-        image: tile57,
-        planets: homeworlds('The Naaz-Rokha Alliance'),
-    },
-    {
-        tileNumber: 58,
-        image: tile58,
-        planets: homeworlds('The Argent Flight'),
-    },
-    {
         tileNumber: 59,
         image: tile59,
         planets: ['Archon Vail'],
@@ -602,175 +825,6 @@ const systemTiles: SystemTile[] = [
         tileNumber: malliceTileNumber,
         image: tile82,
         planets: ['Mallice'],
-    },
-    {
-        tileNumber: 3201,
-        image: tile3201,
-        planets: homeworlds('The Veldyr Sovereignty'),
-    },
-    {
-        tileNumber: 3202,
-        image: tile3202,
-        planets: homeworlds('The Free Systems Compact'),
-    },
-    {
-        tileNumber: 3203,
-        image: tile3203,
-        planets: homeworlds('The Li-Zho Dynasty'),
-    },
-    {
-        tileNumber: 3204,
-        image: tile3204,
-        planets: homeworlds('The Kortali Tribunal'),
-    },
-    {
-        tileNumber: 3205,
-        image: tile3205,
-        planets: homeworlds('The Ghemina Raiders'),
-    },
-    {
-        tileNumber: 3206,
-        image: tile3206,
-        planets: homeworlds('The Vaden Banking Clans'),
-    },
-    {
-        tileNumber: 3207,
-        image: tile3207,
-        planets: homeworlds('The Glimmer of Mortheus'),
-    },
-    {
-        tileNumber: 3208,
-        image: tile3208,
-        planets: homeworlds('The Augurs of Illyxum'),
-    },
-    {
-        tileNumber: 3209,
-        image: tile3209,
-        planets: homeworlds('The Shipwrights of Ark'),
-    },
-    {
-        tileNumber: 3210,
-        image: tile3210,
-        planets: homeworlds('The Olradin League'),
-    },
-    {
-        tileNumber: 3211,
-        image: tile3211,
-        planets: homeworlds('The Myko-Mentori'),
-    },
-    {
-        tileNumber: 3212,
-        image: tile3212,
-        planets: homeworlds('The Tnelis Syndicate'),
-    },
-    {
-        tileNumber: 3213,
-        image: tile3213,
-        planets: homeworlds('The Savages of Cymiae'),
-    },
-    {
-        tileNumber: 3214,
-        image: tile3214,
-        planets: homeworlds("Roh'Dhna Mechatronics"),
-    },
-    {
-        tileNumber: 3215,
-        image: tile3215,
-        planets: homeworlds('The Zelian Purifier'),
-    },
-    {
-        tileNumber: 3216,
-        image: tile3216,
-        planets: homeworlds('The Vaylerian Scourge'),
-    },
-    {
-        tileNumber: 3217,
-        image: tile3217,
-        planets: homeworlds('The Florzen Profiteers'),
-    },
-    {
-        tileNumber: 3218,
-        image: tile3218,
-        planets: homeworlds('The Dih-Mohn Flotilla'),
-    },
-    {
-        tileNumber: 3219,
-        image: tile3219,
-        planets: homeworlds('The Celdauri Trade Confederation'),
-    },
-    {
-        tileNumber: 3220,
-        image: tile3220,
-        planets: homeworlds('The Nivyn Star of Kings'),
-    },
-    {
-        tileNumber: 3221,
-        image: tile3221,
-        planets: homeworlds('The Mirveda Protectorate'),
-    },
-    {
-        tileNumber: 3222,
-        image: tile3222,
-        planets: homeworlds("The L'tokk Khrask"),
-    },
-    {
-        tileNumber: 3223,
-        image: tile3223,
-        planets: homeworlds('The Kollecc Society'),
-    },
-    {
-        tileNumber: 3224,
-        image: tile3224,
-        planets: homeworlds('The Zealots of Rhodun'),
-    },
-    {
-        tileNumber: 3226,
-        image: tile3226,
-        planets: homeworlds('The Berserkers of Kjalengard'),
-    },
-    {
-        tileNumber: 3227,
-        image: tile3227,
-        planets: homeworlds('The Bentor Conglomerate'),
-    },
-    {
-        tileNumber: 3228,
-        image: tile3228,
-        planets: homeworlds('The Nokar Sellships'),
-    },
-    {
-        tileNumber: 3229,
-        image: tile3229,
-        planets: homeworlds('The GLEdge Union'),
-    },
-    {
-        tileNumber: 3230,
-        image: tile3230,
-        planets: homeworlds('The Lanefir Remants'),
-    },
-    {
-        tileNumber: 3231,
-        image: tile3231,
-        planets: homeworlds('The Kyro Sodality'),
-    },
-    {
-        tileNumber: 3232,
-        image: tile3232,
-    },
-    {
-        tileNumber: 3233,
-        image: tile3233,
-        planets: homeworlds('The Monks of Kolume'),
-    },
-    {
-        tileNumber: 3234,
-        image: tile3234,
-        planets: homeworlds('The Cheiran Hordes'),
-    },
-    {
-        tileNumber: 3235,
-        image: tile3235,
-        planets: homeworlds('The Edyn Mandate'),
     },
     {
         tileNumber: 4253,
@@ -905,9 +959,10 @@ const systemWithPlanetsTileDescription = (
             .find((st) => st.tileNumber === stn)?.planets || []
     ).join(', ');
 
-const isHomeworldSystemTile = (st: SystemWithPlanetsTile): boolean =>
-    !!factionsWithFixedHomeworlds.find((f) =>
-        _.isEqual(homeworlds(f), st.planets)
+const isFactionSystemTile = (st: SystemTile): boolean =>
+    factionsWithFixedHomeworlds.some(
+        (f) =>
+            st.tileNumber === factionWithFixedHomeworldsSystemTile(f).tileNumber
     );
 
 const planetlessSystemTileDescription = (
@@ -959,30 +1014,64 @@ const planetlessSystemTileDescription = (
     }
 };
 
-const factionSystemTileNumber = (fs: FactionSelection): SystemTileNumber => {
-    const factionForSystemTile = isFactionSelectionWithCustomHomeworlds(fs)
-        ? fs.homeworldsOf
-        : fs;
-    return systemTiles
-        .filter(isSystemWithPlanetsTile)
-        .find((st) => _.isEqual(st.planets, homeworlds(factionForSystemTile)))
-        ?.tileNumber as SystemTileNumber;
-};
-
 export {
-    factionSystemTileNumber,
+    arborecSystemTile,
+    argentFlightSystemTile,
+    augursOfIllyxumSystemTile,
+    baronyOfLetnevSystemTile,
+    bentorConglomerateSystemTile,
+    berserkersOfKjalengardSystemTile,
+    celdauriTradeConfederationSystemTile,
+    cheiranHordesSystemTile,
+    clanOfSaarSystemTile,
+    dihMohnFlotillaSystemTile,
+    edynMandateSystemTile,
+    embersOfMuattSystemTile,
+    emiratesOfHacanSystemTile,
+    empyreanSystemTile,
+    federationOfSolSystemTile,
+    florzenProfiteersSystemTile,
+    freeSystemsCompactSystemTile,
+    gheminaRaidersSystemTile,
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
-    isHomeworldSystemTile,
+    ghostsOfCreussSystemTile,
+    ghotiWayferersSystemTile,
+    gledgeUnionSystemTile,
+    glimmerOfMortheusSystemTile,
+    isFactionSystemTile,
     isPlanetlessSystemTileNumber,
     isSystemTileNumber,
     isSystemWithPlanetsTile,
     isSystemWithPlanetsTileNumber,
+    kolleccSocietySystemTile,
+    kortaliTribunalSystemTile,
+    kyroSodalitySystemTile,
+    l1z1xMindnetSystemTile,
+    lanefirRemnantsSystemTile,
+    liZhoDynastySystemTile,
+    ltokkKhraskSystemTile,
+    mahactGeneSorcerorsSystemTile,
     malliceTileNumber,
     mecatolRexTileNumber,
+    mentakCoalitionSystemTile,
+    mirvedaProtectorateSystemTile,
+    monksOfKolumeSystemTile,
+    mykoMentoriSystemTile,
+    naaluCollectiveSystemTile,
+    naazRohkaAllianceSystemTile,
+    nekroVirusSystemTile,
+    nivynStarOfKingsSystemTile,
+    nokarSellshipsSystemTile,
+    nomadSystemTile,
+    olradinLeagueSystemTile,
     PlanetlessSystemTile,
     planetlessSystemTileDescription,
     PlanetlessSystemTileNumber,
+    rohDhnaMechatronicsSystemTile,
+    saardakkNorrSystemTile,
+    savagesOfCymiaeSystemTile,
+    shipwrightsOfArkSystemTile,
     SystemTile,
     systemTile,
     systemTileDescription,
@@ -991,4 +1080,17 @@ export {
     systemTiles,
     systemWithPlanetsTileDescription,
     SystemWithPlanetsTileNumber,
+    titansOfUlSystemTile,
+    tnelisSyndicateSystemTile,
+    universitiesOfJolNarSystemTile,
+    vadenBankingClansSystemTile,
+    vaylerianScourgeSystemTile,
+    veldyrSovereigntySystemTile,
+    vuilraithCabalSystemTile,
+    winnuSystemTile,
+    xxchaKingdomSystemTile,
+    yinBrotherhoodSystemTile,
+    yssarilTribesSystemTile,
+    zealotsOfRhodunSystemTile,
+    zelianPurifierSystemTile,
 };

@@ -4,6 +4,7 @@ import { AgendaCard } from './agendaCards';
 import {
     Faction,
     FactionSelection,
+    factionSystemTileNumber,
     isFactionSelectionWithCustomHomeworlds,
     selectedFaction,
 } from './factions';
@@ -11,7 +12,6 @@ import { PlanetName, planets, ResourcesAndInfluence } from './planets';
 import { numberOfPlayersInGame, PlayerColor } from './playerColors';
 import { StrategyCard } from './strategyCards';
 import {
-    factionSystemTileNumber,
     ghostsOfCreussHomeTileNumber,
     isSystemWithPlanetsTile,
     malliceTileNumber,

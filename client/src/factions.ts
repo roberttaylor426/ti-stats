@@ -8,6 +8,69 @@ import rohdna from './assets/factionSheets/rohdna.webp';
 import tnelis from './assets/factionSheets/tnelis.webp';
 import { PlanetName } from './planets';
 import {
+    arborecSystemTile,
+    argentFlightSystemTile,
+    augursOfIllyxumSystemTile,
+    baronyOfLetnevSystemTile,
+    bentorConglomerateSystemTile,
+    berserkersOfKjalengardSystemTile,
+    celdauriTradeConfederationSystemTile,
+    cheiranHordesSystemTile,
+    clanOfSaarSystemTile,
+    dihMohnFlotillaSystemTile,
+    edynMandateSystemTile,
+    embersOfMuattSystemTile,
+    emiratesOfHacanSystemTile,
+    empyreanSystemTile,
+    federationOfSolSystemTile,
+    florzenProfiteersSystemTile,
+    freeSystemsCompactSystemTile,
+    gheminaRaidersSystemTile,
+    ghostsOfCreussSystemTile,
+    ghotiWayferersSystemTile,
+    gledgeUnionSystemTile,
+    glimmerOfMortheusSystemTile,
+    isSystemWithPlanetsTile,
+    kolleccSocietySystemTile,
+    kortaliTribunalSystemTile,
+    kyroSodalitySystemTile,
+    l1z1xMindnetSystemTile,
+    lanefirRemnantsSystemTile,
+    liZhoDynastySystemTile,
+    ltokkKhraskSystemTile,
+    mahactGeneSorcerorsSystemTile,
+    mentakCoalitionSystemTile,
+    mirvedaProtectorateSystemTile,
+    monksOfKolumeSystemTile,
+    mykoMentoriSystemTile,
+    naaluCollectiveSystemTile,
+    naazRohkaAllianceSystemTile,
+    nekroVirusSystemTile,
+    nivynStarOfKingsSystemTile,
+    nokarSellshipsSystemTile,
+    nomadSystemTile,
+    olradinLeagueSystemTile,
+    rohDhnaMechatronicsSystemTile,
+    saardakkNorrSystemTile,
+    savagesOfCymiaeSystemTile,
+    shipwrightsOfArkSystemTile,
+    SystemTile,
+    SystemTileNumber,
+    titansOfUlSystemTile,
+    tnelisSyndicateSystemTile,
+    universitiesOfJolNarSystemTile,
+    vadenBankingClansSystemTile,
+    vaylerianScourgeSystemTile,
+    veldyrSovereigntySystemTile,
+    vuilraithCabalSystemTile,
+    winnuSystemTile,
+    xxchaKingdomSystemTile,
+    yinBrotherhoodSystemTile,
+    yssarilTribesSystemTile,
+    zealotsOfRhodunSystemTile,
+    zelianPurifierSystemTile,
+} from './systemTiles';
+import {
     aiDevelopmentAlgorithm,
     antimassDeflectors,
     bioStims,
@@ -84,7 +147,7 @@ const factionsWithFixedHomeworlds = [
     'The Berserkers of Kjalengard',
     'The Monks of Kolume',
     'The Kyro Sodality',
-    'The Lanefir Remants',
+    'The Lanefir Remnants',
     'The Nokar Sellships',
 ] as const;
 
@@ -223,7 +286,7 @@ const superShortName = (f: Faction): string => {
             return 'Monks';
         case 'The Kyro Sodality':
             return 'Kyro';
-        case 'The Lanefir Remants':
+        case 'The Lanefir Remnants':
             return 'Lanefir';
         case 'The Nokar Sellships':
             return 'Nokar';
@@ -232,124 +295,134 @@ const superShortName = (f: Faction): string => {
     }
 };
 
-const homeworlds = (f: FactionWithFixedHomeworlds): PlanetName[] => {
+const factionSystemTile = (fs: FactionSelection): SystemTile =>
+    isFactionSelectionWithCustomHomeworlds(fs)
+        ? factionWithFixedHomeworldsSystemTile(fs.homeworldsOf)
+        : factionWithFixedHomeworldsSystemTile(fs);
+
+const factionSystemTileNumber = (fs: FactionSelection): SystemTileNumber =>
+    factionSystemTile(fs).tileNumber;
+
+const factionWithFixedHomeworldsSystemTile = (
+    f: FactionWithFixedHomeworlds
+): SystemTile => {
     switch (f) {
         case 'Sardakk N’orr':
-            return ["Tren'lak", 'Quinarra'];
+            return saardakkNorrSystemTile;
         case 'The Arborec':
-            return ['Nestphar'];
+            return arborecSystemTile;
         case 'The Argent Flight':
-            return ['Valk', 'Avar', 'Ylir'];
+            return argentFlightSystemTile;
         case 'The Barony of Letnev':
-            return ['Arc Prime', 'Wren Terra'];
+            return baronyOfLetnevSystemTile;
         case 'The Clan of Saar':
-            return ['Lisis II', 'Ragh'];
+            return clanOfSaarSystemTile;
         case 'The Embers of Muaat':
-            return ['Muaat'];
+            return embersOfMuattSystemTile;
         case 'The Emirates of Hacan':
-            return ['Arretze', 'Hercant', 'Kamdorn'];
+            return emiratesOfHacanSystemTile;
         case 'The Empyrean':
-            return ['The Dark'];
+            return empyreanSystemTile;
         case 'The Federation of Sol':
-            return ['Jord'];
+            return federationOfSolSystemTile;
         case 'The Ghosts of Creuss':
-            return ['Creuss'];
+            return ghostsOfCreussSystemTile;
         case 'The L1Z1X Mindnet':
-            return ['[0.0.0]'];
+            return l1z1xMindnetSystemTile;
         case 'The Mahact Gene-Sorcerers':
-            return ['Ixth'];
+            return mahactGeneSorcerorsSystemTile;
         case 'The Mentak Coalition':
-            return ['Moll Primus'];
+            return mentakCoalitionSystemTile;
         case 'The Naalu Collective':
-            return ['Maaluuk', 'Druaa'];
+            return naaluCollectiveSystemTile;
         case 'The Naaz-Rokha Alliance':
-            return ['Naazir', 'Rohka'];
+            return naazRohkaAllianceSystemTile;
         case 'The Nekro Virus':
-            return ['Mordai II'];
+            return nekroVirusSystemTile;
         case 'The Nomad':
-            return ['Arcturus'];
+            return nomadSystemTile;
         case 'The Titans of Ul':
-            return ['Elysium'];
+            return titansOfUlSystemTile;
         case 'The Universities of Jol-Nar':
-            return ['Jol', 'Nar'];
+            return universitiesOfJolNarSystemTile;
         case "The Vuil'Raith Cabal":
-            return ['Acheron'];
+            return vuilraithCabalSystemTile;
         case 'The Winnu':
-            return ['Winnu'];
+            return winnuSystemTile;
         case 'The Xxcha Kingdom':
-            return ['Archon Ren', 'Archon Tau'];
+            return xxchaKingdomSystemTile;
         case 'The Yin Brotherhood':
-            return ['Darien'];
+            return yinBrotherhoodSystemTile;
         case 'The Yssaril Tribes':
-            return ['Retillion', 'Shalloq'];
+            return yssarilTribesSystemTile;
         case 'The Shipwrights of Ark':
-            return ['Axis'];
+            return shipwrightsOfArkSystemTile;
         case 'The Celdauri Trade Confederation':
-            return ['Louk', 'Auldane'];
+            return celdauriTradeConfederationSystemTile;
         case 'The Savages of Cymiae':
-            return ['Cymiae'];
+            return savagesOfCymiaeSystemTile;
         case 'The Dih-Mohn Flotilla':
-            return ['Abyssus'];
+            return dihMohnFlotillaSystemTile;
         case 'The Florzen Profiteers':
-            return ['Delmor', 'Kyd'];
+            return florzenProfiteersSystemTile;
         case 'The Free Systems Compact':
-            return ['Idyn', 'Kroll', 'Cyrra'];
+            return freeSystemsCompactSystemTile;
         case 'The Ghemina Raiders':
-            return ['Drah', 'Trykk'];
+            return gheminaRaidersSystemTile;
         case 'The Augurs of Illyxum':
-            return ['Chrion', 'Demis'];
+            return augursOfIllyxumSystemTile;
         case 'The Kollecc Society':
-            return ['Susuros'];
+            return kolleccSocietySystemTile;
         case 'The Kortali Tribunal':
-            return ['Ogdun', 'Brthkul'];
+            return kortaliTribunalSystemTile;
         case 'The Li-Zho Dynasty':
-            return ['Pax', 'Vess', 'Kyr'];
+            return liZhoDynastySystemTile;
         case "The L'tokk Khrask":
-            return ['Bohl-Dhur'];
+            return ltokkKhraskSystemTile;
         case 'The Mirveda Protectorate':
-            return ['Aldra', 'Beata'];
+            return mirvedaProtectorateSystemTile;
         case 'The Glimmer of Mortheus':
-            return ['Biaheo', 'Empero'];
+            return glimmerOfMortheusSystemTile;
         case 'The Myko-Mentori':
-            return ['Shi-Halaum'];
+            return mykoMentoriSystemTile;
         case 'The Nivyn Star of Kings':
-            return ['Ellas'];
+            return nivynStarOfKingsSystemTile;
         case 'The Olradin League':
-            return ['Sanctuary'];
+            return olradinLeagueSystemTile;
         case 'The Zealots of Rhodun':
-            return ['Poh', 'Orad'];
+            return zealotsOfRhodunSystemTile;
         case "Roh'Dhna Mechatronics":
-            return ['Prind'];
+            return rohDhnaMechatronicsSystemTile;
         case 'The Tnelis Syndicate':
-            return ['Discordia'];
+            return tnelisSyndicateSystemTile;
         case 'The Vaden Banking Clans':
-            return ['Vadarian', 'Norvus'];
+            return vadenBankingClansSystemTile;
         case 'The Vaylerian Scourge':
-            return ['Vaylar'];
+            return vaylerianScourgeSystemTile;
         case 'The Veldyr Sovereignty':
-            return ['Rhune'];
+            return veldyrSovereigntySystemTile;
         case 'The Zelian Purifier':
-            return ['Zelian', 'Gen'];
+            return zelianPurifierSystemTile;
         case 'The Bentor Conglomerate':
-            return ['Benc', 'Hau'];
+            return bentorConglomerateSystemTile;
         case 'The Cheiran Hordes':
-            return ['Gghurn Theta', 'Arche'];
+            return cheiranHordesSystemTile;
         case 'The Edyn Mandate':
-            return ['Edyn', 'Ekko', 'Okke'];
+            return edynMandateSystemTile;
         case 'The Ghoti Wayfarers':
-            return [];
+            return ghotiWayferersSystemTile;
         case 'The GLEdge Union':
-            return ['Last Stop'];
+            return gledgeUnionSystemTile;
         case 'The Berserkers of Kjalengard':
-            return ['Kjalengard', 'Hulgade'];
+            return berserkersOfKjalengardSystemTile;
         case 'The Monks of Kolume':
-            return ['Alesna', 'Azle'];
+            return monksOfKolumeSystemTile;
         case 'The Kyro Sodality':
-            return ['Avicenna'];
-        case 'The Lanefir Remants':
-            return ["Aysis' Rest", 'Solitude'];
+            return kyroSodalitySystemTile;
+        case 'The Lanefir Remnants':
+            return lanefirRemnantsSystemTile;
         case 'The Nokar Sellships':
-            return ['Zarr', 'Nokk'];
+            return nokarSellshipsSystemTile;
     }
 };
 
@@ -467,7 +540,7 @@ const factionSheetImage = (f: Faction): string => {
             return '';
         case 'The Kyro Sodality':
             return '';
-        case 'The Lanefir Remants':
+        case 'The Lanefir Remnants':
             return '';
         case 'The Nokar Sellships':
             return '';
@@ -590,7 +663,7 @@ const factionQuote = (f: Faction): string => {
             return '';
         case 'The Kyro Sodality':
             return '';
-        case 'The Lanefir Remants':
+        case 'The Lanefir Remnants':
             return '';
         case 'The Nokar Sellships':
             return '';
@@ -616,10 +689,12 @@ const isFactionSelectionWithCustomHomeworlds = (
 const selectedFaction = (fs: FactionSelection): Faction =>
     isFactionSelectionWithCustomHomeworlds(fs) ? fs.faction : fs;
 
-const homeworldsForFactionSelection = (fs: FactionSelection): PlanetName[] =>
-    isFactionSelectionWithCustomHomeworlds(fs)
-        ? homeworlds(fs.homeworldsOf)
-        : homeworlds(fs);
+const homeworldsForFactionSelection = (fs: FactionSelection): PlanetName[] => {
+    const systemTile = isFactionSelectionWithCustomHomeworlds(fs)
+        ? factionWithFixedHomeworldsSystemTile(fs.homeworldsOf)
+        : factionWithFixedHomeworldsSystemTile(fs);
+    return isSystemWithPlanetsTile(systemTile) ? systemTile.planets : [];
+};
 
 const startingTechsForFaction = (f: Faction): Technology[] => {
     switch (f) {
@@ -734,7 +809,7 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
         case 'The Berserkers of Kjalengard':
         case 'The Monks of Kolume':
         case 'The Kyro Sodality':
-        case 'The Lanefir Remants':
+        case 'The Lanefir Remnants':
         case 'The Nokar Sellships':
             return [];
     }
@@ -748,9 +823,11 @@ export {
     factionSheetImage,
     factionsWithDynamicHomeworlds,
     factionsWithFixedHomeworlds,
+    factionSystemTile,
+    factionSystemTileNumber,
     FactionWithDynamicHomeworlds,
     FactionWithFixedHomeworlds,
-    homeworlds,
+    factionWithFixedHomeworldsSystemTile,
     homeworldsForFactionSelection,
     isFactionSelectionWithCustomHomeworlds,
     isFactionWithDynamicHomeworlds,

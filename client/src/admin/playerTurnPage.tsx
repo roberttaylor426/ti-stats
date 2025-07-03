@@ -31,7 +31,7 @@ import { tileIndex } from '../galaxy';
 import { PlanetName, planets } from '../planets';
 import { StrategyCard } from '../strategyCards';
 import {
-    isHomeworldSystemTile,
+    isFactionSystemTile,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
     PlanetlessSystemTileNumber,
@@ -651,7 +651,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             {_.sortBy(
                                 systemTiles
                                     .filter(isSystemWithPlanetsTile)
-                                    .filter(not(isHomeworldSystemTile))
+                                    .filter(not(isFactionSystemTile))
                                     .filter(
                                         (st) =>
                                             !systemTileNumbersInPlay(

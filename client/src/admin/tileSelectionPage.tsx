@@ -3,17 +3,12 @@ import styled from 'styled-components';
 import _ from 'underscore';
 
 import { factionSelections, MapTilesSelectedEvent } from '../events';
-import {
-    FactionSelection,
-    homeworlds,
-    isFactionSelectionWithCustomHomeworlds,
-} from '../factions';
+import { FactionSelection, factionSystemTile } from '../factions';
 import {
     ghostsOfCreussGalaxyTileNumber,
     ghostsOfCreussHomeTileNumber,
-    isHomeworldSystemTile,
+    isFactionSystemTile,
     isSystemTileNumber,
-    isSystemWithPlanetsTile,
     malliceTileNumber,
     mecatolRexTileNumber,
     SystemTile,
@@ -177,32 +172,26 @@ const tilesAvailableForGalaxyIndex = (
     factionSelections: FactionSelection[]
 ) => {
     if (n === 1 || n === 4 || n === 16 || n === 22 || n === 34 || n === 37) {
-        return homeworldTilesForGalaxy(factionSelections);
+        return factionSystemTilesForGalaxy(factionSelections);
     }
 
-    return nonHomeworldTilesForGalaxy();
+    return nonFactionTilesForGalaxy();
 };
 
-const homeworldTilesForGalaxy = (
+const factionSystemTilesForGalaxy = (
     factionSelections: FactionSelection[]
 ): SystemTile[] =>
     systemTiles.filter((st) =>
         factionSelections.some((fs) =>
             fs === 'The Ghosts of Creuss'
                 ? st.tileNumber === ghostsOfCreussGalaxyTileNumber
-                : isFactionSelectionWithCustomHomeworlds(fs)
-                  ? isSystemWithPlanetsTile(st) &&
-                    _.isEqual(homeworlds(fs.homeworldsOf), st.planets)
-                  : isSystemWithPlanetsTile(st) &&
-                    _.isEqual(homeworlds(fs), st.planets)
+                : factionSystemTile(fs)
         )
     );
 
-const nonHomeworldTilesForGalaxy = (): SystemTile[] =>
+const nonFactionTilesForGalaxy = (): SystemTile[] =>
     systemTiles
-        .filter(
-            (st) => !isSystemWithPlanetsTile(st) || !isHomeworldSystemTile(st)
-        )
+        .filter((st) => !isFactionSystemTile(st))
         .filter(
             (st) =>
                 st.tileNumber !== ghostsOfCreussGalaxyTileNumber &&
