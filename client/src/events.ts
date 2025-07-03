@@ -82,6 +82,14 @@ type PlayerCompletedStrategyCardPrimaryActionEvent = {
     faction: Faction;
 };
 
+type PlayerAttackedSystemEvent = {
+    type: 'PlayerAttackedSystem';
+    time: number;
+    faction: Faction;
+    tileNumber: SystemTileNumber;
+    defender: Faction;
+};
+
 type PlayerFinishedTurnEvent = {
     type: 'PlayerFinishedTurn';
     time: number;
@@ -349,6 +357,7 @@ type Event =
     | PlanetEnhancedEvent
     | PlanetlessSystemControlledEvent
     | PlayersAssignedFactionsAndColorsEvent
+    | PlayerAttackedSystemEvent
     | PlayerCompletedStrategyCardPrimaryActionEvent
     | PlayerFinishedTurnEvent
     | PlayerPlayedStrategyCardEvent

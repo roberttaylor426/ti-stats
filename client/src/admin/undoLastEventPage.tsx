@@ -66,6 +66,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return `Planetless system controlled - ${systemTileDescription(e.tileNumber)}`;
         case 'PlayersAssignedFactionsAndColors':
             return 'Player factions and colors assigned';
+        case 'PlayerAttackedSystem':
+            return `Player attacked system - ${e.faction} / ${systemTileDescription(e.tileNumber)}`;
         case 'PlayerFinishedTurn':
             return `Player finished turn - ${e.faction}`;
         case 'PlayerPlayedStrategyCard':

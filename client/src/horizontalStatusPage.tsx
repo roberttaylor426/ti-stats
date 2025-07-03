@@ -109,36 +109,39 @@ const HorizontalStatusPage: React.FC = () => {
                                             : lastEvent.type ===
                                                 'PlayerSelectedStrategyCard'
                                               ? 'All strategy cards picked'
-                                              : activePlayerInActionPhase
-                                                ? `${shortName(activePlayerInActionPhase)} turn`
-                                                : lastEvent.type ===
-                                                    'PlayerFinishedTurn'
-                                                  ? 'Score objectives, initiative order'
+                                              : lastEvent.type ===
+                                                  'PlayerAttackedSystem'
+                                                ? `${shortName(lastEvent.faction)} attack!`
+                                                : activePlayerInActionPhase
+                                                  ? `${shortName(activePlayerInActionPhase)} turn`
                                                   : lastEvent.type ===
-                                                      'ObjectivesScoredDuringStatusPhase'
-                                                    ? 'Reveal public objective'
+                                                      'PlayerFinishedTurn'
+                                                    ? 'Score objectives, initiative order'
                                                     : lastEvent.type ===
-                                                        'PublicObjectiveRevealedDuringStatusPhase'
-                                                      ? 'Draw action cards'
+                                                        'ObjectivesScoredDuringStatusPhase'
+                                                      ? 'Reveal public objective'
                                                       : lastEvent.type ===
-                                                          'ActionCardsDrawnDuringStatusPhase'
-                                                        ? 'Remove command tokens from board'
+                                                          'PublicObjectiveRevealedDuringStatusPhase'
+                                                        ? 'Draw action cards'
                                                         : lastEvent.type ===
-                                                            'CommandTokensRemovedDuringStatusPhase'
-                                                          ? 'Gain and redistribute command tokens'
+                                                            'ActionCardsDrawnDuringStatusPhase'
+                                                          ? 'Remove command tokens from board'
                                                           : lastEvent.type ===
-                                                              'CardsReadiedDuringStatusPhase'
-                                                            ? 'Repair units'
+                                                              'CommandTokensRemovedDuringStatusPhase'
+                                                            ? 'Gain and redistribute command tokens'
                                                             : lastEvent.type ===
-                                                                'UnitsRepairedDuringStatusPhase'
-                                                              ? 'Return strategy cards'
-                                                              : isItAgendaPhase(
-                                                                      events
-                                                                  )
-                                                                ? agendaCardTextToShowDuringAgendaPhase(
-                                                                      events
-                                                                  )
-                                                                : ''}
+                                                                'CardsReadiedDuringStatusPhase'
+                                                              ? 'Repair units'
+                                                              : lastEvent.type ===
+                                                                  'UnitsRepairedDuringStatusPhase'
+                                                                ? 'Return strategy cards'
+                                                                : isItAgendaPhase(
+                                                                        events
+                                                                    )
+                                                                  ? agendaCardTextToShowDuringAgendaPhase(
+                                                                        events
+                                                                    )
+                                                                  : ''}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />
@@ -268,6 +271,8 @@ const generateMarqueeText = (events: Event[]) => {
                     return `${e.faction} ${randomStrategyCardPlayedVerb(e.time)} ${e.strategyCard}`;
                 case 'PlayerResearchedTechnology':
                     return `${e.faction} researched ${e.technology.name}`;
+                case 'PlayerAttackedSystem':
+                    return `${e.faction} ATTACKED ${e.defender}`;
             }
         })
         .filter((t) => t.length > 0)
