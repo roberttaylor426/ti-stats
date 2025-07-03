@@ -49,6 +49,8 @@ import { notUndefined, range } from './util';
  When a player captures Mecatol they should score a point
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
  Rename stuff in statusPage and tickerPage
+ Attack alarms
+ Revamp strategy card selection view on status pane to make it easier to read
 */
 
 const GalaxyPage: React.FC = () => {
