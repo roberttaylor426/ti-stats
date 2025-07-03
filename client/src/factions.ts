@@ -1,7 +1,10 @@
 import _ from 'underscore';
 
+import bentor from './assets/factionSheets/bentor.webp';
 import cabal from './assets/factionSheets/cabal.webp';
 import dihmon from './assets/factionSheets/dih.webp';
+import ghoti from './assets/factionSheets/ghoti.webp';
+import glimmer from './assets/factionSheets/glimmer.webp';
 import berserkers from './assets/factionSheets/kjal.webp';
 import l1z1x from './assets/factionSheets/l1z1x.webp';
 import rohdna from './assets/factionSheets/rohdna.webp';
@@ -503,7 +506,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Mirveda Protectorate':
             return '';
         case 'The Glimmer of Mortheus':
-            return '';
+            return glimmer;
         case 'The Myko-Mentori':
             return '';
         case 'The Nivyn Star of Kings':
@@ -525,13 +528,13 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Zelian Purifier':
             return '';
         case 'The Bentor Conglomerate':
-            return '';
+            return bentor;
         case 'The Cheiran Hordes':
             return '';
         case 'The Edyn Mandate':
             return '';
         case 'The Ghoti Wayfarers':
-            return '';
+            return ghoti;
         case 'The GLEdge Union':
             return '';
         case 'The Berserkers of Kjalengard':
