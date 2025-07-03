@@ -144,6 +144,7 @@ import {
     factionWithFixedHomeworldsSystemTile,
 } from './factions';
 import { PlanetName } from './planets';
+import { not } from './util';
 
 type PlanetlessSystemTile = {
     tileNumber: PlanetlessSystemTileNumber;
@@ -160,6 +161,9 @@ type SystemTile = PlanetlessSystemTile | SystemWithPlanetsTile;
 
 const isSystemWithPlanetsTile = (t: SystemTile): t is SystemWithPlanetsTile =>
     isSystemWithPlanetsTileNumber(t.tileNumber);
+
+const isPlanetlessSystemTile = (t: SystemTile): t is PlanetlessSystemTile =>
+    not(isSystemWithPlanetsTileNumber)(t.tileNumber);
 
 const planetlessSystemTileNumbers = [
     17, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 77, 78, 79, 80, 81,
@@ -1040,6 +1044,7 @@ export {
     gledgeUnionSystemTile,
     glimmerOfMortheusSystemTile,
     isFactionSystemTile,
+    isPlanetlessSystemTile,
     isPlanetlessSystemTileNumber,
     isSystemTileNumber,
     isSystemWithPlanetsTile,

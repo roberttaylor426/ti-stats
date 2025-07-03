@@ -6,10 +6,12 @@ import {
     Faction,
     factions,
     FactionSelection,
+    factionSystemTile,
     FactionWithDynamicHomeworlds,
     FactionWithFixedHomeworlds,
     homeworldsForFactionSelection,
     isFactionWithDynamicHomeworlds,
+    planetsOutsideOfGalaxy,
     selectedFaction,
     startingTechsForFaction,
 } from '../factions';
@@ -18,7 +20,8 @@ import {
     PlayerColor,
     playerColors,
 } from '../playerColors';
-import { range } from '../util';
+import { isPlanetlessSystemTile } from '../systemTiles';
+import { notUndefined, range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
 import { PageTitle } from './components/pageTitle';
@@ -64,6 +67,30 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                             }) as const
                     )
                 ),
+                ...Object.values(factionSelections).flatMap((fs) =>
+                    planetsOutsideOfGalaxy(selectedFaction(fs)).map(
+                        (p) =>
+                            ({
+                                type: 'PlanetControlled',
+                                time: new Date().getTime(),
+                                planet: p,
+                                faction: selectedFaction(fs),
+                            }) as const
+                    )
+                ),
+                ...Object.values(factionSelections)
+                    .map((fs) => {
+                        const fst = factionSystemTile(fs);
+                        return isPlanetlessSystemTile(fst)
+                            ? ({
+                                  type: 'PlanetlessSystemControlled',
+                                  time: new Date().getTime(),
+                                  tileNumber: fst.tileNumber,
+                                  faction: selectedFaction(fs),
+                              } as const)
+                            : undefined;
+                    })
+                    .filter(notUndefined),
                 ...Object.values(factionSelections)
                     .map((fs) => selectedFaction(fs))
                     .flatMap((f) =>

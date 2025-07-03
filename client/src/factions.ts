@@ -818,6 +818,72 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
     }
 };
 
+const planetsOutsideOfGalaxy = (f: Faction): PlanetName[] => {
+    switch (f) {
+        case 'Sardakk N’orr':
+        case 'The Arborec':
+        case 'The Argent Flight':
+        case 'The Barony of Letnev':
+        case 'The Clan of Saar':
+        case 'The Embers of Muaat':
+        case 'The Emirates of Hacan':
+        case 'The Empyrean':
+        case 'The Federation of Sol':
+        case 'The Ghosts of Creuss':
+        case 'The L1Z1X Mindnet':
+        case 'The Mahact Gene-Sorcerers':
+        case 'The Mentak Coalition':
+        case 'The Naalu Collective':
+        case 'The Naaz-Rokha Alliance':
+        case 'The Nekro Virus':
+        case 'The Nomad':
+        case 'The Titans of Ul':
+        case 'The Universities of Jol-Nar':
+        case "The Vuil'Raith Cabal":
+        case 'The Winnu':
+        case 'The Xxcha Kingdom':
+        case 'The Yin Brotherhood':
+        case 'The Yssaril Tribes':
+        case 'The Shipwrights of Ark':
+        case 'The Celdauri Trade Confederation':
+        case 'The Savages of Cymiae':
+        case 'The Dih-Mohn Flotilla':
+        case 'The Florzen Profiteers':
+        case 'The Free Systems Compact':
+        case 'The Ghemina Raiders':
+        case 'The Augurs of Illyxum':
+        case 'The Kollecc Society':
+        case 'The Kortali Tribunal':
+        case 'The Li-Zho Dynasty':
+        case "The L'tokk Khrask":
+        case 'The Mirveda Protectorate':
+        case 'The Glimmer of Mortheus':
+        case 'The Myko-Mentori':
+        case 'The Nivyn Star of Kings':
+        case 'The Olradin League':
+        case 'The Zealots of Rhodun':
+        case "Roh'Dhna Mechatronics":
+        case 'The Tnelis Syndicate':
+        case 'The Vaden Banking Clans':
+        case 'The Vaylerian Scourge':
+        case 'The Veldyr Sovereignty':
+        case 'The Zelian Purifier':
+        case 'The Bentor Conglomerate':
+        case 'The Cheiran Hordes':
+        case 'The Edyn Mandate':
+        case 'The GLEdge Union':
+        case 'The Berserkers of Kjalengard':
+        case 'The Monks of Kolume':
+        case 'The Kyro Sodality':
+        case 'The Lanefir Remnants':
+        case 'The Nokar Sellships':
+        case 'The Council Keleres':
+            return [];
+        case 'The Ghoti Wayfarers':
+            return ['Ghoti'];
+    }
+};
+
 export {
     Faction,
     factionQuote,
@@ -834,6 +900,7 @@ export {
     homeworldsForFactionSelection,
     isFactionSelectionWithCustomHomeworlds,
     isFactionWithDynamicHomeworlds,
+    planetsOutsideOfGalaxy,
     selectedFaction,
     shortName,
     startingTechsForFaction,

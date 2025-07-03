@@ -181,6 +181,7 @@ const planetNames = [
     'Ekko',
     'Edyn',
     'Okke',
+    'Ghoti',
 ] as const;
 
 type PlanetName = (typeof planetNames)[number];
@@ -1013,6 +1014,10 @@ const planets: Record<PlanetName, PlanetMeta> = {
     Okke: {
         resources: 0,
         influence: 1,
+    },
+    Ghoti: {
+        resources: 3,
+        influence: 3,
     },
 };
 
