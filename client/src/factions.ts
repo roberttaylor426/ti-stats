@@ -553,7 +553,7 @@ const factionQuote = (f: Faction): string => {
         case 'The Mirveda Protectorate':
             return '';
         case 'The Glimmer of Mortheus':
-            return '';
+            return 'You do not see. You will know.';
         case 'The Myko-Mentori':
             return '';
         case 'The Nivyn Star of Kings':
@@ -575,13 +575,13 @@ const factionQuote = (f: Faction): string => {
         case 'The Zelian Purifier':
             return '';
         case 'The Bentor Conglomerate':
-            return '';
+            return "We will find what we seek. Don't make this difficult";
         case 'The Cheiran Hordes':
             return '';
         case 'The Edyn Mandate':
             return '';
         case 'The Ghoti Wayfarers':
-            return '';
+            return 'You float through space, seeking to conquer its surface, but ignorant to what you disturbed in the deep.';
         case 'The GLEdge Union':
             return '';
         case 'The Berserkers of Kjalengard':
