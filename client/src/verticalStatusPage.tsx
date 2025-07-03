@@ -42,7 +42,7 @@ import {
     ResourcesAndInfluence,
 } from './planets';
 import { numberOfPlayersInGame } from './playerColors';
-import { strategyCardImage } from './strategyCards';
+import { compactStrategyCardImage, strategyCardImage } from './strategyCards';
 import { useEvents } from './useEvents';
 
 const VerticalStatusPage: React.FC = () => {
@@ -143,78 +143,28 @@ const VerticalStatusPage: React.FC = () => {
                     activePlayerInStrategyPhase ||
                     _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
                         <StrategyCardGrid>
-                            <StrategyCard
-                                src={strategyCardImage(
+                            {(
+                                [
                                     'Leadership',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find(
-                                        (e) => e.strategyCard === 'Leadership'
-                                    )
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Diplomacy',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find(
-                                        (e) => e.strategyCard === 'Diplomacy'
-                                    )
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Politics',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find((e) => e.strategyCard === 'Politics')
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Construction',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find(
-                                        (e) => e.strategyCard === 'Construction'
-                                    )
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Trade',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find((e) => e.strategyCard === 'Trade')
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Warfare',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find((e) => e.strategyCard === 'Warfare')
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Technology',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find(
-                                        (e) => e.strategyCard === 'Technology'
-                                    )
-                                )}
-                            />
-                            <StrategyCard
-                                src={strategyCardImage(
                                     'Imperial',
-                                    !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                        events
-                                    ).find((e) => e.strategyCard === 'Imperial')
-                                )}
-                            />
+                                ] as const
+                            ).map((sc) => (
+                                <StrategyCard
+                                    src={compactStrategyCardImage(sc)}
+                                    key={sc}
+                                    $translucent={
+                                        !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                                            events
+                                        ).find((e) => e.strategyCard === sc)
+                                    }
+                                />
+                            ))}
                         </StrategyCardGrid>
                     ) : isRoundEndedPageShown(events) ? (
                         <ColumnWithTitleContainer>
@@ -857,7 +807,7 @@ const SpaceAroundColumn = styled.div`
 
 const StrategyCardGrid = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 1vh;
     margin: 1vh;
@@ -966,9 +916,14 @@ const ActionPhaseStrategyCardContainer = styled.div`
     }
 `;
 
-const StrategyCard = styled.img`
+type StrategyCardProps = {
+    $translucent?: boolean;
+};
+
+const StrategyCard = styled.img<StrategyCardProps>`
     min-width: 0;
     min-height: 0;
+    opacity: ${(props) => (props.$translucent ? 0.25 : 1)};
 `;
 
 const TimeSpan = styled.span`
