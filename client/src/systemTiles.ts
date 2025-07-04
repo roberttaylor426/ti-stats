@@ -948,6 +948,10 @@ const systemTiles: SystemTile[] = [
 const systemTile = (stn: SystemTileNumber): SystemTile =>
     systemTiles.find((st) => st.tileNumber === stn) as SystemTile;
 
+const systemWithPlanetsTile = (
+    stn: SystemWithPlanetsTileNumber
+): SystemWithPlanetsTile => systemTile(stn) as SystemWithPlanetsTile;
+
 const systemTileImage = (stn?: SystemTileNumber) =>
     !!stn ? systemTile(stn).image : tile0;
 
@@ -1083,6 +1087,7 @@ export {
     systemTileImage,
     SystemTileNumber,
     systemTiles,
+    systemWithPlanetsTile,
     systemWithPlanetsTileDescription,
     SystemWithPlanetsTileNumber,
     titansOfUlSystemTile,

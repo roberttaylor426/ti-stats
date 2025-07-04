@@ -30,9 +30,9 @@ import {
     ghostsOfCreussHomeTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
+    systemTile,
     systemTileImage,
     SystemTileNumber,
-    systemTiles,
     SystemWithPlanetsTileNumber,
 } from './systemTiles';
 import { useEvents } from './useEvents';
@@ -50,6 +50,12 @@ import { notUndefined, range } from './util';
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
  Rename stuff in statusPage and tickerPage
  Attack alarms
+ https://www.youtube.com/watch?v=8Q64gi9ziHc
+ https://www.youtube.com/watch?v=OgHbJbx7ENw
+ https://www.youtube.com/watch?v=7ejH_BihwFQ
+ https://www.youtube.com/watch?v=BhSZNYyJG-Y
+ https://www.youtube.com/watch?v=W_9KR3mYkUo
+ https://www.youtube.com/watch?v=OJtmtgCwSbI
 */
 
 const GalaxyPage: React.FC = () => {
@@ -610,19 +616,17 @@ const controllingPlayerColors = (
     systemTileNumber: SystemTileNumber | undefined,
     events: Event[]
 ): ControllingPlayerColors | undefined => {
-    const systemTile = systemTiles.find(
-        (st) => st.tileNumber === systemTileNumber
-    );
+    const st = systemTileNumber ? systemTile(systemTileNumber) : undefined;
 
-    if (!systemTile) {
+    if (!st) {
         return undefined;
     }
 
-    if (isSystemWithPlanetsTile(systemTile)) {
+    if (isSystemWithPlanetsTile(st)) {
         return {
             style: 'solid',
             playerColors:
-                systemTile.planets
+                st.planets
                     .map((p) =>
                         latestPlanetControlledEventsByPlanet(events).find(
                             (e) => e.planet === p
@@ -638,10 +642,7 @@ const controllingPlayerColors = (
         events
     ).find((e) => e.planet === 'Mirage')?.faction;
     if (
-        hasMiragePlanetBeenFoundOnSystemTileWithNumber(
-            events,
-            systemTile.tileNumber
-        ) &&
+        hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, st.tileNumber) &&
         factionControllingMirage
     ) {
         return {

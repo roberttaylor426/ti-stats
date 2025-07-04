@@ -36,11 +36,13 @@ import {
     isSystemWithPlanetsTile,
     PlanetlessSystemTileNumber,
     systemTileDescription,
+    SystemTileNumber,
     systemTiles,
+    systemWithPlanetsTile,
     SystemWithPlanetsTileNumber,
 } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
-import { not, range } from '../util';
+import { not, notUndefined, range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
 import { NumberInput } from './components/input';
@@ -88,6 +90,11 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const [techToResearch, setTechToResearch] = useState<Technology>();
     const [factionToResearchTech, setFactionToResearchTech] =
+        useState<Faction>();
+
+    const [selectedSystemToAttack, setSelectedSystemToAttack] =
+        useState<SystemTileNumber>();
+    const [selectedFactionDefendingSystem, setSelectedFactionDefendingSystem] =
         useState<Faction>();
 
     const [planetToDestroy, setPlanetToDestroy] = useState<PlanetName>();
@@ -234,7 +241,25 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         return await publishNewEvents([newEvent]);
     };
 
-    const planetsOnTheBoard: PlanetName[] = systemTileNumbersInPlay(events)
+    const publishPlayerAttackedSystemEvent = async (
+        f: Faction,
+        tn: SystemTileNumber,
+        defender: Faction
+    ): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'PlayerAttackedSystem',
+            time: new Date().getTime(),
+            faction: f,
+            tileNumber: tn,
+            defender,
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
+    const systemTilesInPlay = systemTileNumbersInPlay(events);
+
+    const planetsOnTheBoard: PlanetName[] = systemTilesInPlay
         .flatMap((stn) =>
             isPlanetlessSystemTileNumber(stn)
                 ? hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, stn)
@@ -250,7 +275,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         );
 
     const planetlessSystemTilesOnTheBoard: PlanetlessSystemTileNumber[] =
-        systemTileNumbersInPlay(events)
+        systemTilesInPlay
             .filter(isPlanetlessSystemTileNumber)
             .filter(
                 (stn) =>
@@ -266,6 +291,24 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         return `${p}${faction ? ` (${shortName(faction)})` : ''}`;
     };
 
+    const factionsCurrentlyControllingSystemTile = (
+        stn: SystemTileNumber
+    ): Faction[] =>
+        _.uniq(
+            isPlanetlessSystemTileNumber(stn)
+                ? [factionCurrentlyControllingPlanetlessSystemTile(stn)].filter(
+                      notUndefined
+                  )
+                : systemWithPlanetsTile(stn)
+                      .planets.map((p) =>
+                          latestPlanetControlledEventsByPlanet(events).find(
+                              (e) => e.planet === p
+                          )
+                      )
+                      .filter(notUndefined)
+                      .map((e) => e.faction)
+        );
+
     const factionCurrentlyControllingPlanetlessSystemTile = (
         stn: PlanetlessSystemTileNumber
     ): Faction | undefined =>
@@ -279,6 +322,12 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         const faction = factionCurrentlyControllingPlanetlessSystemTile(stn);
         return `${systemTileDescription(stn)}${faction ? ` (${shortName(faction)})` : ''}`;
     };
+
+    const systemTilesAttackableByActivePlayer = systemTilesInPlay.filter((st) =>
+        factionsCurrentlyControllingSystemTile(st).some(
+            (f) => f !== activePlayerInActionPhase
+        )
+    );
 
     const planetResourcesAndInfluence = (p: PlanetName) => ({
         resources:
@@ -573,6 +622,60 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             <InputsRow>
                 <Select
                     onChange={(e) =>
+                        setSelectedSystemToAttack(
+                            Number.parseInt(e.target.value) as SystemTileNumber
+                        )
+                    }
+                >
+                    <option value={''}>--System to attack--</option>
+                    {_.sortBy(systemTilesAttackableByActivePlayer, (stn) =>
+                        tileIndexOnBoard(stn, mapTilesSelectedEvent)
+                    ).map((stn) => (
+                        <option key={stn} value={stn}>
+                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                        </option>
+                    ))}
+                </Select>
+                <Select
+                    onChange={(e) =>
+                        setSelectedFactionDefendingSystem(
+                            e.target.value as Faction
+                        )
+                    }
+                    disabled={selectedSystemToAttack === undefined}
+                >
+                    <option value={''}>--Defending faction--</option>
+                    {selectedSystemToAttack &&
+                        _.sortBy(
+                            factionsCurrentlyControllingSystemTile(
+                                selectedSystemToAttack
+                            )
+                        ).map((f) => (
+                            <option key={f} value={f}>
+                                {f}
+                            </option>
+                        ))}
+                </Select>
+                <Button
+                    onClick={async () => {
+                        if (
+                            selectedSystemToAttack &&
+                            selectedFactionDefendingSystem
+                        ) {
+                            await publishPlayerAttackedSystemEvent(
+                                activePlayerInActionPhase,
+                                selectedSystemToAttack,
+                                selectedFactionDefendingSystem
+                            );
+                        }
+                    }}
+                >
+                    Attack system
+                </Button>
+            </InputsRow>
+            <InputsRow>
+                <Select
+                    onChange={(e) =>
                         setPlanetToDestroy(e.target.value as PlanetName)
                     }
                 >
@@ -654,9 +757,9 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                     .filter(not(isFactionSystemTile))
                                     .filter(
                                         (st) =>
-                                            !systemTileNumbersInPlay(
-                                                events
-                                            ).includes(st.tileNumber)
+                                            !systemTilesInPlay.includes(
+                                                st.tileNumber
+                                            )
                                     ),
                                 (st) => st.tileNumber
                             ).map((st) => (
@@ -770,7 +873,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 };
 
 const tileIndexOnBoard = (
-    stn: PlanetlessSystemTileNumber,
+    stn: SystemTileNumber,
     mapTilesSelectedEvent: MapTilesSelectedEvent
 ): number =>
     Number.parseInt(
