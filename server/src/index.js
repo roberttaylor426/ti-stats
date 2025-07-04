@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const fs = require('node:fs');
+const {createProxyMiddleware} = require('http-proxy-middleware');
 
 const app = require('express')();
 
@@ -179,6 +180,13 @@ app.get('/api', (req, res) => {
 
 app.put('/api', async (req, res) => {
     events = req.body;
+    fs.writeFile('out/event-log.json', JSON.stringify(events), err => {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log('Successfully wrote events');
+        }
+    });
     res.end();
 });
 
