@@ -48,6 +48,7 @@ import { notUndefined, range } from './util';
  When a player captures Mecatol they should score a point
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
  Rename stuff in statusPage and tickerPage
+ Make admin controls a little easier to navigate during action phase
 */
 
 const GalaxyPage: React.FC = () => {
@@ -111,6 +112,13 @@ const GalaxyPage: React.FC = () => {
                                                     systemTileNumber,
                                                     events
                                                 )}
+                                                systemUnderAttack={
+                                                    !systemTileNumber ||
+                                                    isSystemUnderAttack(
+                                                        systemTileNumber,
+                                                        events
+                                                    )
+                                                }
                                                 showMirageToken={
                                                     !!systemTileNumber &&
                                                     isPlanetlessSystemTileNumber(
@@ -206,6 +214,17 @@ const GalaxyPage: React.FC = () => {
                 </Scoreboard>
             </ResourcesAndInfluenceStats>
         </StyledGalaxy>
+    );
+};
+
+const isSystemUnderAttack = (
+    stn: SystemTileNumber,
+    events: Event[]
+): boolean => {
+    const lastEvent = _.last(events);
+    return (
+        lastEvent?.type === 'PlayerAttackedSystem' &&
+        lastEvent.tileNumber === stn
     );
 };
 
@@ -323,6 +342,7 @@ const columnOutsideOfInitialGalaxy = (
                             t,
                             events
                         )}
+                        systemUnderAttack={isSystemUnderAttack(t, events)}
                         showMirageToken={false}
                     />
                 )
@@ -396,6 +416,7 @@ const tilesAtBeginningOfColumn = (c: number, events: Event[]) => [
                 e.tileNumber,
                 events
             )}
+            systemUnderAttack={isSystemUnderAttack(e.tileNumber, events)}
             showMirageToken={false}
         />
     )),
@@ -449,6 +470,7 @@ const tilesAtEndOfColumn = (c: number, events: Event[]) => [
                     e.tileNumber,
                     events
                 )}
+                systemUnderAttack={isSystemUnderAttack(e.tileNumber, events)}
                 showMirageToken={false}
             />
         )
@@ -662,12 +684,14 @@ const controllingPlayerColors = (
 type HighlightableTileProps = {
     systemTileNumber?: SystemTileNumber;
     controllingPlayerColors: ControllingPlayerColors | undefined;
+    systemUnderAttack: boolean;
     showMirageToken: boolean;
 };
 
 const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
     systemTileNumber,
     controllingPlayerColors,
+    systemUnderAttack,
     showMirageToken,
 }) => (
     <StyledHighlightableTile>
@@ -681,7 +705,10 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
             </MirageTokenContainer>
         )}
         {systemTileNumber && (
-            <HexHighlight controllingPlayerColors={controllingPlayerColors} />
+            <HexHighlight
+                controllingPlayerColors={controllingPlayerColors}
+                systemUnderAttack={systemUnderAttack}
+            />
         )}
     </StyledHighlightableTile>
 );
@@ -701,10 +728,12 @@ const tanFromDegrees = (degrees: number) => Math.tan((degrees * Math.PI) / 180);
 
 type HexHighlightProps = {
     controllingPlayerColors: ControllingPlayerColors | undefined;
+    systemUnderAttack: boolean;
 };
 
 const HexHighlight: React.FC<HexHighlightProps> = ({
     controllingPlayerColors,
+    systemUnderAttack,
 }) => (
     <>
         {controllingPlayerColors &&
@@ -725,6 +754,7 @@ const HexHighlight: React.FC<HexHighlightProps> = ({
                         ]
                     )}
                     $dashedBorder={controllingPlayerColors.style === 'dashed'}
+                    $pulse={systemUnderAttack}
                 />
             ))}
     </>
@@ -737,6 +767,7 @@ type HexHighlightSegmentProps = {
     $rotation: number;
     $color: string;
     $dashedBorder: boolean;
+    $pulse: boolean;
 };
 
 const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
@@ -759,6 +790,19 @@ const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
             ${highlightPercentage}%,
         ${(50 * tanFromDegrees(30)) / hexagonWidthToHeightRatio}% 0%
     );
+    animation: ${(props) => (props.$pulse ? 'pulse 2s infinite' : 'none')};
+
+    @keyframes pulse {
+        0% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
 `;
 
 type MalliceTileProps = {
