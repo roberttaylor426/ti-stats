@@ -50,12 +50,6 @@ import { notUndefined, range } from './util';
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
  Rename stuff in statusPage and tickerPage
  Attack alarms
- https://www.youtube.com/watch?v=8Q64gi9ziHc
- https://www.youtube.com/watch?v=OgHbJbx7ENw
- https://www.youtube.com/watch?v=7ejH_BihwFQ
- https://www.youtube.com/watch?v=BhSZNYyJG-Y
- https://www.youtube.com/watch?v=W_9KR3mYkUo
- https://www.youtube.com/watch?v=OJtmtgCwSbI
 */
 
 const GalaxyPage: React.FC = () => {

@@ -55,6 +55,18 @@ module.exports = [
                         },
                     ],
                 },
+                {
+                    test: /\.(mp3)(\?v=\d+\.\d+\.\d+)?$/,
+                    use: [
+                        {
+                            loader: 'file-loader',
+                            options: {
+                                name: '[name]-[hash].[ext]',
+                                outputPath: 'audio/',
+                            },
+                        },
+                    ],
+                },
             ],
         },
 
