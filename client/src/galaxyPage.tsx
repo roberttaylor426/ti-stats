@@ -44,12 +44,10 @@ import { notUndefined, range } from './util';
  Support tile changes in game (Creuss, Muaat heroes)
  Digitize the VP tracks
  Ability to lose a tech (Jol Nar)
- Pause timer after Strategy primary
  Can we keep track of votes?
  When a player captures Mecatol they should score a point
  Mallice and Creuss tiles overlap certain tiles added to the galaxy
  Rename stuff in statusPage and tickerPage
- Attack alarms
 */
 
 const GalaxyPage: React.FC = () => {
