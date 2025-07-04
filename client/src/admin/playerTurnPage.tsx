@@ -621,11 +621,25 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             />
             <InputsRow>
                 <Select
-                    onChange={(e) =>
-                        setSelectedSystemToAttack(
-                            Number.parseInt(e.target.value) as SystemTileNumber
-                        )
-                    }
+                    onChange={(e) => {
+                        const systemToAttack = Number.parseInt(
+                            e.target.value
+                        ) as SystemTileNumber;
+                        setSelectedSystemToAttack(systemToAttack);
+
+                        if (
+                            factionsCurrentlyControllingSystemTile(
+                                systemToAttack
+                            ).length === 1
+                        ) {
+                            setSelectedFactionDefendingSystem(
+                                factionsCurrentlyControllingSystemTile(
+                                    systemToAttack
+                                )[0]
+                            );
+                        }
+                    }}
+                    value={selectedSystemToAttack || ''}
                 >
                     <option value={''}>--System to attack--</option>
                     {_.sortBy(systemTilesAttackableByActivePlayer, (stn) =>
@@ -643,6 +657,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                         )
                     }
                     disabled={selectedSystemToAttack === undefined}
+                    value={selectedFactionDefendingSystem || ''}
                 >
                     <option value={''}>--Defending faction--</option>
                     {selectedSystemToAttack &&
@@ -667,6 +682,8 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                 selectedSystemToAttack,
                                 selectedFactionDefendingSystem
                             );
+                            setSelectedSystemToAttack(undefined);
+                            setSelectedFactionDefendingSystem(undefined);
                         }
                     }}
                 >
