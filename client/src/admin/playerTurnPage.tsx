@@ -48,6 +48,7 @@ import { Button } from './components/button';
 import { NumberInput } from './components/input';
 import { InputsColumn } from './components/inputsColumn';
 import { InputsRow } from './components/inputsRow';
+import { InputTitle } from './components/inputTitle';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
 import { VpScoringContainer } from './components/vpScoringContainer';
@@ -386,104 +387,49 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     title={`${currentPlayerTurnInActionPhase(events)} turn`}
                 />
             </div>
-            <InputsRow>
-                <Select
-                    onChange={(e) =>
-                        setSelectedPlanetToControl(e.target.value as PlanetName)
-                    }
-                >
-                    <option value={''}>--Planet--</option>
-                    {_.sortBy(planetsOnTheBoard, identity).map((p) => (
-                        <option key={p} value={p}>
-                            {planetNameWithControllingFaction(p)}
-                        </option>
-                    ))}
-                </Select>
-                <Button
-                    onClick={async () => {
-                        if (
-                            selectedPlanetToControl &&
-                            activePlayerInActionPhase !==
-                                factionCurrentlyControllingPlanet(
-                                    selectedPlanetToControl
-                                )
-                        ) {
-                            await publishPlanetControlledEvent(
-                                selectedPlanetToControl,
-                                activePlayerInActionPhase
-                            );
-                        }
-                    }}
-                >
-                    Take control
-                </Button>
-            </InputsRow>
-            <InputsRow>
-                <Select
-                    onChange={(e) =>
-                        setSelectedPlanetlessSystemToControl(
-                            Number.parseInt(
-                                e.target.value
-                            ) as PlanetlessSystemTileNumber
-                        )
-                    }
-                >
-                    <option value={''}>--Planetless system--</option>
-                    <option
-                        value={''}
-                        disabled
-                    >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
-                    {_.sortBy(planetlessSystemTilesOnTheBoard, (stn) =>
-                        tileIndexOnBoard(stn, mapTilesSelectedEvent)
-                    ).map((stn) => (
-                        <option key={stn} value={stn}>
-                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
-                                stn
-                            )}`}
-                        </option>
-                    ))}
-                </Select>
-                <Button
-                    onClick={async () => {
-                        if (
-                            selectedPlanetlessSystemToControl &&
-                            factionCurrentlyControllingPlanetlessSystemTile(
-                                selectedPlanetlessSystemToControl
-                            ) !== activePlayerInActionPhase
-                        ) {
-                            await publishPlanetlessSystemControlledEvent(
-                                selectedPlanetlessSystemToControl,
-                                activePlayerInActionPhase
-                            );
-                        }
-                    }}
-                >
-                    Take control
-                </Button>
-                <Button
-                    disabled={
-                        !selectedPlanetlessSystemToControl ||
-                        factionCurrentlyControllingPlanetlessSystemTile(
-                            selectedPlanetlessSystemToControl
-                        ) !== activePlayerInActionPhase
-                    }
-                    onClick={async () => {
-                        if (selectedPlanetlessSystemToControl) {
-                            await publishPlanetlessSystemControlledEvent(
-                                selectedPlanetlessSystemToControl,
-                                undefined
-                            );
-                        }
-                    }}
-                >
-                    Lose control
-                </Button>
-            </InputsRow>
-            {!hasMiragePlanetBeenFound(events) && (
+            <InputsColumn>
+                <InputTitle>Take control of planet</InputTitle>
                 <InputsRow>
                     <Select
                         onChange={(e) =>
-                            setSelectedPlanetlessSystemToFindMirageIn(
+                            setSelectedPlanetToControl(
+                                e.target.value as PlanetName
+                            )
+                        }
+                    >
+                        <option value={''}>--Planet--</option>
+                        {_.sortBy(planetsOnTheBoard, identity).map((p) => (
+                            <option key={p} value={p}>
+                                {planetNameWithControllingFaction(p)}
+                            </option>
+                        ))}
+                    </Select>
+                    <Button
+                        onClick={async () => {
+                            if (
+                                selectedPlanetToControl &&
+                                activePlayerInActionPhase !==
+                                    factionCurrentlyControllingPlanet(
+                                        selectedPlanetToControl
+                                    )
+                            ) {
+                                await publishPlanetControlledEvent(
+                                    selectedPlanetToControl,
+                                    activePlayerInActionPhase
+                                );
+                            }
+                        }}
+                    >
+                        Take control
+                    </Button>
+                </InputsRow>
+            </InputsColumn>
+            <InputsColumn>
+                <InputTitle>Take control of planetless system</InputTitle>
+                <InputsRow>
+                    <Select
+                        onChange={(e) =>
+                            setSelectedPlanetlessSystemToControl(
                                 Number.parseInt(
                                     e.target.value
                                 ) as PlanetlessSystemTileNumber
@@ -507,19 +453,43 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     </Select>
                     <Button
                         onClick={async () => {
-                            if (selectedPlanetlessSystemToFindMirageIn) {
-                                await publishMiragePlanetFoundEvent(
-                                    selectedPlanetlessSystemToFindMirageIn,
+                            if (
+                                selectedPlanetlessSystemToControl &&
+                                factionCurrentlyControllingPlanetlessSystemTile(
+                                    selectedPlanetlessSystemToControl
+                                ) !== activePlayerInActionPhase
+                            ) {
+                                await publishPlanetlessSystemControlledEvent(
+                                    selectedPlanetlessSystemToControl,
                                     activePlayerInActionPhase
                                 );
                             }
                         }}
                     >
-                        Find Mirage
+                        Take control
+                    </Button>
+                    <Button
+                        disabled={
+                            !selectedPlanetlessSystemToControl ||
+                            factionCurrentlyControllingPlanetlessSystemTile(
+                                selectedPlanetlessSystemToControl
+                            ) !== activePlayerInActionPhase
+                        }
+                        onClick={async () => {
+                            if (selectedPlanetlessSystemToControl) {
+                                await publishPlanetlessSystemControlledEvent(
+                                    selectedPlanetlessSystemToControl,
+                                    undefined
+                                );
+                            }
+                        }}
+                    >
+                        Lose control
                     </Button>
                 </InputsRow>
-            )}
+            </InputsColumn>
             <InputsColumn>
+                <InputTitle>Enhance planet</InputTitle>
                 <Select
                     onChange={(e) =>
                         setSelectedPlanetToEnhance(e.target.value as PlanetName)
@@ -564,160 +534,222 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     Enhance
                 </Button>
             </InputsColumn>
-            <InputsRow>
-                <Select
-                    onChange={(e) =>
-                        setFactionToResearchTech(e.target.value as Faction)
-                    }
-                >
-                    <option value={''}>--Faction--</option>
-                    {_.sortBy(factionsInGame(events)).map((f) => (
-                        <option key={f} value={f}>
-                            {f}
-                        </option>
-                    ))}
-                </Select>
-                <Select
-                    onChange={(e) =>
-                        setTechToResearch(
-                            technologies.find((t) => e.target.value === t.name)
-                        )
-                    }
-                >
-                    <option value={''}>--Tech--</option>
-                    {_.sortBy(
-                        techsAvailableToResearch(factionToResearchTech, events)
-                    ).map(({ name }) => (
-                        <option key={name} value={name}>
-                            {name}
-                        </option>
-                    ))}
-                </Select>
-                <Button
-                    onClick={async () => {
-                        if (factionToResearchTech && techToResearch) {
-                            await publishPlayerResearchedTechnologyEvent(
-                                techToResearch,
-                                factionToResearchTech
-                            );
-
-                            if (
-                                techToResearch.name === 'I.I.H.Q Modernization'
-                            ) {
-                                await publishPlanetControlledEvent(
-                                    'Custodia Vigilia',
-                                    factionToResearchTech
-                                );
-                            }
+            <InputsColumn>
+                <InputTitle>Research tech</InputTitle>
+                <InputsRow>
+                    <Select
+                        onChange={(e) =>
+                            setFactionToResearchTech(e.target.value as Faction)
                         }
-                    }}
-                >
-                    Research
-                </Button>
-            </InputsRow>
-            <VpScoringContainer
-                defaultFaction={activePlayerInActionPhase}
-                {...props}
-            />
-            <InputsRow>
-                <Select
-                    onChange={(e) => {
-                        const systemToAttack = Number.parseInt(
-                            e.target.value
-                        ) as SystemTileNumber;
-                        setSelectedSystemToAttack(systemToAttack);
-
-                        if (
-                            factionsCurrentlyControllingSystemTile(
-                                systemToAttack
-                            ).length === 1
-                        ) {
-                            setSelectedFactionDefendingSystem(
-                                factionsCurrentlyControllingSystemTile(
-                                    systemToAttack
-                                )[0]
-                            );
-                        }
-                    }}
-                    value={selectedSystemToAttack || ''}
-                >
-                    <option value={''}>--System to attack--</option>
-                    {_.sortBy(systemTilesAttackableByActivePlayer, (stn) =>
-                        tileIndexOnBoard(stn, mapTilesSelectedEvent)
-                    ).map((stn) => (
-                        <option key={stn} value={stn}>
-                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
-                        </option>
-                    ))}
-                </Select>
-                <Select
-                    onChange={(e) =>
-                        setSelectedFactionDefendingSystem(
-                            e.target.value as Faction
-                        )
-                    }
-                    disabled={selectedSystemToAttack === undefined}
-                    value={selectedFactionDefendingSystem || ''}
-                >
-                    <option value={''}>--Defending faction--</option>
-                    {selectedSystemToAttack &&
-                        _.sortBy(
-                            factionsCurrentlyControllingSystemTile(
-                                selectedSystemToAttack
-                            )
-                        ).map((f) => (
+                    >
+                        <option value={''}>--Faction--</option>
+                        {_.sortBy(factionsInGame(events)).map((f) => (
                             <option key={f} value={f}>
                                 {f}
                             </option>
                         ))}
-                </Select>
-                <Button
-                    onClick={async () => {
-                        if (
-                            selectedSystemToAttack &&
-                            selectedFactionDefendingSystem
-                        ) {
-                            await publishPlayerAttackedSystemEvent(
-                                activePlayerInActionPhase,
-                                selectedSystemToAttack,
+                    </Select>
+                    <Select
+                        onChange={(e) =>
+                            setTechToResearch(
+                                technologies.find(
+                                    (t) => e.target.value === t.name
+                                )
+                            )
+                        }
+                    >
+                        <option value={''}>--Tech--</option>
+                        {_.sortBy(
+                            techsAvailableToResearch(
+                                factionToResearchTech,
+                                events
+                            )
+                        ).map(({ name }) => (
+                            <option key={name} value={name}>
+                                {name}
+                            </option>
+                        ))}
+                    </Select>
+                    <Button
+                        onClick={async () => {
+                            if (factionToResearchTech && techToResearch) {
+                                await publishPlayerResearchedTechnologyEvent(
+                                    techToResearch,
+                                    factionToResearchTech
+                                );
+
+                                if (
+                                    techToResearch.name ===
+                                    'I.I.H.Q Modernization'
+                                ) {
+                                    await publishPlanetControlledEvent(
+                                        'Custodia Vigilia',
+                                        factionToResearchTech
+                                    );
+                                }
+                            }
+                        }}
+                    >
+                        Research
+                    </Button>
+                </InputsRow>
+            </InputsColumn>
+            <InputsColumn>
+                <InputTitle>Score VPs</InputTitle>
+                <VpScoringContainer
+                    defaultFaction={activePlayerInActionPhase}
+                    {...props}
+                />
+            </InputsColumn>
+            <InputsColumn>
+                <InputTitle>Attack system</InputTitle>
+                <InputsRow>
+                    <Select
+                        onChange={(e) => {
+                            const systemToAttack = Number.parseInt(
+                                e.target.value
+                            ) as SystemTileNumber;
+                            setSelectedSystemToAttack(systemToAttack);
+
+                            if (
+                                factionsCurrentlyControllingSystemTile(
+                                    systemToAttack
+                                ).length === 1
+                            ) {
+                                setSelectedFactionDefendingSystem(
+                                    factionsCurrentlyControllingSystemTile(
+                                        systemToAttack
+                                    )[0]
+                                );
+                            }
+                        }}
+                        value={selectedSystemToAttack || ''}
+                    >
+                        <option value={''}>--System to attack--</option>
+                        {_.sortBy(systemTilesAttackableByActivePlayer, (stn) =>
+                            tileIndexOnBoard(stn, mapTilesSelectedEvent)
+                        ).map((stn) => (
+                            <option key={stn} value={stn}>
+                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                            </option>
+                        ))}
+                    </Select>
+                    <Select
+                        onChange={(e) =>
+                            setSelectedFactionDefendingSystem(
+                                e.target.value as Faction
+                            )
+                        }
+                        disabled={selectedSystemToAttack === undefined}
+                        value={selectedFactionDefendingSystem || ''}
+                    >
+                        <option value={''}>--Defending faction--</option>
+                        {selectedSystemToAttack &&
+                            _.sortBy(
+                                factionsCurrentlyControllingSystemTile(
+                                    selectedSystemToAttack
+                                )
+                            ).map((f) => (
+                                <option key={f} value={f}>
+                                    {f}
+                                </option>
+                            ))}
+                    </Select>
+                    <Button
+                        onClick={async () => {
+                            if (
+                                selectedSystemToAttack &&
                                 selectedFactionDefendingSystem
-                            );
-                            setSelectedSystemToAttack(undefined);
-                            setSelectedFactionDefendingSystem(undefined);
+                            ) {
+                                await publishPlayerAttackedSystemEvent(
+                                    activePlayerInActionPhase,
+                                    selectedSystemToAttack,
+                                    selectedFactionDefendingSystem
+                                );
+                                setSelectedSystemToAttack(undefined);
+                                setSelectedFactionDefendingSystem(undefined);
+                            }
+                        }}
+                    >
+                        Attack system
+                    </Button>
+                </InputsRow>
+            </InputsColumn>
+            <InputsColumn>
+                <InputTitle>Destroy planet</InputTitle>
+                <InputsRow>
+                    <Select
+                        onChange={(e) =>
+                            setPlanetToDestroy(e.target.value as PlanetName)
                         }
-                    }}
-                >
-                    Attack system
-                </Button>
-            </InputsRow>
-            <InputsRow>
-                <Select
-                    onChange={(e) =>
-                        setPlanetToDestroy(e.target.value as PlanetName)
-                    }
-                >
-                    <option value={''}>--Planet--</option>
-                    {_.sortBy(planetsOnTheBoard, identity).map((p) => (
-                        <option key={p} value={p}>
-                            {planetNameWithControllingFaction(p)}
-                        </option>
-                    ))}
-                </Select>
-                <Button
-                    onClick={async () => {
-                        if (planetToDestroy) {
-                            await publishPlanetDestroyedEvent(
-                                planetToDestroy,
-                                activePlayerInActionPhase
-                            );
-                        }
-                    }}
-                >
-                    Destroy planet
-                </Button>
-            </InputsRow>
+                    >
+                        <option value={''}>--Planet--</option>
+                        {_.sortBy(planetsOnTheBoard, identity).map((p) => (
+                            <option key={p} value={p}>
+                                {planetNameWithControllingFaction(p)}
+                            </option>
+                        ))}
+                    </Select>
+                    <Button
+                        onClick={async () => {
+                            if (planetToDestroy) {
+                                await publishPlanetDestroyedEvent(
+                                    planetToDestroy,
+                                    activePlayerInActionPhase
+                                );
+                            }
+                        }}
+                    >
+                        Destroy planet
+                    </Button>
+                </InputsRow>
+            </InputsColumn>
+            {!hasMiragePlanetBeenFound(events) && (
+                <InputsColumn>
+                    <InputTitle>Find Mirage</InputTitle>
+                    <InputsRow>
+                        <Select
+                            onChange={(e) =>
+                                setSelectedPlanetlessSystemToFindMirageIn(
+                                    Number.parseInt(
+                                        e.target.value
+                                    ) as PlanetlessSystemTileNumber
+                                )
+                            }
+                        >
+                            <option value={''}>--Planetless system--</option>
+                            <option
+                                value={''}
+                                disabled
+                            >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                            {_.sortBy(planetlessSystemTilesOnTheBoard, (stn) =>
+                                tileIndexOnBoard(stn, mapTilesSelectedEvent)
+                            ).map((stn) => (
+                                <option key={stn} value={stn}>
+                                    {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                        stn
+                                    )}`}
+                                </option>
+                            ))}
+                        </Select>
+                        <Button
+                            onClick={async () => {
+                                if (selectedPlanetlessSystemToFindMirageIn) {
+                                    await publishMiragePlanetFoundEvent(
+                                        selectedPlanetlessSystemToFindMirageIn,
+                                        activePlayerInActionPhase
+                                    );
+                                }
+                            }}
+                        >
+                            Find Mirage
+                        </Button>
+                    </InputsRow>
+                </InputsColumn>
+            )}
             {events.filter(isMapTileAddedToBoardEvent).length < 3 && (
                 <InputsColumn>
+                    <InputTitle>Add map tile to board</InputTitle>
                     <InputsRow>
                         <Select
                             onChange={(e) => {
