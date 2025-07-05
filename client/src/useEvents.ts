@@ -26,7 +26,7 @@ const useEvents = (
 
     useInterval(() => {
         setRefreshTrigger(refreshTrigger + 1);
-    }, refreshIntervalInMillis || 15_000);
+    }, refreshIntervalInMillis || 10_000);
 
     return { events };
 };
