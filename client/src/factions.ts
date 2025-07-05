@@ -7,6 +7,7 @@ import ghoti from './assets/factionSheets/ghoti.webp';
 import glimmer from './assets/factionSheets/glimmer.webp';
 import berserkers from './assets/factionSheets/kjal.webp';
 import l1z1x from './assets/factionSheets/l1z1x.webp';
+import nivyn from './assets/factionSheets/nivyn.webp';
 import rohdna from './assets/factionSheets/rohdna.webp';
 import tnelis from './assets/factionSheets/tnelis.webp';
 import { PlanetName } from './planets';
@@ -510,7 +511,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Myko-Mentori':
             return '';
         case 'The Nivyn Star of Kings':
-            return '';
+            return nivyn;
         case 'The Olradin League':
             return '';
         case 'The Zealots of Rhodun':
@@ -633,7 +634,7 @@ const factionQuote = (f: Faction): string => {
         case 'The Myko-Mentori':
             return '';
         case 'The Nivyn Star of Kings':
-            return '';
+            return 'More power. More.';
         case 'The Olradin League':
             return '';
         case 'The Zealots of Rhodun':
