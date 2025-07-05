@@ -35,6 +35,7 @@ import {
     SystemTileNumber,
     SystemWithPlanetsTileNumber,
 } from './systemTiles';
+import { useAttackAlarms } from './useAttackAlarms';
 import { useEvents } from './useEvents';
 import { notUndefined, range } from './util';
 
@@ -52,6 +53,8 @@ import { notUndefined, range } from './util';
 
 const GalaxyPage: React.FC = () => {
     const { events } = useEvents();
+
+    useAttackAlarms(events);
 
     const mapTilesSelectedEvent = _.last(
         events.filter(isMapTilesSelectedEvent)
