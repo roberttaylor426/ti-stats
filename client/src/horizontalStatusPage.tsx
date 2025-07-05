@@ -20,11 +20,14 @@ import {
     isPlayerScoredVictoryPointEvent,
     isRoundStartedEvent,
     isUnion,
+    PlayerAttackedSystemEvent,
     playerScore,
 } from './events';
 import { Faction, shortName } from './factions';
 import {
+    isPlanetlessSystemTileNumber,
     planetlessSystemTileDescription,
+    systemWithPlanetsTile,
     systemWithPlanetsTileDescription,
 } from './systemTiles';
 import { useAttackAlarms } from './useAttackAlarms';
@@ -275,13 +278,59 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'PlayerResearchedTechnology':
                     return `${e.faction} researched ${e.technology.name}`;
                 case 'PlayerAttackedSystem':
-                    return `${e.faction} ATTACKED ${e.defender}`;
+                    return `${e.faction} ATTACKED ${shortName(e.defender)} ${generateMarqueeSuffixForPlayerAttackedSystemEvent(e)}`;
             }
         })
         .filter((t) => t.length > 0)
         .slice(-10)
         .join(' ++ ');
     return [singleMarqueeMessage, singleMarqueeMessage].join(' ++ ');
+};
+
+const generateMarqueeSuffixForPlayerAttackedSystemEvent = (
+    e: PlayerAttackedSystemEvent
+): string => {
+    if (isPlanetlessSystemTileNumber(e.tileNumber)) {
+        switch (e.tileNumber) {
+            case 17:
+                return 'at the Creuss Gate';
+            case 39:
+            case 79:
+                return 'near the Alpha wormhole';
+            case 40:
+            case 4272:
+                return 'near the Beta wormhole';
+            case 41:
+            case 4274:
+                return 'near a gravity rift';
+            case 42:
+            case 4273:
+                return 'in a nebula';
+            case 4275:
+                return 'near the Gamma wormhole';
+            case 4276:
+            case 43:
+            case 80:
+            case 81:
+                return 'in a supernova';
+            case 44:
+            case 45:
+                return 'in an asteroid field';
+            case 3232:
+            case 46:
+            case 47:
+            case 48:
+            case 49:
+            case 50:
+            case 77:
+            case 78:
+            case 4270:
+            case 4271:
+                return 'in empty space';
+        }
+    }
+
+    return `in the ${systemWithPlanetsTile(e.tileNumber).planets.join(', ')} system`;
 };
 
 const Ticker = styled.div`

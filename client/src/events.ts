@@ -856,6 +856,7 @@ export {
     PlanetControlledEvent,
     PlanetlessSystemControlledEvent,
     planetsControlledByFaction,
+    PlayerAttackedSystemEvent,
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
     playerScore,
