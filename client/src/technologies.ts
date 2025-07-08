@@ -565,6 +565,54 @@ const technologies: Technology[] = [
         faction: 'The Tnelis Syndicate',
         image: plasmaScoringImage,
     },
+    {
+        name: 'Fractal Plating',
+        type: 'Warfare',
+        faction: 'The Glimmer of Mortheus',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Fabrication Grid',
+        type: 'Cybernetic',
+        faction: 'The Glimmer of Mortheus',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Broker Network',
+        type: 'Biotic',
+        faction: 'The Bentor Conglomerate',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Merged Replicators',
+        type: 'Cybernetic',
+        faction: 'The Bentor Conglomerate',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Voidwake Missiles',
+        type: 'Cybernetic',
+        faction: 'The Nivyn Star of Kings',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Orbital Defense Grid',
+        type: 'Warfare',
+        faction: 'The Mirveda Protectorate',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Networked Command',
+        type: 'Biotic',
+        faction: 'The Ghoti Wayfarers',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Parallel Production',
+        type: 'Cybernetic',
+        faction: 'The Ghoti Wayfarers',
+        image: plasmaScoringImage,
+    },
 ];
 
 const hexColorForTechnologyType = (t: TechnologyType): string => {
