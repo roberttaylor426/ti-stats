@@ -12,6 +12,8 @@ import AlarmClock from './assets/fonts/AlarmClock.ttf';
 import HandelGothic from './assets/fonts/HandelGothic/font.woff';
 import { GalaxyPage } from './galaxyPage';
 import { HorizontalStatusPage } from './horizontalStatusPage';
+import { ScoreGraphPage } from './scoreGraphPage';
+import { ScoreTablePage } from './scoreTablePage';
 import { StatsPage } from './statsPage';
 import { TechPage } from './techPage';
 import { VerticalStatusPage } from './verticalStatusPage';
@@ -34,19 +36,29 @@ const App: React.FC = () => (
                             element={<StatsPage />}
                         />,
                         <Route
-                            key="status"
-                            path={'/status'}
+                            key="scoreTable"
+                            path={'/score-table'}
+                            element={<ScoreTablePage />}
+                        />,
+                        <Route
+                            key="scoreGraph"
+                            path={'/score-graph'}
+                            element={<ScoreGraphPage />}
+                        />,
+                        <Route
+                            key="horizontalStatus"
+                            path={'/horizontal-status'}
+                            element={<HorizontalStatusPage />}
+                        />,
+                        <Route
+                            key="verticalStatus"
+                            path={'/vertical-status'}
                             element={<VerticalStatusPage />}
                         />,
                         <Route
                             key="tech"
                             path={'/tech'}
                             element={<TechPage />}
-                        />,
-                        <Route
-                            key="ticker"
-                            path={'/ticker'}
-                            element={<HorizontalStatusPage />}
                         />,
                         <Route
                             key="admin"
