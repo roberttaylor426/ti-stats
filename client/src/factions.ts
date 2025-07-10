@@ -135,7 +135,7 @@ const factionsWithFixedHomeworlds = [
     'The Mirveda Protectorate',
     'The Glimmer of Mortheus',
     'The Myko-Mentori',
-    'The Nivyn Star of Kings',
+    'The Nivyn Star Kings',
     'The Olradin League',
     'The Zealots of Rhodun',
     "Roh'Dhna Mechatronics",
@@ -257,7 +257,7 @@ const superShortName = (f: Faction): string => {
             return 'Glimmer';
         case 'The Myko-Mentori':
             return 'Myko-Mentori';
-        case 'The Nivyn Star of Kings':
+        case 'The Nivyn Star Kings':
             return 'Nivyn';
         case 'The Olradin League':
             return 'Olradin';
@@ -390,7 +390,7 @@ const factionWithFixedHomeworldsSystemTile = (
             return glimmerOfMortheusSystemTile;
         case 'The Myko-Mentori':
             return mykoMentoriSystemTile;
-        case 'The Nivyn Star of Kings':
+        case 'The Nivyn Star Kings':
             return nivynStarOfKingsSystemTile;
         case 'The Olradin League':
             return olradinLeagueSystemTile;
@@ -511,7 +511,7 @@ const factionSheetImage = (f: Faction): string => {
             return glimmer;
         case 'The Myko-Mentori':
             return '';
-        case 'The Nivyn Star of Kings':
+        case 'The Nivyn Star Kings':
             return nivyn;
         case 'The Olradin League':
             return '';
@@ -634,7 +634,7 @@ const factionQuote = (f: Faction): string => {
             return 'You do not see. You will know.';
         case 'The Myko-Mentori':
             return '';
-        case 'The Nivyn Star of Kings':
+        case 'The Nivyn Star Kings':
             return 'More power. More.';
         case 'The Olradin League':
             return '';
@@ -788,7 +788,7 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
             return [darkEnergyTap];
         case 'The Myko-Mentori':
             return [predictiveIntelligence];
-        case 'The Nivyn Star of Kings':
+        case 'The Nivyn Star Kings':
             return [darkEnergyTap, plasmaScoring];
         case 'The Olradin League':
             return [scanlinkDroneNetwork, psychoArchaeology];
@@ -861,7 +861,7 @@ const planetsOutsideOfGalaxy = (f: Faction): PlanetName[] => {
         case 'The Mirveda Protectorate':
         case 'The Glimmer of Mortheus':
         case 'The Myko-Mentori':
-        case 'The Nivyn Star of Kings':
+        case 'The Nivyn Star Kings':
         case 'The Olradin League':
         case 'The Zealots of Rhodun':
         case "Roh'Dhna Mechatronics":

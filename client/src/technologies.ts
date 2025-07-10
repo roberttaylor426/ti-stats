@@ -592,7 +592,7 @@ const technologies: Technology[] = [
     {
         name: 'Voidwake Missiles',
         type: 'Cybernetic',
-        faction: 'The Nivyn Star of Kings',
+        faction: 'The Nivyn Star Kings',
         image: plasmaScoringImage,
     },
     {
