@@ -16,6 +16,7 @@ import {
     latestPlanetlessSystemControlledEventsBySystem,
     MapTileAddedToBoardPosition,
     MapTilesSelectedEvent,
+    PlanetControlledEvent,
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
     RowForNewMapTile,
@@ -106,13 +107,18 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     const [systemTileToAddToMap, setSystemTileToAddToMap] =
         useState<SystemWithPlanetsTileNumber>();
 
+    const planetControlledEvent = (
+        p: PlanetName,
+        f: Faction
+    ): PlanetControlledEvent => ({
+        type: 'PlanetControlled',
+        time: new Date().getTime(),
+        planet: p,
+        faction: f,
+    });
+
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
-        const newEvent: Event = {
-            type: 'PlanetControlled',
-            time: new Date().getTime(),
-            planet: p,
-            faction: f,
-        };
+        const newEvent = planetControlledEvent(p, f);
 
         await publishNewEvents([newEvent]);
     };
@@ -131,18 +137,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         await publishNewEvents([newEvent]);
     };
 
-    const publishMiragePlanetFoundEvent = async (
+    const publishMiragePlanetFoundEvents = async (
         stn: PlanetlessSystemTileNumber,
         f: Faction
     ) => {
-        const newEvent: Event = {
+        const newEvent1: Event = {
             type: 'MiragePlanetFound',
             time: new Date().getTime(),
             tileNumber: stn,
             faction: f,
         };
 
-        await publishNewEvents([newEvent]);
+        const newEvent2 = planetControlledEvent('Mirage', f);
+
+        await publishNewEvents([newEvent1, newEvent2]);
     };
 
     const publishPlanetEnhancedEvent = async (
@@ -735,7 +743,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                         <Button
                             onClick={async () => {
                                 if (selectedPlanetlessSystemToFindMirageIn) {
-                                    await publishMiragePlanetFoundEvent(
+                                    await publishMiragePlanetFoundEvents(
                                         selectedPlanetlessSystemToFindMirageIn,
                                         activePlayerInActionPhase
                                     );
