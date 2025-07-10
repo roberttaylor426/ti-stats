@@ -237,6 +237,11 @@ const randomPlanetControlledVerb = (t: number): string => {
     return verbs[t % (verbs.length - 1)];
 };
 
+const randomSystemComponentFoundVerb = (t: number): string => {
+    const verbs = ['found', 'discovered', 'revealed', 'stumbled upon'];
+    return verbs[t % (verbs.length - 1)];
+};
+
 const generateMarqueeText = (events: Event[]) => {
     const singleMarqueeMessage = events
         .map((e) => {
@@ -261,11 +266,11 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'UnitsRepairedDuringStatusPhase':
                     return '';
                 case 'GammaWormholeFound':
-                    return `Gamma wormhole found ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`;
+                    return `Gamma wormhole ${randomSystemComponentFoundVerb(e.time)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`;
                 case 'MapTileAddedToBoard':
                     return `Star charts reveal new planets: ${systemWithPlanetsTileDescription(e.tileNumber)}`;
                 case 'MiragePlanetFound':
-                    return `Mirage revealed by ${factionWithLowercaseArticle(e.faction)}`;
+                    return `Mirage ${randomSystemComponentFoundVerb(e.time)} by ${factionWithLowercaseArticle(e.faction)}`;
                 case 'PlanetControlled':
                     return `${e.planet} ${randomPlanetControlledVerb(e.time)} by ${factionWithLowercaseArticle(e.faction)}`;
                 case 'PlanetDestroyed':
