@@ -10,6 +10,7 @@ import {
     hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    isGammaWormholeFoundEvent,
     isMapTileAddedToBoardEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
@@ -110,6 +111,11 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     const [rowToAddMapTile, setRowToAddMapTile] = useState<RowForNewMapTile>();
     const [systemTileToAddToMap, setSystemTileToAddToMap] =
         useState<SystemWithPlanetsTileNumber>();
+
+    const [
+        selectedSystemToAddGammaWormholeTo,
+        setSelectedSystemToAddGammaWormholeTo,
+    ] = useState<SystemTileNumber>();
 
     const planetControlledEvent = (
         p: PlanetName,
@@ -275,6 +281,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         return await publishNewEvents([newEvent]);
     };
 
+    const publishGammaWormholeFoundEvent = async (
+        f: Faction,
+        tn: SystemTileNumber
+    ): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'GammaWormholeFound',
+            time: new Date().getTime(),
+            faction: f,
+            tileNumber: tn,
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
     const systemTilesInPlay = systemTileNumbersInPlay(events);
 
     const planetsOnTheBoard: PlanetName[] = systemTilesInPlay
@@ -345,6 +365,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         factionsCurrentlyControllingSystemTile(st).some(
             (f) => f !== activePlayerInActionPhase
         )
+    );
+
+    const systemTilesInWhichGammaWormholeCanBeFound = systemTilesInPlay.filter(
+        (st) =>
+            factionsCurrentlyControllingSystemTile(st).some(
+                (f) => f === activePlayerInActionPhase
+            )
     );
 
     const planetResourcesAndInfluence = (p: PlanetName) => ({
@@ -855,6 +882,54 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             }}
                         >
                             Add map tile to board
+                        </Button>
+                    </InputsRow>
+                </InputsColumn>
+            )}
+            {events.filter(isGammaWormholeFoundEvent).length < 2 && (
+                <InputsColumn>
+                    <InputTitle>Add gamma wormhole to board</InputTitle>
+                    <InputsRow>
+                        <Select
+                            onChange={(e) => {
+                                setSelectedSystemToAddGammaWormholeTo(
+                                    Number.parseInt(
+                                        e.target.value
+                                    ) as SystemTileNumber
+                                );
+                            }}
+                            value={selectedSystemToAddGammaWormholeTo || ''}
+                        >
+                            <option value={''}>--System--</option>
+                            {_.sortBy(
+                                systemTilesInWhichGammaWormholeCanBeFound,
+                                (stn) =>
+                                    tileIndexOnBoard(stn, mapTilesSelectedEvent)
+                            ).map((stn) => (
+                                <option key={stn} value={stn}>
+                                    {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                </option>
+                            ))}
+                        </Select>
+                    </InputsRow>
+                    <InputsRow>
+                        <Button
+                            onClick={async () => {
+                                if (
+                                    selectedSystemToAddGammaWormholeTo !==
+                                    undefined
+                                ) {
+                                    await publishGammaWormholeFoundEvent(
+                                        activePlayerInActionPhase,
+                                        selectedSystemToAddGammaWormholeTo
+                                    );
+                                    setSelectedSystemToAddGammaWormholeTo(
+                                        undefined
+                                    );
+                                }
+                            }}
+                        >
+                            Add gamma wormhole to board
                         </Button>
                     </InputsRow>
                 </InputsColumn>

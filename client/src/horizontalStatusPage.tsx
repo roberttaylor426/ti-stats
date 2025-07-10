@@ -11,6 +11,7 @@ import {
     currentRoundNumber,
     Event,
     factionsInGame,
+    GammaWormholeFoundEvent,
     hasGameStarted,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
@@ -259,6 +260,8 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'RoundStarted':
                 case 'UnitsRepairedDuringStatusPhase':
                     return '';
+                case 'GammaWormholeFound':
+                    return `Gamma wormhole found ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)}`;
                 case 'MapTileAddedToBoard':
                     return `Star charts reveal new planets: ${systemWithPlanetsTileDescription(e.tileNumber)}`;
                 case 'MiragePlanetFound':
@@ -278,7 +281,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'PlayerResearchedTechnology':
                     return `${e.faction} researched ${e.technology.name}`;
                 case 'PlayerAttackedSystem':
-                    return `${e.faction} ATTACKED ${shortName(e.defender)} ${generateMarqueeSuffixForPlayerAttackedSystemEvent(e)}`;
+                    return `${e.faction} ATTACKED ${shortName(e.defender)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)}`;
             }
         })
         .filter((t) => t.length > 0)
@@ -287,8 +290,8 @@ const generateMarqueeText = (events: Event[]) => {
     return [singleMarqueeMessage, singleMarqueeMessage].join(' ++ ');
 };
 
-const generateMarqueeSuffixForPlayerAttackedSystemEvent = (
-    e: PlayerAttackedSystemEvent
+const generateMarqueeSuffixForEventOccurringOnSystemTile = (
+    e: PlayerAttackedSystemEvent | GammaWormholeFoundEvent
 ): string => {
     if (isPlanetlessSystemTileNumber(e.tileNumber)) {
         switch (e.tileNumber) {

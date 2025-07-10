@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
+import gammaWormholeToken from './assets/tiles/GammaToken.webp';
 import mirageToken from './assets/tiles/MirageToken.webp';
 import tile51 from './assets/tiles/ST_51.webp';
 import tile82 from './assets/tiles/ST_82.webp';
@@ -9,6 +10,7 @@ import tile82Back from './assets/tiles/ST_82_Back.webp';
 import {
     Event,
     factionsInGame,
+    hasGammaWormholeBeenFoundOnSystemTileWithNumber,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,
@@ -126,6 +128,13 @@ const GalaxyPage: React.FC = () => {
                                                         systemTileNumber
                                                     ) &&
                                                     hasMiragePlanetBeenFoundOnSystemTileWithNumber(
+                                                        events,
+                                                        systemTileNumber
+                                                    )
+                                                }
+                                                showGammaWormholeToken={
+                                                    !!systemTileNumber &&
+                                                    hasGammaWormholeBeenFoundOnSystemTileWithNumber(
                                                         events,
                                                         systemTileNumber
                                                     )
@@ -345,6 +354,7 @@ const columnOutsideOfInitialGalaxy = (
                         )}
                         systemUnderAttack={isSystemUnderAttack(t, events)}
                         showMirageToken={false}
+                        showGammaWormholeToken={false}
                     />
                 )
             )}
@@ -419,6 +429,10 @@ const tilesAtBeginningOfColumn = (c: number, events: Event[]) => [
             )}
             systemUnderAttack={isSystemUnderAttack(e.tileNumber, events)}
             showMirageToken={false}
+            showGammaWormholeToken={hasGammaWormholeBeenFoundOnSystemTileWithNumber(
+                events,
+                e.tileNumber
+            )}
         />
     )),
 ];
@@ -473,6 +487,10 @@ const tilesAtEndOfColumn = (c: number, events: Event[]) => [
                 )}
                 systemUnderAttack={isSystemUnderAttack(e.tileNumber, events)}
                 showMirageToken={false}
+                showGammaWormholeToken={hasGammaWormholeBeenFoundOnSystemTileWithNumber(
+                    events,
+                    e.tileNumber
+                )}
             />
         )
     ),
@@ -548,7 +566,19 @@ const MirageTokenContainer = styled.div`
     }
 `;
 
-const MirageToken = styled.img`
+const GammaWormholeTokenContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 20%;
+    padding-bottom: 20%;
+
+    > * {
+        width: 40%;
+    }
+`;
+
+const SystemTileToken = styled.img`
     min-width: 0;
     min-height: 0;
 `;
@@ -687,6 +717,7 @@ type HighlightableTileProps = {
     controllingPlayerColors: ControllingPlayerColors | undefined;
     systemUnderAttack: boolean;
     showMirageToken: boolean;
+    showGammaWormholeToken: boolean;
 };
 
 const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
@@ -694,6 +725,7 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
     controllingPlayerColors,
     systemUnderAttack,
     showMirageToken,
+    showGammaWormholeToken,
 }) => (
     <StyledHighlightableTile>
         <Tile
@@ -702,8 +734,16 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
         />
         {showMirageToken && (
             <MirageTokenContainer>
-                <MirageToken src={mirageToken} alt={`Mirage tile`} />
+                <SystemTileToken src={mirageToken} alt={`Mirage token`} />
             </MirageTokenContainer>
+        )}
+        {showGammaWormholeToken && (
+            <GammaWormholeTokenContainer>
+                <SystemTileToken
+                    src={gammaWormholeToken}
+                    alt={`Gamma wormhole token`}
+                />
+            </GammaWormholeTokenContainer>
         )}
         {systemTileNumber && (
             <HexHighlight

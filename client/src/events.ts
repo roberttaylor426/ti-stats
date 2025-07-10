@@ -133,6 +133,13 @@ type MiragePlanetFoundEvent = {
     faction: Faction;
 };
 
+type GammaWormholeFoundEvent = {
+    type: 'GammaWormholeFound';
+    time: number;
+    tileNumber: SystemTileNumber;
+    faction: Faction;
+};
+
 type PlanetDestroyedEvent = {
     type: 'PlanetDestroyed';
     time: number;
@@ -302,6 +309,9 @@ const isMiragePlanetFoundEvent = (e: Event): e is MiragePlanetFoundEvent =>
 const isMapTileAddedToBoardEvent = (e: Event): e is MapTileAddedToBoardEvent =>
     e.type === 'MapTileAddedToBoard';
 
+const isGammaWormholeFoundEvent = (e: Event): e is GammaWormholeFoundEvent =>
+    e.type === 'GammaWormholeFound';
+
 const isTechnologyResearchedEvent = (
     e: Event
 ): e is PlayerResearchedTechnologyEvent =>
@@ -348,6 +358,7 @@ type Event =
     | CardsReadiedDuringStatusPhaseEvent
     | CommandTokensGainedAndRedistributedDuringStatusPhaseEvent
     | CommandTokensRemovedDuringStatusPhaseEvent
+    | GammaWormholeFoundEvent
     | MapTileAddedToBoardEvent
     | MapTilesSelectedEvent
     | MiragePlanetFoundEvent
@@ -406,6 +417,11 @@ const hasMiragePlanetBeenFoundOnSystemTileWithNumber = (
     events: Event[],
     stn: PlanetlessSystemTileNumber
 ): boolean => events.find(isMiragePlanetFoundEvent)?.tileNumber === stn;
+
+const hasGammaWormholeBeenFoundOnSystemTileWithNumber = (
+    events: Event[],
+    stn: SystemTileNumber
+): boolean => events.find(isGammaWormholeFoundEvent)?.tileNumber === stn;
 
 const hasMiragePlanetBeenFoundOnSystemTile = (
     events: Event[],
@@ -822,7 +838,9 @@ export {
     Event,
     factionSelections,
     factionsInGame,
+    GammaWormholeFoundEvent,
     hasGameStarted,
+    hasGammaWormholeBeenFoundOnSystemTileWithNumber,
     hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTile,
@@ -830,6 +848,7 @@ export {
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isGammaWormholeFoundEvent,
     isItAgendaPhase,
     isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,
