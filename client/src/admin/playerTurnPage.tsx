@@ -7,6 +7,7 @@ import {
     currentPlayerTurnInActionPhase,
     Event,
     factionsInGame,
+    hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     isMapTileAddedToBoardEvent,
@@ -52,7 +53,10 @@ import { InputsRow } from './components/inputsRow';
 import { InputTitle } from './components/inputTitle';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
-import { VpScoringContainer } from './components/vpScoringContainer';
+import {
+    playerScoredVictoryPointEvent,
+    VpScoringContainer,
+} from './components/vpScoringContainer';
 
 type Props = {
     activePlayerInActionPhase: Faction;
@@ -118,9 +122,14 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     });
 
     const publishPlanetControlledEvent = async (p: PlanetName, f: Faction) => {
-        const newEvent = planetControlledEvent(p, f);
+        const newEvents = [
+            planetControlledEvent(p, f),
+            p === 'Mecatol Rex' && !hasMecatolRexBeenCaptured(events)
+                ? playerScoredVictoryPointEvent(f, 1)
+                : undefined,
+        ];
 
-        await publishNewEvents([newEvent]);
+        await publishNewEvents(newEvents.filter(notUndefined));
     };
 
     const publishPlanetlessSystemControlledEvent = async (

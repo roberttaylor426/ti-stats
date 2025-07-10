@@ -860,6 +860,7 @@ export {
     playerFactionsAndColors,
     PlayerFinishedTurnEvent,
     playerScore,
+    PlayerScoredVictoryPointEvent,
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
     resourcesAndInfluenceForFaction,

@@ -5,6 +5,7 @@ import {
     Event,
     factionsInGame,
     isPlayerScoredVictoryPointEvent,
+    PlayerScoredVictoryPointEvent,
 } from '../../events';
 import { Faction } from '../../factions';
 import { Button } from './button';
@@ -80,4 +81,14 @@ const VpScoringContainer: React.FC<Props & AdminPageProps> = ({
     );
 };
 
-export { VpScoringContainer };
+const playerScoredVictoryPointEvent = (
+    f: Faction,
+    delta: number
+): PlayerScoredVictoryPointEvent => ({
+    type: 'PlayerScoredVictoryPoint',
+    time: new Date().getTime(),
+    faction: f,
+    delta,
+});
+
+export { playerScoredVictoryPointEvent,VpScoringContainer };
