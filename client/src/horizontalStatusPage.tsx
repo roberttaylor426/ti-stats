@@ -2,6 +2,7 @@ import { intervalToDuration } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
+import useSound from 'use-sound';
 
 import { agendaCardBoldText } from './agendaCards';
 import { accentColor } from './colors';
@@ -47,10 +48,9 @@ const HorizontalStatusPage: React.FC = () => {
     );
 
     useEffect(() => {
-        const interval = setInterval(
-            () => setCurrentTime(new Date().getTime()),
-            1_000
-        );
+        const interval = setInterval(() => {
+            setCurrentTime(new Date().getTime());
+        }, 1_000);
         return () => clearInterval(interval);
     }, []);
 
@@ -70,6 +70,22 @@ const HorizontalStatusPage: React.FC = () => {
             }))
             .filter((fs) => fs.score >= 10)
     );
+
+    const [playVictoryTune] = useSound('/music/victory.mp3');
+    const [victoryTunePlayed, setVictoryTunePlayed] = useState<number>();
+
+    useEffect(() => {
+        const lastVictoryPointScoredTimestamp = _.last(
+            events.filter(isPlayerScoredVictoryPointEvent)
+        )?.time;
+        if (
+            winningPlayer &&
+            victoryTunePlayed !== lastVictoryPointScoredTimestamp
+        ) {
+            playVictoryTune();
+            setVictoryTunePlayed(lastVictoryPointScoredTimestamp);
+        }
+    }, [winningPlayer, playVictoryTune, events, victoryTunePlayed]);
 
     return (
         <StyledHorizontalStatusPage>

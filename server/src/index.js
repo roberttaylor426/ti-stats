@@ -1,10 +1,13 @@
 const bodyParser = require('body-parser');
 const fs = require('node:fs');
 const {createProxyMiddleware} = require('http-proxy-middleware');
+const express = require("express");
 
 const app = require('express')();
 
 const port = 9999;
+
+app.use('/music', express.static('music'));
 
 app.use(bodyParser.json());
 
