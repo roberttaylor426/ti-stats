@@ -20,7 +20,6 @@ import {
 import { Faction } from './factions';
 import { hexPlayerColor } from './playerColors';
 import { Scoreboard } from './scoreboard';
-import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import { useEvents } from './useEvents';
 
@@ -61,8 +60,6 @@ const ScoreGraphPage: React.FC = () => {
 
     return (
         <div>
-            <Stars />
-
             {playerScoresByRound.length > 2 ? (
                 <StyledStats>
                     <VpScores>
@@ -101,6 +98,7 @@ const ScoreGraphPage: React.FC = () => {
                                         ],
                                     }}
                                     options={{
+                                        maintainAspectRatio: false,
                                         animation: { duration: 0 },
                                         elements: {
                                             point: {
@@ -148,8 +146,8 @@ const StyledStats = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin: 4rem;
-    gap: 4rem;
+    margin: 2rem;
+    gap: 2rem;
 `;
 
 const VpScores = styled.section`

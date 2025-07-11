@@ -7,14 +7,20 @@ import {
     LineElement,
     PointElement,
 } from 'chart.js';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import React from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
 
-import { factionsInGame, playerFactionsAndColors, playerScore } from './events';
+import {
+    factionsInGame,
+    isRoundEndedEvent,
+    playerFactionsAndColors,
+    playerScore,
+    timesTakenPerPlayer,
+} from './events';
 import { hexPlayerColor } from './playerColors';
 import { Scoreboard, ScoreboardRow } from './scoreboard';
-import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import { useEvents } from './useEvents';
 
@@ -31,9 +37,10 @@ const ScoreTablePage: React.FC = () => {
         score: playerScore(events, f),
     }));
 
+    const roundEndedEvents = events.filter(isRoundEndedEvent);
+
     return (
         <div>
-            <Stars />
             <StyledStats>
                 <VpScores>
                     <Scoreboard>
@@ -54,6 +61,74 @@ const ScoreTablePage: React.FC = () => {
                         </StatsContainer>
                     </Scoreboard>
                 </VpScores>
+                {roundEndedEvents.length > 0 && (
+                    <>
+                        <Scoreboard>
+                            <StatsTitle>Average time taken per turn</StatsTitle>
+                            <StatsContainer>
+                                {_.sortBy(
+                                    timesTakenPerPlayer(events),
+                                    (ps) => ps.avTimeTakenInMillis
+                                )
+                                    .reverse()
+                                    .map((ps) => (
+                                        <ScoreboardRow
+                                            key={ps.faction}
+                                            title={ps.faction}
+                                            titleColor={hexPlayerColor(
+                                                ps.playerColor
+                                            )}
+                                            value={`${formatDuration(
+                                                intervalToDuration({
+                                                    start: 0,
+                                                    end: ps.avTimeTakenInMillis,
+                                                }),
+                                                {
+                                                    format: [
+                                                        'hours',
+                                                        'minutes',
+                                                        'seconds',
+                                                    ],
+                                                }
+                                            )}`}
+                                        />
+                                    ))}
+                            </StatsContainer>
+                        </Scoreboard>
+                        <Scoreboard>
+                            <StatsTitle>Max time taken on a turn</StatsTitle>
+                            <StatsContainer>
+                                {_.sortBy(
+                                    timesTakenPerPlayer(events),
+                                    (ps) => ps.maxTimeTakenInMillis
+                                )
+                                    .reverse()
+                                    .map((ps) => (
+                                        <ScoreboardRow
+                                            key={ps.faction}
+                                            title={ps.faction}
+                                            titleColor={hexPlayerColor(
+                                                ps.playerColor
+                                            )}
+                                            value={`${formatDuration(
+                                                intervalToDuration({
+                                                    start: 0,
+                                                    end: ps.maxTimeTakenInMillis,
+                                                }),
+                                                {
+                                                    format: [
+                                                        'hours',
+                                                        'minutes',
+                                                        'seconds',
+                                                    ],
+                                                }
+                                            )}`}
+                                        />
+                                    ))}
+                            </StatsContainer>
+                        </Scoreboard>
+                    </>
+                )}
             </StyledStats>
         </div>
     );
@@ -63,8 +138,8 @@ const StyledStats = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin: 4rem;
-    gap: 4rem;
+    margin: 2rem;
+    gap: 2rem;
 `;
 
 const VpScores = styled.section`
