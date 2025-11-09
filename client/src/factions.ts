@@ -1,16 +1,20 @@
 import _ from 'underscore';
 
 import bentor from './assets/factionSheets/bentor.webp';
+import berserkers from './assets/factionSheets/berserkers.webp';
 import cabal from './assets/factionSheets/cabal.webp';
+import freeSystems from './assets/factionSheets/compact.webp';
 import dihmon from './assets/factionSheets/dih.webp';
 import ghoti from './assets/factionSheets/ghoti.webp';
 import glimmer from './assets/factionSheets/glimmer.webp';
-import berserkers from './assets/factionSheets/kjal.webp';
 import l1z1x from './assets/factionSheets/l1z1x.webp';
+import mahact from './assets/factionSheets/mahact.webp';
 import mirveda from './assets/factionSheets/mirveda.webp';
 import nivyn from './assets/factionSheets/nivyn.webp';
+import nokar from './assets/factionSheets/nokar.webp';
 import rohdna from './assets/factionSheets/rohdna.webp';
 import tnelis from './assets/factionSheets/tnelis.webp';
+import vaden from './assets/factionSheets/vaden.webp';
 import { PlanetName } from './planets';
 import {
     arborecSystemTile,
@@ -238,7 +242,7 @@ const superShortName = (f: Faction): string => {
         case 'The Florzen Profiteers':
             return 'Florzen';
         case 'The Free Systems Compact':
-            return 'Compact';
+            return 'FS Compact';
         case 'The Ghemina Raiders':
             return 'Ghemina';
         case 'The Augurs of Illyxum':
@@ -456,7 +460,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The L1Z1X Mindnet':
             return l1z1x;
         case 'The Mahact Gene-Sorcerers':
-            return '';
+            return mahact;
         case 'The Mentak Coalition':
             return '';
         case 'The Naalu Collective':
@@ -492,7 +496,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Florzen Profiteers':
             return '';
         case 'The Free Systems Compact':
-            return '';
+            return freeSystems;
         case 'The Ghemina Raiders':
             return '';
         case 'The Augurs of Illyxum':
@@ -522,7 +526,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Tnelis Syndicate':
             return tnelis;
         case 'The Vaden Banking Clans':
-            return '';
+            return vaden;
         case 'The Vaylerian Scourge':
             return '';
         case 'The Veldyr Sovereignty':
@@ -548,7 +552,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Lanefir Remnants':
             return '';
         case 'The Nokar Sellships':
-            return '';
+            return nokar;
         case 'The Council Keleres':
             return '';
     }
@@ -579,7 +583,7 @@ const factionQuote = (f: Faction): string => {
         case 'The L1Z1X Mindnet':
             return 'You do not know the meaning of time. You do not comprehend the infinite. Your ignorance is surpassed only by your irrelevance.';
         case 'The Mahact Gene-Sorcerers':
-            return '';
+            return 'KNEEL.';
         case 'The Mentak Coalition':
             return '';
         case 'The Naalu Collective':
@@ -615,7 +619,7 @@ const factionQuote = (f: Faction): string => {
         case 'The Florzen Profiteers':
             return '';
         case 'The Free Systems Compact':
-            return '';
+            return 'You have called out for leadership, for change; I humbly answer your call.';
         case 'The Ghemina Raiders':
             return '';
         case 'The Augurs of Illyxum':
@@ -645,7 +649,7 @@ const factionQuote = (f: Faction): string => {
         case 'The Tnelis Syndicate':
             return 'Syndicate rules? Protect children, healers, and family. Always.';
         case 'The Vaden Banking Clans':
-            return '';
+            return 'It seems your line of credit has reached its limit.';
         case 'The Vaylerian Scourge':
             return '';
         case 'The Veldyr Sovereignty':
@@ -671,9 +675,9 @@ const factionQuote = (f: Faction): string => {
         case 'The Lanefir Remnants':
             return '';
         case 'The Nokar Sellships':
-            return '';
+            return 'Everyone has a price. Everyone.';
         case 'The Council Keleres':
-            return '';
+            return 'Our duty is to protect the billions of people in our galaxy, not the few hundred in these Council Chambers.';
     }
 };
 
