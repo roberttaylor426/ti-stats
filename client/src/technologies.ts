@@ -17,6 +17,111 @@ import selfAssemblyRoutinesImage from './assets/techCards/SelfAssemblyRoutines.w
 import slingRelayImage from './assets/techCards/SlingRelay.webp';
 import { Faction } from './factions';
 
+type TechnologyName =
+    | 'Sarween Tools'
+    | 'Predictive Intelligence'
+    | 'Graviton Laser System'
+    | 'Scanlink Drone Network'
+    | 'Neural Motivator'
+    | 'Psychoarchaeology'
+    | 'Daxcive Animators'
+    | 'Bio Stims'
+    | 'Plasma Scoring'
+    | 'AI Development Algorithm'
+    | 'Self Assembly Routines'
+    | 'Magen Defense Grid'
+    | 'Antimass Deflectors'
+    | 'Dark Energy Tap'
+    | 'Gravity Drive'
+    | 'Sling Relay'
+    | 'Hyper Metabolism'
+    | 'X-89 Bacterial Weapon'
+    | 'Bioplasmosis'
+    | 'Production Biomes'
+    | 'Neuroglaive'
+    | 'Instinct Training'
+    | 'Yin Spinner'
+    | 'Transparasteel Plating'
+    | 'Mageon Implants'
+    | 'Voidwatch'
+    | 'Genetic Recombination'
+    | 'Pre-Fab Arcologies'
+    | 'Transit Diodes'
+    | 'Integrated Economy'
+    | 'Temporal Command Suite'
+    | 'Aerie Hololattice'
+    | 'L4 Disruptors'
+    | 'I.I.H.Q Modernization'
+    | 'Agency Supply Network'
+    | 'Quantum Datahub Node'
+    | 'Inheritance Systems'
+    | 'Salvage Operations'
+    | 'Mirror Computing'
+    | 'E-Res Siphons'
+    | 'Hegemonic Trade Policy'
+    | 'Nullification Field'
+    | 'Impulse Core'
+    | 'Fleet Logistics'
+    | 'Light/Wave Deflector'
+    | 'Chaos Mapping'
+    | 'Wormhole Generator'
+    | 'Spacial Conduit Cylinder'
+    | 'Lazax Gate Folding'
+    | 'Aetherstream'
+    | 'Duranium Armor'
+    | 'Assault Cannon'
+    | 'Non-Euclidean Shielding'
+    | 'Magmus Reactor'
+    | 'Dimensional Splicer'
+    | 'Valkyrie Particle Weave'
+    | 'Supercharge'
+    | 'Vortex'
+    | 'Carrier II'
+    | 'Advanced Carrier II'
+    | 'Cruiser II'
+    | 'Saturn Engine II'
+    | 'Destroyer II'
+    | 'Strike Wing Alpha II'
+    | 'Dreadnought II'
+    | 'Super-Dreadnought II'
+    | 'Exotrireme II'
+    | 'Fighter II'
+    | 'Hybrid Crystal Fighter II'
+    | 'Infantry II'
+    | 'Spec Ops II'
+    | 'Letani Warrior II'
+    | 'Crimson Legionnaire II'
+    | 'PDS II'
+    | 'Hel Titan II'
+    | 'Space Dock II'
+    | 'Floating Factory II'
+    | 'Dimensional Tear II'
+    | 'War Sun'
+    | 'Prototype War Sun II'
+    | 'Memoria II'
+    | 'Impressment Programs'
+    | 'Aegis II'
+    | 'Contractual Obligations'
+    | 'Terrafactory II'
+    | 'Zhrgar Stimulants'
+    | 'Star Dragon II'
+    | 'Daedalon Flight System'
+    | 'Blockade Runner II'
+    | 'Fractal Plating'
+    | 'Fabrication Grid'
+    | 'Broker Network'
+    | 'Merged Replicators'
+    | 'Voidwake Missiles'
+    | 'Orbital Defense Grid'
+    | 'Networked Command'
+    | 'Parallel Production'
+    | 'Envoy Network'
+    | 'Covert Strike Teams'
+    | 'Local Contracts'
+    | 'Sabre II'
+    | 'Midas Turbine'
+    | 'Krovoz Strike Teams';
+
 type TechnologyType =
     | 'Biotic'
     | 'Propulsion'
@@ -25,10 +130,11 @@ type TechnologyType =
     | 'Unit';
 
 type Technology = {
-    name: string;
+    name: TechnologyName;
     type: TechnologyType;
     image: string;
     faction?: Faction;
+    supersedes?: TechnologyName;
 };
 
 const sarweenTools: Technology = {
@@ -470,6 +576,7 @@ const technologies: Technology[] = [
         name: 'Crimson Legionnaire II',
         type: 'Unit',
         faction: 'The Mahact Gene-Sorcerers',
+        supersedes: 'Infantry II',
         image: plasmaScoringImage,
     },
     {
@@ -540,6 +647,7 @@ const technologies: Technology[] = [
         type: 'Unit',
         faction: "Roh'Dhna Mechatronics",
         image: plasmaScoringImage,
+        supersedes: 'Space Dock II',
     },
     {
         name: 'Zhrgar Stimulants',
@@ -552,6 +660,7 @@ const technologies: Technology[] = [
         type: 'Unit',
         faction: 'The Berserkers of Kjalengard',
         image: plasmaScoringImage,
+        supersedes: 'Carrier II',
     },
     {
         name: 'Daedalon Flight System',
@@ -611,6 +720,43 @@ const technologies: Technology[] = [
         name: 'Parallel Production',
         type: 'Cybernetic',
         faction: 'The Ghoti Wayfarers',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Envoy Network',
+        type: 'Biotic',
+        faction: 'The Free Systems Compact',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Covert Strike Teams',
+        type: 'Cybernetic',
+        faction: 'The Free Systems Compact',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Local Contracts',
+        type: 'Cybernetic',
+        faction: 'The Nokar Sellships',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Sabre II',
+        type: 'Unit',
+        faction: 'The Nokar Sellships',
+        supersedes: 'Destroyer II',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Krovoz Strike Teams',
+        type: 'Cybernetic',
+        faction: 'The Vaden Banking Clans',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Midas Turbine',
+        type: 'Propulsion',
+        faction: 'The Vaden Banking Clans',
         image: plasmaScoringImage,
     },
 ];
