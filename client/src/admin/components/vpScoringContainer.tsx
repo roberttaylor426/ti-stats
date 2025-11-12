@@ -1,15 +1,14 @@
 import { AdminPageProps } from 'admin/adminPageProps';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Event,
-    factionsInGame,
+    initiativeOrderWhenMostRecentActionPhaseStarted,
     isPlayerScoredVictoryPointEvent,
     PlayerScoredVictoryPointEvent,
 } from '../../events';
 import { Faction } from '../../factions';
 import { Button } from './button';
-import { NumberInput } from './input';
 import { InputsColumn } from './inputsColumn';
 import { InputsRow } from './inputsRow';
 import { Select } from './select';
@@ -25,8 +24,16 @@ const VpScoringContainer: React.FC<Props & AdminPageProps> = ({
 }) => {
     const [playerToScoreVps, setPlayerToScoreVps] = useState<
         Faction | undefined
-    >(defaultFaction);
-    const [vpsToAdd, setVpsToAdd] = useState<number>(0);
+    >();
+
+    const initiativeOrder =
+        initiativeOrderWhenMostRecentActionPhaseStarted(events);
+
+    const initialSelection = defaultFaction || initiativeOrder[0];
+
+    useEffect(() => {
+        setPlayerToScoreVps(initialSelection);
+    }, [initialSelection]);
 
     const publishVpScoredEvent = async (
         f: Faction,
@@ -43,39 +50,38 @@ const VpScoringContainer: React.FC<Props & AdminPageProps> = ({
     };
 
     return (
-        <InputsColumn>
+        <InputsColumn key={defaultFaction}>
             <Select
                 onChange={(e) => setPlayerToScoreVps(e.target.value as Faction)}
-                defaultValue={defaultFaction}
+                defaultValue={initialSelection}
             >
-                {!defaultFaction && <option value={''}>--Faction--</option>}
-                {factionsInGame(events).map((f) => (
-                    <option key={f} value={f}>
-                        {`${f} (${events
-                            .filter(isPlayerScoredVictoryPointEvent)
-                            .filter((vpe) => vpe.faction === f)
-                            .reduce((acc, n) => acc + n.delta, 0)}vp)`}
-                    </option>
-                ))}
+                {initiativeOrderWhenMostRecentActionPhaseStarted(events).map(
+                    (f) => (
+                        <option key={f} value={f}>
+                            {`${events
+                                .filter(isPlayerScoredVictoryPointEvent)
+                                .filter((vpe) => vpe.faction === f)
+                                .reduce(
+                                    (acc, n) => acc + n.delta,
+                                    0
+                                )}vp - ${f}`}
+                        </option>
+                    )
+                )}
             </Select>
             <InputsRow>
-                <NumberInput
-                    onChange={(e) =>
-                        setVpsToAdd(Number.parseInt(e.target.value))
-                    }
-                />
-                <Button
-                    onClick={async () => {
-                        if (playerToScoreVps && vpsToAdd) {
-                            await publishVpScoredEvent(
-                                playerToScoreVps,
-                                vpsToAdd
-                            );
-                        }
-                    }}
-                >
-                    Score
-                </Button>
+                {[-1, 1, 2, 3].map((n) => (
+                    <Button
+                        key={n}
+                        onClick={async () => {
+                            if (playerToScoreVps) {
+                                await publishVpScoredEvent(playerToScoreVps, n);
+                            }
+                        }}
+                    >
+                        {n < 0 ? `${n}` : `+${n}`}
+                    </Button>
+                ))}
             </InputsRow>
         </InputsColumn>
     );
@@ -91,4 +97,4 @@ const playerScoredVictoryPointEvent = (
     delta,
 });
 
-export { playerScoredVictoryPointEvent,VpScoringContainer };
+export { playerScoredVictoryPointEvent, VpScoringContainer };

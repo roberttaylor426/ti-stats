@@ -534,7 +534,9 @@ const systemTileNumbersInPlay = (events: Event[]): SystemTileNumber[] =>
             : undefined,
     ].filter(notUndefined) as SystemTileNumber[];
 
-const currentActionPhasePlayerOrder = (events: Event[]): Faction[] =>
+const initiativeOrderWhenMostRecentActionPhaseStarted = (
+    events: Event[]
+): Faction[] =>
     _.last(events.filter(isActionPhaseStartedEvent))?.playerOrder || [];
 
 const turnsFinishedThisActionPhase = (
@@ -551,7 +553,7 @@ const turnsFinishedThisActionPhase = (
     }, [] as PlayerFinishedTurnEvent[]);
 
 const unpassedPlayersThisActionPhase = (events: Event[]): Faction[] =>
-    currentActionPhasePlayerOrder(events).filter(
+    initiativeOrderWhenMostRecentActionPhaseStarted(events).filter(
         (f) =>
             !turnsFinishedThisActionPhase(events).some(
                 (e) => e.faction === f && e.pass
@@ -563,7 +565,7 @@ const currentPlayerTurnInActionPhase = (
 ): Faction | undefined => {
     const turnsFinished = turnsFinishedThisActionPhase(events);
     const lastPlayerToHaveATurn = _.last(turnsFinished);
-    const playerOrder = currentActionPhasePlayerOrder(events);
+    const playerOrder = initiativeOrderWhenMostRecentActionPhaseStarted(events);
 
     const indexOfPlayerAfterLastToHaveATurn = !lastPlayerToHaveATurn
         ? 0
@@ -866,6 +868,7 @@ export {
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTile,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    initiativeOrderWhenMostRecentActionPhaseStarted,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
