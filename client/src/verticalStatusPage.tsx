@@ -42,7 +42,13 @@ import {
     ResourcesAndInfluence,
 } from './planets';
 import { numberOfPlayersInGame } from './playerColors';
-import { compactStrategyCardImage, strategyCardImage } from './strategyCards';
+import {
+    color,
+    initiative,
+    StrategyCard,
+    strategyCardImage,
+    strategyCards,
+} from './strategyCards';
 import { useEvents } from './useEvents';
 
 const VerticalStatusPage: React.FC = () => {
@@ -143,26 +149,11 @@ const VerticalStatusPage: React.FC = () => {
                     activePlayerInStrategyPhase ||
                     _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
                         <StrategyCardGrid>
-                            {(
-                                [
-                                    'Leadership',
-                                    'Diplomacy',
-                                    'Politics',
-                                    'Construction',
-                                    'Trade',
-                                    'Warfare',
-                                    'Technology',
-                                    'Imperial',
-                                ] as const
-                            ).map((sc) => (
-                                <StrategyCard
-                                    src={compactStrategyCardImage(sc)}
+                            {strategyCards.map((sc) => (
+                                <StrategyCardV2
                                     key={sc}
-                                    $translucent={
-                                        !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
-                                            events
-                                        ).find((e) => e.strategyCard === sc)
-                                    }
+                                    events={events}
+                                    strategyCard={sc}
                                 />
                             ))}
                         </StrategyCardGrid>
@@ -268,7 +259,7 @@ const VerticalStatusPage: React.FC = () => {
                                     >
                                         {strategyCardSelectedByActivePlayerInActionPhase && (
                                             <ActionPhaseStrategyCardContainer>
-                                                <StrategyCard
+                                                <StrategyCardImage
                                                     src={strategyCardImage(
                                                         strategyCardSelectedByActivePlayerInActionPhase,
                                                         strategyCardPlayedByPlayerOnPreviousTurnThisRound(
@@ -808,17 +799,10 @@ const SpaceAroundColumn = styled.div`
 const StrategyCardGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
-    justify-items: center;
     grid-gap: 1vh;
-    margin: 1vh;
+    margin: 2vh;
     overflow-y: hidden;
     filter: drop-shadow(1vh 0 1vh grey);
-
-    > * {
-        object-fit: contain;
-        height: 100%;
-        max-width: 100%;
-    }
 `;
 
 const StatsColumn = styled.div`
@@ -916,14 +900,56 @@ const ActionPhaseStrategyCardContainer = styled.div`
     }
 `;
 
-type StrategyCardProps = {
-    $translucent?: boolean;
-};
-
-const StrategyCard = styled.img<StrategyCardProps>`
+const StrategyCardImage = styled.img`
     min-width: 0;
     min-height: 0;
+`;
+
+type StrategyCardPropsV2 = {
+    events: Event[];
+    strategyCard: StrategyCard;
+};
+
+const StrategyCardV2: React.FC<StrategyCardPropsV2> = ({
+    events,
+    strategyCard,
+}) => (
+    <StyledStrategyCard
+        $borderColor={color(strategyCard)}
+        $translucent={
+            !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
+                events
+            ).find((e) => e.strategyCard === strategyCard)
+        }
+    >
+        <StrategyCardTitle>{strategyCard}</StrategyCardTitle>
+        <StrategyCardInitiative>
+            {initiative(strategyCard)}
+        </StrategyCardInitiative>
+    </StyledStrategyCard>
+);
+
+type StyledStrategyCardProps = {
+    $borderColor: string;
+    $translucent: boolean;
+};
+
+const StyledStrategyCard = styled.div<StyledStrategyCardProps>`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3vw;
+    background-color: black;
+    border: ${(props) => props.$borderColor} 1.5vw solid;
     opacity: ${(props) => (props.$translucent ? 0.25 : 1)};
+`;
+
+const StrategyCardTitle = styled.span`
+    font-size: 10vw;
+`;
+
+const StrategyCardInitiative = styled.span`
+    font-size: 12vw;
 `;
 
 const TimeSpan = styled.span`

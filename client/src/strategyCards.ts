@@ -57,6 +57,27 @@ const initiative = (sc: StrategyCard): number => {
     }
 };
 
+const color = (sc: StrategyCard): string => {
+    switch (sc) {
+        case 'Leadership':
+            return '#ee1b22';
+        case 'Diplomacy':
+            return '#f69421';
+        case 'Politics':
+            return '#fef400';
+        case 'Construction':
+            return '#3ab44b';
+        case 'Trade':
+            return '#00ac9f';
+        case 'Warfare':
+            return '#008fd5';
+        case 'Technology':
+            return '#14489f';
+        case 'Imperial':
+            return '#752c8f';
+    }
+};
+
 const strategyCardImage = (sc: StrategyCard, showBack: boolean): string => {
     switch (sc) {
         case 'Leadership':
@@ -106,6 +127,7 @@ const compactStrategyCardImage = (sc: StrategyCard): string => {
 };
 
 export {
+    color,
     compactStrategyCardImage,
     initiative,
     StrategyCard,
