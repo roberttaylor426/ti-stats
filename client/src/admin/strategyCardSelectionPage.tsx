@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import _ from 'underscore';
 
 import {
@@ -10,7 +10,6 @@ import { initiative, StrategyCard, strategyCards } from '../strategyCards';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
 import { PageTitle } from './components/pageTitle';
-import { Select } from './components/select';
 
 type Props = {
     activePlayer: Faction;
@@ -18,8 +17,6 @@ type Props = {
 
 const StrategyCardSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
     const { activePlayer, events, publishNewEvents } = props;
-    const [selectedStrategyCard, setSelectedStrategyCard] =
-        useState<StrategyCard>();
     const playerSelectedStrategyCardEvents =
         playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events);
 
@@ -40,40 +37,27 @@ const StrategyCardSelectionPage: React.FC<Props & AdminPageProps> = (props) => {
     return (
         <>
             <PageTitle {...props} title={`${activePlayer} strategy card`} />
-            <Select
-                onChange={(e) =>
-                    setSelectedStrategyCard(
-                        e.currentTarget.value as StrategyCard
-                    )
-                }
-            >
-                <option value={''}>--Strategy card--</option>
-                {_.sortBy(
-                    strategyCards.filter(
-                        (sc) =>
-                            !playerSelectedStrategyCardEvents.find(
-                                (sce) => sce.strategyCard === sc
-                            )
-                    ),
-                    initiative
-                ).map((sc) => (
-                    <option key={sc} value={sc}>
-                        {sc}
-                    </option>
-                ))}
-            </Select>
-            <Button
-                onClick={async () => {
-                    if (selectedStrategyCard) {
+            {_.sortBy(
+                strategyCards.filter(
+                    (sc) =>
+                        !playerSelectedStrategyCardEvents.find(
+                            (sce) => sce.strategyCard === sc
+                        )
+                ),
+                initiative
+            ).map((sc) => (
+                <Button
+                    key={sc}
+                    onClick={async () => {
                         await publishPlayerSelectedStrategyCardEvent(
                             activePlayer,
-                            selectedStrategyCard
+                            sc
                         );
-                    }
-                }}
-            >
-                Select
-            </Button>
+                    }}
+                >
+                    {sc}
+                </Button>
+            ))}
         </>
     );
 };
