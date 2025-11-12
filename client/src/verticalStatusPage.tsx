@@ -150,7 +150,7 @@ const VerticalStatusPage: React.FC = () => {
                     _.last(events)?.type === 'PlayerSelectedStrategyCard' ? (
                         <StrategyCardGrid>
                             {strategyCards.map((sc) => (
-                                <StrategyCardV2
+                                <CompactStrategyCard
                                     key={sc}
                                     events={events}
                                     strategyCard={sc}
@@ -905,16 +905,16 @@ const StrategyCardImage = styled.img`
     min-height: 0;
 `;
 
-type StrategyCardPropsV2 = {
+type CompactStrategyCardProps = {
     events: Event[];
     strategyCard: StrategyCard;
 };
 
-const StrategyCardV2: React.FC<StrategyCardPropsV2> = ({
+const CompactStrategyCard: React.FC<CompactStrategyCardProps> = ({
     events,
     strategyCard,
 }) => (
-    <StyledStrategyCard
+    <StyledCompactStrategyCard
         $borderColor={color(strategyCard)}
         $translucent={
             !!playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(
@@ -922,11 +922,11 @@ const StrategyCardV2: React.FC<StrategyCardPropsV2> = ({
             ).find((e) => e.strategyCard === strategyCard)
         }
     >
-        <StrategyCardTitle>{strategyCard}</StrategyCardTitle>
-        <StrategyCardInitiative>
+        <CompactStrategyCardTitle>{strategyCard}</CompactStrategyCardTitle>
+        <CompactStrategyCardInitiative $shadowColor={color(strategyCard)}>
             {initiative(strategyCard)}
-        </StrategyCardInitiative>
-    </StyledStrategyCard>
+        </CompactStrategyCardInitiative>
+    </StyledCompactStrategyCard>
 );
 
 type StyledStrategyCardProps = {
@@ -934,7 +934,7 @@ type StyledStrategyCardProps = {
     $translucent: boolean;
 };
 
-const StyledStrategyCard = styled.div<StyledStrategyCardProps>`
+const StyledCompactStrategyCard = styled.div<StyledStrategyCardProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -944,12 +944,17 @@ const StyledStrategyCard = styled.div<StyledStrategyCardProps>`
     opacity: ${(props) => (props.$translucent ? 0.25 : 1)};
 `;
 
-const StrategyCardTitle = styled.span`
+const CompactStrategyCardTitle = styled.span`
     font-size: 10vw;
 `;
 
-const StrategyCardInitiative = styled.span`
+type CompactStrategyCardInitiativeProps = {
+    $shadowColor: string;
+};
+
+const CompactStrategyCardInitiative = styled.span<CompactStrategyCardInitiativeProps>`
     font-size: 12vw;
+    filter: drop-shadow(0vh 0vh 0.75vh ${(props) => props.$shadowColor});
 `;
 
 const TimeSpan = styled.span`
