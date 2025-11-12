@@ -707,6 +707,27 @@ const strategyCardPrimaryActionsCompletedByPlayerThisTurn = (
         .find((e) => e.faction === faction);
 };
 
+const roundsStartedSinceStrategyCardWasPlayed = (
+    events: Event[],
+    strategyCard: StrategyCard
+): number => {
+    const lastIndexOfStrategyCardBeingPlayed =
+        _.last(
+            events
+                .map((e, index) =>
+                    isPlayerPlayedStrategyCardEvent(e) &&
+                    e.strategyCard === strategyCard
+                        ? index
+                        : -1
+                )
+                .filter((n) => n !== -1)
+        ) || -1;
+
+    return events
+        .slice(lastIndexOfStrategyCardBeingPlayed + 1)
+        .filter(isRoundStartedEvent).length;
+};
+
 const resourcesAndInfluenceForFaction = (
     events: Event[],
     f: Faction
@@ -883,6 +904,7 @@ export {
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
     resourcesAndInfluenceForFaction,
+    roundsStartedSinceStrategyCardWasPlayed,
     RoundStartedEvent,
     RowForNewMapTile,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,

@@ -6,6 +6,7 @@ import _ from 'underscore';
 
 import { agendaCardBack, agendaCardFaces } from './agendaCards';
 import galaxyPhoto from './assets/ti-artwork.webp';
+import tradeGood from './assets/trade-good.webp';
 import { accentColor } from './colors';
 import {
     currentPlayerTurnInActionPhase,
@@ -25,6 +26,7 @@ import {
     playerScore,
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     resourcesAndInfluenceForFaction,
+    roundsStartedSinceStrategyCardWasPlayed,
     strategyCardPlayedByPlayerOnPreviousTurnThisRound,
     TimesTaken,
     timesTakenPerPlayer,
@@ -50,6 +52,7 @@ import {
     strategyCards,
 } from './strategyCards';
 import { useEvents } from './useEvents';
+import { range } from './util';
 
 const VerticalStatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
@@ -926,6 +929,12 @@ const CompactStrategyCard: React.FC<CompactStrategyCardProps> = ({
         <CompactStrategyCardInitiative $shadowColor={color(strategyCard)}>
             {initiative(strategyCard)}
         </CompactStrategyCardInitiative>
+        <CompactStrategyCardTradeGoodsContainer>
+            {range(
+                roundsStartedSinceStrategyCardWasPlayed(events, strategyCard) -
+                    1
+            ).map(() => <TradeGoodImage src={tradeGood} />)}
+        </CompactStrategyCardTradeGoodsContainer>
     </StyledCompactStrategyCard>
 );
 
@@ -938,6 +947,7 @@ const StyledCompactStrategyCard = styled.div<StyledStrategyCardProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
     padding: 3vw;
     background-color: black;
     border: ${(props) => props.$borderColor} 1.5vw solid;
@@ -955,6 +965,25 @@ type CompactStrategyCardInitiativeProps = {
 const CompactStrategyCardInitiative = styled.span<CompactStrategyCardInitiativeProps>`
     font-size: 12vw;
     filter: drop-shadow(0vh 0vh 0.75vh ${(props) => props.$shadowColor});
+`;
+
+const CompactStrategyCardTradeGoodsContainer = styled.div`
+    position: absolute;
+    display: flex;
+    flex-direction: row-reverse;
+    top: -10%;
+    right: 15%;
+    height: 12vw;
+
+    > * {
+        flex: 1 0 0;
+        margin-left: -6vw;
+    }
+`;
+
+const TradeGoodImage = styled.img`
+    object-fit: contain;
+    min-width: 0;
 `;
 
 const TimeSpan = styled.span`
