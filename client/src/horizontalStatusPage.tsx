@@ -32,7 +32,6 @@ import {
     systemWithPlanetsTile,
     systemWithPlanetsTileDescription,
 } from './systemTiles';
-import { useAttackAlarms } from './useAttackAlarms';
 import { useEvents } from './useEvents';
 
 const HorizontalStatusPage: React.FC = () => {
@@ -53,8 +52,6 @@ const HorizontalStatusPage: React.FC = () => {
         }, 1_000);
         return () => clearInterval(interval);
     }, []);
-
-    useAttackAlarms(events);
 
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
