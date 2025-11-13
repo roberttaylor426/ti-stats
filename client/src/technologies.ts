@@ -122,20 +122,37 @@ type TechnologyName =
     | 'Midas Turbine'
     | 'Krovoz Strike Teams';
 
-type TechnologyType =
-    | 'Biotic'
-    | 'Propulsion'
-    | 'Cybernetic'
-    | 'Warfare'
-    | 'Unit';
+type NonUnitTechnologyType = 'Biotic' | 'Propulsion' | 'Cybernetic' | 'Warfare';
 
-type Technology = {
+type TechnologyType = NonUnitTechnologyType | 'Unit';
+
+type NonUnitTechnology = {
     name: TechnologyName;
-    type: TechnologyType;
+    type: NonUnitTechnologyType;
     image: string;
     faction?: Faction;
-    supersedes?: TechnologyName;
 };
+
+type UnitTechnology = {
+    name: TechnologyName;
+    type: 'Unit';
+    image: string;
+    faction?: never;
+    supersedes?: never;
+};
+
+type FactionUnitTechnology = {
+    name: TechnologyName;
+    type: 'Unit';
+    image: string;
+    faction: Faction;
+    supersedes: TechnologyName | undefined;
+};
+
+type Technology = NonUnitTechnology | UnitTechnology | FactionUnitTechnology;
+
+const isFactionUnitTechnology = (t: Technology): t is FactionUnitTechnology =>
+    !!(t as FactionUnitTechnology).faction && t.type === 'Unit';
 
 const sarweenTools: Technology = {
     name: 'Sarween Tools',
@@ -503,6 +520,7 @@ const technologies: Technology[] = [
         name: 'Advanced Carrier II',
         type: 'Unit',
         faction: 'The Federation of Sol',
+        supersedes: 'Carrier II',
         image: plasmaScoringImage,
     },
     {
@@ -514,6 +532,7 @@ const technologies: Technology[] = [
         name: 'Saturn Engine II',
         type: 'Unit',
         faction: 'The Titans of Ul',
+        supersedes: 'Cruiser II',
         image: plasmaScoringImage,
     },
     {
@@ -525,6 +544,7 @@ const technologies: Technology[] = [
         name: 'Strike Wing Alpha II',
         type: 'Unit',
         faction: 'The Argent Flight',
+        supersedes: 'Destroyer II',
         image: plasmaScoringImage,
     },
     {
@@ -536,12 +556,14 @@ const technologies: Technology[] = [
         name: 'Super-Dreadnought II',
         type: 'Unit',
         faction: 'The L1Z1X Mindnet',
+        supersedes: 'Dreadnought II',
         image: plasmaScoringImage,
     },
     {
         name: 'Exotrireme II',
         type: 'Unit',
         faction: 'Sardakk N’orr',
+        supersedes: 'Dreadnought II',
         image: plasmaScoringImage,
     },
     {
@@ -553,6 +575,7 @@ const technologies: Technology[] = [
         name: 'Hybrid Crystal Fighter II',
         type: 'Unit',
         faction: 'The Naalu Collective',
+        supersedes: 'Fighter II',
         image: plasmaScoringImage,
     },
     {
@@ -564,12 +587,14 @@ const technologies: Technology[] = [
         name: 'Spec Ops II',
         type: 'Unit',
         faction: 'The Federation of Sol',
+        supersedes: 'Infantry II',
         image: plasmaScoringImage,
     },
     {
         name: 'Letani Warrior II',
         type: 'Unit',
         faction: 'The Arborec',
+        supersedes: 'Infantry II',
         image: plasmaScoringImage,
     },
     {
@@ -588,6 +613,7 @@ const technologies: Technology[] = [
         name: 'Hel Titan II',
         type: 'Unit',
         faction: 'The Titans of Ul',
+        supersedes: 'PDS II',
         image: plasmaScoringImage,
     },
     {
@@ -599,12 +625,14 @@ const technologies: Technology[] = [
         name: 'Floating Factory II',
         type: 'Unit',
         faction: 'The Clan of Saar',
+        supersedes: 'Space Dock II',
         image: plasmaScoringImage,
     },
     {
         name: 'Dimensional Tear II',
         type: 'Unit',
         faction: "The Vuil'Raith Cabal",
+        supersedes: 'Space Dock II',
         image: plasmaScoringImage,
     },
     {
@@ -616,12 +644,14 @@ const technologies: Technology[] = [
         name: 'Prototype War Sun II',
         type: 'Unit',
         faction: 'The Embers of Muaat',
+        supersedes: 'War Sun',
         image: plasmaScoringImage,
     },
     {
         name: 'Memoria II',
         type: 'Unit',
         faction: 'The Nomad',
+        supersedes: undefined,
         image: plasmaScoringImage,
     },
     {
@@ -634,6 +664,7 @@ const technologies: Technology[] = [
         name: 'Aegis II',
         type: 'Unit',
         faction: 'The Dih-Mohn Flotilla',
+        supersedes: 'Dreadnought II',
         image: plasmaScoringImage,
     },
     {
@@ -672,6 +703,7 @@ const technologies: Technology[] = [
         name: 'Blockade Runner II',
         type: 'Unit',
         faction: 'The Tnelis Syndicate',
+        supersedes: 'Destroyer II',
         image: plasmaScoringImage,
     },
     {
@@ -785,6 +817,7 @@ export {
     gravitonLaserSystem,
     gravityDrive,
     hexColorForTechnologyType,
+    isFactionUnitTechnology,
     magenDefenseGrid,
     neuralMotivator,
     plasmaScoring,

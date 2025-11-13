@@ -21,7 +21,11 @@ import {
     SystemTileNumber,
     SystemWithPlanetsTileNumber,
 } from './systemTiles';
-import { technologies, Technology } from './technologies';
+import {
+    isFactionUnitTechnology,
+    technologies,
+    Technology,
+} from './technologies';
 import { notUndefined } from './util';
 
 type PlayersAssignedFactionsAndColorsEvent = {
@@ -724,15 +728,15 @@ const techsAvailableToResearch = (
 ): Technology[] => {
     const factionTechs = technologies.filter((t) => t.faction === f);
     const supersededFactionTechs = factionTechs
-        .map((t) => t.supersedes)
+        .map((t) => (isFactionUnitTechnology(t) ? t.supersedes : undefined))
         .filter(notUndefined);
     const nonFactionTechs = technologies.filter((t) => !t.faction);
-    const nonSupersededFactionTechs = nonFactionTechs.filter(
+    const nonSupersededTechs = nonFactionTechs.filter(
         (t) => !supersededFactionTechs.includes(t.name)
     );
     return f
         ? _.sortBy(
-              [...factionTechs, ...nonSupersededFactionTechs].filter(
+              [...factionTechs, ...nonSupersededTechs].filter(
                   (t) =>
                       !technologiesResearchedByFaction(f, events).some(
                           (trbf) => t.name === trbf.name
