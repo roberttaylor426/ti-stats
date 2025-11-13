@@ -51,6 +51,7 @@ import {
     strategyCardImage,
     strategyCards,
 } from './strategyCards';
+import { timeElapsedLabel } from './timeElapsed';
 import { useEvents } from './useEvents';
 import { range } from './util';
 
@@ -700,36 +701,6 @@ const isRoundEndedPageShown = (events: Event[]): boolean => {
 const timeElapsedBetweenEvents = (e1: Event, e2: Event): string =>
     timeElapsedLabel(e1, e2.time);
 
-const timeElapsedLabel = (e: Event, currentTime: number): string =>
-    `${timeComponent(
-        intervalToDuration({
-            start: e.time,
-            end: currentTime,
-        }).hours
-    )}:${timeComponent(
-        intervalToDuration({
-            start: e.time,
-            end: currentTime,
-        }).minutes
-    )}:${timeComponent(
-        intervalToDuration({
-            start: e.time,
-            end: currentTime,
-        }).seconds
-    )}`;
-
-const timeComponent = (n: number | undefined): string => {
-    if (!n) {
-        return '00';
-    }
-
-    if (n < 10) {
-        return `0${n}`;
-    }
-
-    return `${n}`;
-};
-
 type StyledVerticalStatusPageProps = {
     $backgroundImage: string;
 };
@@ -933,7 +904,9 @@ const CompactStrategyCard: React.FC<CompactStrategyCardProps> = ({
             {range(
                 roundsStartedSinceStrategyCardWasPlayed(events, strategyCard) -
                     1
-            ).map(() => <TradeGoodImage src={tradeGood} />)}
+            ).map(() => (
+                <TradeGoodImage src={tradeGood} />
+            ))}
         </CompactStrategyCardTradeGoodsContainer>
     </StyledCompactStrategyCard>
 );

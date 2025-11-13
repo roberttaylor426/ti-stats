@@ -1,4 +1,3 @@
-import { intervalToDuration } from 'date-fns';
 import { Howl } from 'howler';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -33,6 +32,7 @@ import {
     systemWithPlanetsTile,
     systemWithPlanetsTileDescription,
 } from './systemTiles';
+import { timeElapsedLabel } from './timeElapsed';
 import { useEvents } from './useEvents';
 import { notUndefined } from './util';
 
@@ -516,36 +516,6 @@ const ScrollingTickerRoundOverlayTriangle = styled.div`
     background-color: red;
     clip-path: polygon(0 0, 0 100%, 100% 0);
 `;
-
-const timeElapsedLabel = (e: Event, currentTime: number): string =>
-    `${timeComponent(
-        intervalToDuration({
-            start: e.time,
-            end: currentTime,
-        }).hours
-    )}:${timeComponent(
-        intervalToDuration({
-            start: e.time,
-            end: currentTime,
-        }).minutes
-    )}:${timeComponent(
-        intervalToDuration({
-            start: e.time,
-            end: currentTime,
-        }).seconds
-    )}`;
-
-const timeComponent = (n: number | undefined): string => {
-    if (!n) {
-        return '00';
-    }
-
-    if (n < 10) {
-        return `0${n}`;
-    }
-
-    return `${n}`;
-};
 
 const StyledHorizontalStatusPage = styled.div`
     display: grid;
