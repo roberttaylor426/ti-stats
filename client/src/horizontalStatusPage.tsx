@@ -1,8 +1,9 @@
 import { intervalToDuration } from 'date-fns';
+import { Howl } from 'howler';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'underscore';
-import useSound from 'use-sound';
+import useAsyncEffect from 'use-async-effect';
 
 import { agendaCardBoldText } from './agendaCards';
 import { accentColor } from './colors';
@@ -25,7 +26,7 @@ import {
     PlayerAttackedSystemEvent,
     playerScore,
 } from './events';
-import { Faction, shortName } from './factions';
+import { Faction, shortName, superShortName } from './factions';
 import {
     isPlanetlessSystemTileNumber,
     planetlessSystemTileDescription,
@@ -33,6 +34,7 @@ import {
     systemWithPlanetsTileDescription,
 } from './systemTiles';
 import { useEvents } from './useEvents';
+import { notUndefined } from './util';
 
 const HorizontalStatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
@@ -68,8 +70,34 @@ const HorizontalStatusPage: React.FC = () => {
             .filter((fs) => fs.score >= 10)
     );
 
-    const [playVictoryTune] = useSound('/music/victory.mp3');
+    const [factionsWithVictoryTunes, setFactionsWithVictoryTunes] = useState<
+        Faction[] | undefined
+    >();
     const [victoryTunePlayed, setVictoryTunePlayed] = useState<number>();
+    const [victoryTunePlayer, setVictoryTunePlayer] = useState<Howl>();
+
+    useAsyncEffect(async () => {
+        if (factionsWithVictoryTunes === undefined) {
+            if (factionsInGame(events).length > 0) {
+                const fs = (
+                    await Promise.all(
+                        factionsInGame(events).map(async (f) => {
+                            try {
+                                const response = await fetch(
+                                    factionSpecificVictoryTune(f)
+                                );
+                                if (response.ok) {
+                                    return f;
+                                }
+                            } catch {}
+                            return undefined;
+                        })
+                    )
+                ).filter(notUndefined);
+                setFactionsWithVictoryTunes(fs);
+            }
+        }
+    }, [events]);
 
     useEffect(() => {
         const lastVictoryPointScoredTimestamp = _.last(
@@ -77,12 +105,31 @@ const HorizontalStatusPage: React.FC = () => {
         )?.time;
         if (
             winningPlayer &&
-            victoryTunePlayed !== lastVictoryPointScoredTimestamp
+            victoryTunePlayed !== lastVictoryPointScoredTimestamp &&
+            !victoryTunePlayer
         ) {
-            playVictoryTune();
+            const victoryTunePath = factionsWithVictoryTunes?.includes(
+                winningPlayer.faction
+            )
+                ? factionSpecificVictoryTune(winningPlayer.faction)
+                : '/music/victory.mp3';
+            const player = new Howl({ src: [victoryTunePath] });
+            player.play();
+            setVictoryTunePlayer(player);
             setVictoryTunePlayed(lastVictoryPointScoredTimestamp);
         }
-    }, [winningPlayer, playVictoryTune, events, victoryTunePlayed]);
+
+        if (!winningPlayer && victoryTunePlayer) {
+            victoryTunePlayer.stop();
+            setVictoryTunePlayer(undefined);
+        }
+    }, [
+        factionsWithVictoryTunes,
+        winningPlayer,
+        events,
+        victoryTunePlayed,
+        victoryTunePlayer,
+    ]);
 
     return (
         <StyledHorizontalStatusPage>
@@ -353,6 +400,9 @@ const generateMarqueeSuffixForEventOccurringOnSystemTile = (
 
     return `in the ${systemWithPlanetsTile(e.tileNumber).planets.join(', ')} system`;
 };
+
+const factionSpecificVictoryTune = (f: Faction): string =>
+    `/music/${superShortName(f).toLowerCase().replace(/ /g, '-')}-victory.mp3`;
 
 const Ticker = styled.div`
     display: flex;
