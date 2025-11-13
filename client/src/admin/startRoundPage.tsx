@@ -6,6 +6,7 @@ import { Event, factionsInGame, isSpeakerAssignedEvent } from '../events';
 import { Faction } from '../factions';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
+import { InputsRow } from './components/inputsRow';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
 
@@ -39,7 +40,7 @@ const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
     return (
         <StyledStartRoundPage>
             <PageTitle {...props} title={'Start round'} />
-            <SpeakerAssignmentRow>
+            <InputsRow>
                 <Select
                     defaultValue={currentSpeaker}
                     onChange={(e) =>
@@ -62,7 +63,7 @@ const StartRoundPage: React.FC<Props & AdminPageProps> = (props) => {
                 >
                     Assign speaker
                 </Button>
-            </SpeakerAssignmentRow>
+            </InputsRow>
             <Button
                 onClick={publishRoundStartedEvent}
                 disabled={events.filter(isSpeakerAssignedEvent).length === 0}
@@ -78,17 +79,6 @@ const StyledStartRoundPage = styled.div`
     flex-direction: column;
     gap: 4rem;
     height: 100%;
-`;
-
-const SpeakerAssignmentRow = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 2rem;
-    row-gap: 1rem;
-
-    > * {
-        flex: 1 1 0;
-    }
 `;
 
 export { StartRoundPage };

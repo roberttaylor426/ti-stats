@@ -21,7 +21,7 @@ import {
     SystemTileNumber,
     SystemWithPlanetsTileNumber,
 } from './systemTiles';
-import { Technology } from './technologies';
+import { technologies, Technology } from './technologies';
 import { notUndefined } from './util';
 
 type PlayersAssignedFactionsAndColorsEvent = {
@@ -35,6 +35,11 @@ type MapTilesSelectedEvent = {
     type: 'MapTilesSelected';
     time: number;
     selections: Record<number, SystemTileNumber>;
+};
+
+type GameSetupCompletedEvent = {
+    type: 'GameSetupCompleted';
+    time: number;
 };
 
 type SpeakerAssignedEvent = {
@@ -283,6 +288,9 @@ const isPlayersAssignedFactionsAndColorsEvent = (
 const isMapTilesSelectedEvent = (e: Event): e is MapTilesSelectedEvent =>
     e.type === 'MapTilesSelected';
 
+const isGameSetupCompletedEvent = (e: Event): e is GameSetupCompletedEvent =>
+    e.type === 'GameSetupCompleted';
+
 const isSpeakerAssignedEvent = (e: Event): e is SpeakerAssignedEvent =>
     e.type === 'SpeakerAssigned';
 
@@ -358,6 +366,7 @@ type Event =
     | CardsReadiedDuringStatusPhaseEvent
     | CommandTokensGainedAndRedistributedDuringStatusPhaseEvent
     | CommandTokensRemovedDuringStatusPhaseEvent
+    | GameSetupCompletedEvent
     | GammaWormholeFoundEvent
     | MapTileAddedToBoardEvent
     | MapTilesSelectedEvent
@@ -709,6 +718,31 @@ const strategyCardPrimaryActionsCompletedByPlayerThisTurn = (
         .find((e) => e.faction === faction);
 };
 
+const techsAvailableToResearch = (
+    f: Faction | undefined,
+    events: Event[]
+): Technology[] => {
+    const factionTechs = technologies.filter((t) => t.faction === f);
+    const supersededFactionTechs = factionTechs
+        .map((t) => t.supersedes)
+        .filter(notUndefined);
+    const nonFactionTechs = technologies.filter((t) => !t.faction);
+    const nonSupersededFactionTechs = nonFactionTechs.filter(
+        (t) => !supersededFactionTechs.includes(t.name)
+    );
+    return f
+        ? _.sortBy(
+              [...factionTechs, ...nonSupersededFactionTechs].filter(
+                  (t) =>
+                      !technologiesResearchedByFaction(f, events).some(
+                          (trbf) => t.name === trbf.name
+                      )
+              ),
+              (t) => t.name
+          )
+        : [];
+};
+
 const roundsStartedSinceStrategyCardWasPlayed = (
     events: Event[],
     strategyCard: StrategyCard
@@ -872,6 +906,7 @@ export {
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isGameSetupCompletedEvent,
     isGammaWormholeFoundEvent,
     isItAgendaPhase,
     isMapTileAddedToBoardEvent,
@@ -916,6 +951,7 @@ export {
     systemTileNumbersInPlay,
     systemTilePlanets,
     technologiesResearchedByFaction,
+    techsAvailableToResearch,
     TimesTaken,
     timesTakenPerPlayer,
 };

@@ -8,6 +8,7 @@ import {
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
+    isGameSetupCompletedEvent,
     isItAgendaPhase,
     isMapTilesSelectedEvent,
     isRoundEndedEvent,
@@ -17,6 +18,7 @@ import {
 } from '../events';
 import { numberOfPlayersInGame } from '../playerColors';
 import { AgendaPhasePage } from './agendaPhasePage';
+import { CompleteGameSetupPage } from './completeGameSetupPage';
 import { FactionAssignmentPage } from './factionAssignmentPage';
 import { PlayerOrderSelectionPage } from './playerOrderSelectionPage';
 import { PlayerTurnPage } from './playerTurnPage';
@@ -81,6 +83,7 @@ const AdminPages: React.FC = () => {
     const mapTilesSelectedEvent = _.last(
         events.filter(isMapTilesSelectedEvent)
     );
+    const gameSetupCompletedEvent = events.find(isGameSetupCompletedEvent);
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
@@ -93,6 +96,8 @@ const AdminPages: React.FC = () => {
                 <FactionAssignmentPage {...adminPageProps} />
             ) : !mapTilesSelectedEvent ? (
                 <TileSelectionPage {...adminPageProps} />
+            ) : !gameSetupCompletedEvent ? (
+                <CompleteGameSetupPage {...adminPageProps} />
             ) : isStartRoundPageVisible(events) ? (
                 <StartRoundPage
                     {...adminPageProps}

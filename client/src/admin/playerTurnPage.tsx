@@ -27,7 +27,7 @@ import {
     strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,
     systemTilePlanets,
-    technologiesResearchedByFaction,
+    techsAvailableToResearch,
 } from '../events';
 import { Faction, shortName } from '../factions';
 import { tileIndex } from '../galaxy';
@@ -391,31 +391,6 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const planetNameWithResourcesAndInfluence = (p: PlanetName) =>
         `${p} (${planetResourcesAndInfluence(p).resources}R, ${planetResourcesAndInfluence(p).influence}I)`;
-
-    const techsAvailableToResearch = (
-        f: Faction | undefined,
-        events: Event[]
-    ): Technology[] => {
-        const factionTechs = technologies.filter((t) => t.faction === f);
-        const supersededFactionTechs = factionTechs
-            .map((t) => t.supersedes)
-            .filter(notUndefined);
-        const nonFactionTechs = technologies.filter((t) => !t.faction);
-        const nonSupersededFactionTechs = nonFactionTechs.filter(
-            (t) => !supersededFactionTechs.includes(t.name)
-        );
-        return f
-            ? _.sortBy(
-                  [...factionTechs, ...nonSupersededFactionTechs].filter(
-                      (t) =>
-                          !technologiesResearchedByFaction(f, events).some(
-                              (trbf) => t.name === trbf.name
-                          )
-                  ),
-                  (t) => t.name
-              )
-            : [];
-    };
 
     const columnToAddMapTileToDescription = (c: number): string => {
         if ([-2, -1, 7, 8].includes(c)) {

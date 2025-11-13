@@ -314,6 +314,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'CardsReadiedDuringStatusPhase':
                 case 'CommandTokensGainedAndRedistributedDuringStatusPhase':
                 case 'CommandTokensRemovedDuringStatusPhase':
+                case 'GameSetupCompleted':
                 case 'MapTilesSelected':
                 case 'ObjectivesScoredDuringStatusPhase':
                 case 'PlanetEnhanced':
