@@ -22,14 +22,12 @@ const VpScoringContainer: React.FC<Props & AdminPageProps> = ({
     events,
     publishNewEvents,
 }) => {
-    const [playerToScoreVps, setPlayerToScoreVps] = useState<
-        Faction | undefined
-    >();
+    const initialSelection =
+        defaultFaction ||
+        initiativeOrderWhenMostRecentActionPhaseStarted(events)[0];
 
-    const initiativeOrder =
-        initiativeOrderWhenMostRecentActionPhaseStarted(events);
-
-    const initialSelection = defaultFaction || initiativeOrder[0];
+    const [playerToScoreVps, setPlayerToScoreVps] =
+        useState<Faction>(initialSelection);
 
     useEffect(() => {
         setPlayerToScoreVps(initialSelection);
@@ -74,9 +72,7 @@ const VpScoringContainer: React.FC<Props & AdminPageProps> = ({
                     <Button
                         key={n}
                         onClick={async () => {
-                            if (playerToScoreVps) {
-                                await publishVpScoredEvent(playerToScoreVps, n);
-                            }
+                            await publishVpScoredEvent(playerToScoreVps, n);
                         }}
                     >
                         {n < 0 ? `${n}` : `+${n}`}

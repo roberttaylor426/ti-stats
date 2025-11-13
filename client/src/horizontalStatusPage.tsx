@@ -106,7 +106,8 @@ const HorizontalStatusPage: React.FC = () => {
         if (
             winningPlayer &&
             victoryTunePlayed !== lastVictoryPointScoredTimestamp &&
-            !victoryTunePlayer
+            !victoryTunePlayer &&
+            factionsWithVictoryTunes !== undefined
         ) {
             const victoryTunePath = factionsWithVictoryTunes?.includes(
                 winningPlayer.faction
