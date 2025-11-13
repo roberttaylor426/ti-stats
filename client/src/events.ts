@@ -685,9 +685,12 @@ const strategyCardPlayedByPlayerOnPreviousTurnThisRound = (
         lastPlayerFinishedTurnIndex
     );
 
-    return !!eventsThisRoundBeforeStartOfTurn
-        .filter(isPlayerPlayedStrategyCardEvent)
-        .find((e) => e.faction === faction);
+    return (
+        lastPlayerFinishedTurnIndex > 0 &&
+        !!eventsThisRoundBeforeStartOfTurn
+            .filter(isPlayerPlayedStrategyCardEvent)
+            .find((e) => e.faction === faction)
+    );
 };
 
 const strategyCardPlayedByPlayerThisTurn = (
