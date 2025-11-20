@@ -904,8 +904,8 @@ const CompactStrategyCard: React.FC<CompactStrategyCardProps> = ({
             {range(
                 roundsStartedSinceStrategyCardWasPlayed(events, strategyCard) -
                     1
-            ).map(() => (
-                <TradeGoodImage src={tradeGood} />
+            ).map((_, i) => (
+                <TradeGoodImage key={i} src={tradeGood} />
             ))}
         </CompactStrategyCardTradeGoodsContainer>
     </StyledCompactStrategyCard>
@@ -928,7 +928,7 @@ const StyledCompactStrategyCard = styled.div<StyledStrategyCardProps>`
 `;
 
 const CompactStrategyCardTitle = styled.span`
-    font-size: 10vw;
+    font-size: 8vw;
 `;
 
 type CompactStrategyCardInitiativeProps = {
@@ -936,7 +936,7 @@ type CompactStrategyCardInitiativeProps = {
 };
 
 const CompactStrategyCardInitiative = styled.span<CompactStrategyCardInitiativeProps>`
-    font-size: 12vw;
+    font-size: 8vw;
     filter: drop-shadow(0vh 0vh 0.75vh ${(props) => props.$shadowColor});
 `;
 
@@ -946,7 +946,7 @@ const CompactStrategyCardTradeGoodsContainer = styled.div`
     flex-direction: row-reverse;
     top: -10%;
     right: 15%;
-    height: 12vw;
+    height: 8vw;
 
     > * {
         flex: 1 0 0;
