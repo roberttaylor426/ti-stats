@@ -561,89 +561,89 @@ const factionSheetImage = (f: Faction): string => {
 const factionQuote = (f: Faction): string => {
     switch (f) {
         case 'Sardakk N’orr':
-            return '';
+            return 'Fear is death. Most of you will die. The Queen Mother thanks you for your worthy sacrifice.';
         case 'The Arborec':
-            return '';
+            return 'Do you hear, flesh-thing? The harmonies of the Arborec? Your golems of metal and noise and fire have deafened you to the symphony.';
         case 'The Argent Flight':
-            return '';
+            return 'You tread upon sacred ground. There is no path to atonement for your sins, only swift and merciless defeat.';
         case 'The Barony of Letnev':
-            return '';
+            return 'Hold your fire until the main fleet arrives. Our armada will blot out their sun – when they die, they will die in darkness!';
         case 'The Clan of Saar':
-            return '';
+            return 'O, Lisis, you whose fate is forever carved into the backs of the weary. Your spectre is all we see.';
         case 'The Embers of Muaat':
-            return '';
+            return 'No longer will the Gashlai be shackled by your whims. Be extinguished, now, and know that you have lost.';
         case 'The Emirates of Hacan':
-            return '';
+            return 'There is no price too great for the Hacan, no silk too fine, and no war too long. My people will persevere.';
         case 'The Empyrean':
-            return '';
+            return 'We see what you are. We see what you are not. There is nothing we do not know.';
         case 'The Federation of Sol':
-            return '';
+            return 'Our enemies consider us children. They think us weak. Show them. Show them what the children of Jord can do!';
         case 'The Ghosts of Creuss':
-            return '';
+            return 'We do not mean to offend the honored ambassador. We mean only to imply that should his ship attempt to pass through the gate, it will not return.';
         case 'The L1Z1X Mindnet':
             return 'You do not know the meaning of time. You do not comprehend the infinite. Your ignorance is surpassed only by your irrelevance.';
         case 'The Mahact Gene-Sorcerers':
             return 'KNEEL.';
         case 'The Mentak Coalition':
-            return '';
+            return 'One people. One mind. One destiny. We will rise above the pit they have thrown us in.';
         case 'The Naalu Collective':
-            return '';
+            return 'You insult me, ssskinling. Ze monstrosity you suggest – ze Druaa, we are not capable of such cruelty. Purge zis madness from your mind and leave zis world.';
         case 'The Naaz-Rokha Alliance':
-            return '';
+            return "For too long the galaxy has squabbled over the bones of our predecessors. It's time for something new.";
         case 'The Nekro Virus':
-            return '';
+            return 'The final step of all craft. The gate to eternity. A transcendency to a state of being that can only be described as godhead.';
         case 'The Nomad':
-            return '';
+            return 'The future must be preserved at all costs.';
         case 'The Titans of Ul':
-            return '';
+            return 'The Titans seek something more permanent than a mere empire.';
         case 'The Universities of Jol-Nar':
-            return '';
+            return 'We cannot halt progress for the sake of morality. If you have not the stomach for science, then I suggest you depart Wun-Escha immediately.';
         case "The Vuil'Raith Cabal":
             return 'YOUR FORM IS FRAGILE AND WEAK. LET ME RELIEVE YOU OF YOUR HARDSHIPS.';
         case 'The Winnu':
-            return '';
+            return 'We will claim what is ours by right, cousins. We will fulfill the destiny of those who came before us, and your treachery will not be forgotten.';
         case 'The Xxcha Kingdom':
-            return '';
+            return 'To fight without cause is not the way, human. Curb your anger. Let us walk through the gardens and consider how to proceed.';
         case 'The Yin Brotherhood':
-            return '';
+            return 'A-ah! You mistake me for a human; that we share the blood of Jord. I am no son of humanity. My life for the Yin!';
         case 'The Yssaril Tribes':
-            return '';
+            return 'Clever Ssruu has met the offworlder and made it dead. What does the Guild want for Ssruu to meet next?';
         case 'The Shipwrights of Ark':
-            return '';
+            return 'War is good for business.';
         case 'The Celdauri Trade Confederation':
-            return '';
+            return 'Just a modest adjustment to bolster the bottom line.';
         case 'The Savages of Cymiae':
-            return '';
+            return 'Do you feel it now? How the voices call out in anguish for retribution?';
         case 'The Dih-Mohn Flotilla':
             return 'We are exiles no longer!';
         case 'The Florzen Profiteers':
-            return '';
+            return 'Join us! Find wealth, adventure, and purpose beyond your wildest dreams!';
         case 'The Free Systems Compact':
             return 'You have called out for leadership, for change; I humbly answer your call.';
         case 'The Ghemina Raiders':
-            return '';
+            return "My sister? You'll find my sister is less a diplomat than you seem to think.";
         case 'The Augurs of Illyxum':
-            return '';
+            return 'The future lies before us like the infinite stars. We merely find the path.';
         case 'The Kollecc Society':
-            return '';
+            return 'Do I care about those dusty artifacts? No. I care about getting paid.';
         case 'The Kortali Tribunal':
-            return '';
+            return 'My life, for the Queens!';
         case 'The Li-Zho Dynasty':
-            return '';
+            return 'Do nothing without purpose.';
         case "The L'tokk Khrask":
-            return '';
+            return 'Breathe deep, allow your spirit to listen to the song of this world.';
         case 'The Mirveda Protectorate':
             return 'We are here to protect. Please do not resist.';
         case 'The Glimmer of Mortheus':
             return 'You do not see. You will know.';
         case 'The Myko-Mentori':
-            return '';
+            return "Technically, they do not predict the future \u2013 they remember it. Fortunately, they don't seem to remember it well.";
         case 'The Nivyn Star Kings':
             return 'More power. More.';
         case 'The Olradin League':
-            return '';
+            return 'Downtrodden peoples of the galaxy, unite! Together, we can build an empire for the Olradin people!';
         case 'The Zealots of Rhodun':
-            return '';
+            return 'You use these gifts as though no force in the galaxy could hold you and your people accountable.';
         case "Roh'Dhna Mechatronics":
             return 'Do not test our patience, valued customer, for it is with our constructions that your wars are fought.';
         case 'The Tnelis Syndicate':
@@ -651,29 +651,29 @@ const factionQuote = (f: Faction): string => {
         case 'The Vaden Banking Clans':
             return 'It seems your line of credit has reached its limit.';
         case 'The Vaylerian Scourge':
-            return '';
+            return "If you're to fight, win completely.";
         case 'The Veldyr Sovereignty':
-            return '';
+            return 'Let your plans be dark and impenetrable as the night, and when you move, fall like a thunderbolt.';
         case 'The Zelian Purifier':
-            return '';
+            return 'There is only Zelian. Submit and be spared.';
         case 'The Bentor Conglomerate':
             return "We will find what we seek. Don't make this difficult";
         case 'The Cheiran Hordes':
-            return '';
+            return 'Billions perish. Hordes endure.';
         case 'The Edyn Mandate':
-            return '';
+            return 'Life is brilliant, beautiful. It enchants us to the point of obsession. What is it that drives you?';
         case 'The Ghoti Wayfarers':
             return 'You float through space, seeking to conquer its surface, but ignorant to what you disturbed in the deep.';
         case 'The GLEdge Union':
-            return '';
+            return "From nothing, to everything. That's the chronicle of our work.";
         case 'The Berserkers of Kjalengard':
             return 'There is no glory in crushing the weak.';
         case 'The Monks of Kolume':
-            return '';
+            return 'Creation, mathematics, or war... in all things precision is the difference between fiasco and failure.';
         case 'The Kyro Sodality':
-            return '';
+            return 'What a waste of life you are, why must you insist on it?';
         case 'The Lanefir Remnants':
-            return '';
+            return 'Step out from the shadows of the past, and let us find a new path.';
         case 'The Nokar Sellships':
             return 'Everyone has a price. Everyone.';
         case 'The Council Keleres':
