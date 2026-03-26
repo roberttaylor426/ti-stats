@@ -112,6 +112,7 @@ type TechnologyName =
     | 'Broker Network'
     | 'Merged Replicators'
     | 'Voidwake Missiles'
+    | 'Voidflare Warden II'
     | 'Orbital Defense Grid'
     | 'Networked Command'
     | 'Parallel Production'
@@ -120,7 +121,11 @@ type TechnologyName =
     | 'Local Contracts'
     | 'Sabre II'
     | 'Midas Turbine'
-    | 'Krovoz Strike Teams';
+    | 'Krovoz Strike Teams'
+    | 'Applied Biothermics'
+    | 'Wraith Engine'
+    | 'Omniscience Field'
+    | 'Heavy Bomber II';
 
 type NonUnitTechnologyType = 'Biotic' | 'Propulsion' | 'Cybernetic' | 'Warfare';
 
@@ -678,7 +683,7 @@ const technologies: Technology[] = [
         type: 'Unit',
         faction: "Roh'Dhna Mechatronics",
         image: plasmaScoringImage,
-        supersedes: 'Space Dock II',
+        supersedes: 'War Sun',
     },
     {
         name: 'Zhrgar Stimulants',
@@ -731,10 +736,42 @@ const technologies: Technology[] = [
         image: plasmaScoringImage,
     },
     {
+        name: 'Wraith Engine',
+        type: 'Propulsion',
+        faction: 'The Li-Zho Dynasty',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Heavy Bomber II',
+        type: 'Unit',
+        faction: 'The Li-Zho Dynasty',
+        supersedes: 'Fighter II',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Applied Biothermics',
+        type: 'Biotic',
+        faction: 'The Monks of Kolume',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Omniscience Field',
+        type: 'Warfare',
+        faction: 'The Monks of Kolume',
+        image: plasmaScoringImage,
+    },
+    {
         name: 'Voidwake Missiles',
         type: 'Cybernetic',
         faction: 'The Nivyn Star Kings',
         image: plasmaScoringImage,
+    },
+    {
+        name: 'Voidflare Warden II',
+        type: 'Unit',
+        faction: 'The Nivyn Star Kings',
+        image: plasmaScoringImage,
+        supersedes: undefined,
     },
     {
         name: 'Orbital Defense Grid',
