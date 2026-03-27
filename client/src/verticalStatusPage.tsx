@@ -921,7 +921,8 @@ const StyledCompactStrategyCard = styled.div<StyledStrategyCardProps>`
     justify-content: space-between;
     align-items: center;
     position: relative;
-    padding: 3vw;
+    padding-left: 3vw;
+    padding-right: 3vw;
     background-color: black;
     border: ${(props) => props.$borderColor} 1.5vw solid;
     opacity: ${(props) => (props.$translucent ? 0.25 : 1)};
