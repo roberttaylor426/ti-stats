@@ -405,6 +405,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             (e) => e.faction === activePlayerInActionPhase
         )?.strategyCard;
 
+    const strategyCardPrimaryActionInProgress =
+        strategyCardPlayedByPlayerThisTurn(events, activePlayerInActionPhase) &&
+        !strategyCardPrimaryActionsCompletedByPlayerThisTurn(
+            events,
+            activePlayerInActionPhase
+        );
+
     return (
         <StyledPlayerTurnPage>
             <div ref={pageTitleRef}>
@@ -937,29 +944,23 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             Play strategy card
                         </Button>
 
-                        {strategyCardPlayedByPlayerThisTurn(
-                            events,
-                            activePlayerInActionPhase
-                        ) &&
-                            !strategyCardPrimaryActionsCompletedByPlayerThisTurn(
-                                events,
-                                activePlayerInActionPhase
-                            ) && (
-                                <Button
-                                    onClick={() =>
-                                        publishPlayerCompletedStrategyCardPrimaryActionEvent(
-                                            strategyCardSelectedByActivePlayerInActionPhase,
-                                            activePlayerInActionPhase
-                                        )
-                                    }
-                                >
-                                    Strategy card primary action completed
-                                </Button>
-                            )}
+                        {strategyCardPrimaryActionInProgress && (
+                            <Button
+                                onClick={() =>
+                                    publishPlayerCompletedStrategyCardPrimaryActionEvent(
+                                        strategyCardSelectedByActivePlayerInActionPhase,
+                                        activePlayerInActionPhase
+                                    )
+                                }
+                            >
+                                Strategy card primary action completed
+                            </Button>
+                        )}
                     </InputsColumn>
                 )}
             <InputsColumn>
                 <Button
+                    disabled={strategyCardPrimaryActionInProgress}
                     onClick={async () => {
                         await publishTurnFinishedEvent(
                             activePlayerInActionPhase,
