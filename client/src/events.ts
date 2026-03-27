@@ -82,6 +82,13 @@ type PlayerResearchedTechnologyEvent = {
     faction: Faction;
 };
 
+type PlayerDeresearchedTechnologyEvent = {
+    type: 'PlayerDeresearchedTechnology';
+    time: number;
+    technology: Technology;
+    faction: Faction;
+};
+
 type PlayerPlayedStrategyCardEvent = {
     type: 'PlayerPlayedStrategyCard';
     time: number;
@@ -333,10 +340,15 @@ const isMapTileAddedToBoardEvent = (e: Event): e is MapTileAddedToBoardEvent =>
 const isGammaWormholeFoundEvent = (e: Event): e is GammaWormholeFoundEvent =>
     e.type === 'GammaWormholeFound';
 
-const isTechnologyResearchedEvent = (
+const isPlayerResearchedTechnologyEvent = (
     e: Event
 ): e is PlayerResearchedTechnologyEvent =>
     e.type === 'PlayerResearchedTechnology';
+
+const isPlayerDeresearchedTechnologyEvent = (
+    e: Event
+): e is PlayerDeresearchedTechnologyEvent =>
+    e.type === 'PlayerDeresearchedTechnology';
 
 const isPlayerScoredVictoryPointEvent = (
     e: Event
@@ -395,6 +407,7 @@ type Event =
     | PlayerCompletedStrategyCardPrimaryActionEvent
     | PlayerFinishedTurnEvent
     | PlayerPlayedStrategyCardEvent
+    | PlayerDeresearchedTechnologyEvent
     | PlayerResearchedTechnologyEvent
     | PlayerScoredVictoryPointEvent
     | PlayerSelectedStrategyCardEvent
@@ -422,11 +435,24 @@ const factionsInGame = (events: Event[]): Faction[] =>
 const technologiesResearchedByFaction = (
     faction: Faction,
     events: Event[]
-): Technology[] =>
-    events
-        .filter(isTechnologyResearchedEvent)
+): Technology[] => {
+    const playerDeresearchedTechnologyEvents = events
+        .filter(isPlayerDeresearchedTechnologyEvent)
+        .filter((e) => e.faction === faction);
+
+    return events
+        .filter(isPlayerResearchedTechnologyEvent)
         .filter((e) => e.faction === faction)
+        .filter(
+            (e) =>
+                !playerDeresearchedTechnologyEvents.find(
+                    (de) =>
+                        e.technology.name === de.technology.name &&
+                        e.time < de.time
+                )
+        )
         .map((e) => e.technology);
+};
 
 const hasMecatolRexBeenCaptured = (events: Event[]): boolean =>
     events.some(
@@ -933,15 +959,16 @@ export {
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     isPlanetlessSystemControlledEvent,
+    isPlayerDeresearchedTechnologyEvent,
     isPlayerFinishedTurnEvent,
     isPlayerPlayedStrategyCardEvent,
+    isPlayerResearchedTechnologyEvent,
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
     isPlayerSelectedStrategyCardEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isSpeakerAssignedEvent,
-    isTechnologyResearchedEvent,
     isUnion,
     lastIndexOfEventType,
     latestPlanetControlledEventsByPlanet,

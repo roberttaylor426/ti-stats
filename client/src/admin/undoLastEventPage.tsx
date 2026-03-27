@@ -74,6 +74,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Player factions and colors assigned';
         case 'PlayerAttackedSystem':
             return `Player attacked system - ${e.faction} / ${systemTileDescription(e.tileNumber)}`;
+        case 'PlayerDeresearchedTechnology':
+            return `Tech deresearched - ${e.faction} / ${e.technology.name}`;
         case 'PlayerFinishedTurn':
             return `Player finished turn - ${e.faction}`;
         case 'PlayerPlayedStrategyCard':

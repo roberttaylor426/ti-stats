@@ -27,6 +27,7 @@ import {
     strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,
     systemTilePlanets,
+    technologiesResearchedByFaction,
     techsAvailableToResearch,
 } from '../events';
 import { Faction, shortName } from '../factions';
@@ -97,6 +98,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const [techToResearch, setTechToResearch] = useState<Technology>();
     const [factionToResearchTech, setFactionToResearchTech] =
+        useState<Faction>();
+
+    const [techToDeresearch, setTechToDeresearch] = useState<Technology>();
+    const [factionToDeresearchTech, setFactionToDeresearchTech] =
         useState<Faction>();
 
     const [selectedSystemToAttack, setSelectedSystemToAttack] =
@@ -190,6 +195,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     ) => {
         const newEvent: Event = {
             type: 'PlayerResearchedTechnology',
+            time: new Date().getTime(),
+            technology: t,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishPlayerDeresearchedTechnologyEvent = async (
+        t: Technology,
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'PlayerDeresearchedTechnology',
             time: new Date().getTime(),
             technology: t,
             faction: f,
@@ -624,6 +643,60 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                         }}
                     >
                         Research
+                    </Button>
+                </InputsRow>
+            </InputsColumn>
+            <InputsColumn>
+                <InputTitle>Deresearch tech</InputTitle>
+                <InputsRow>
+                    <Select
+                        onChange={(e) =>
+                            setFactionToDeresearchTech(
+                                e.target.value as Faction
+                            )
+                        }
+                    >
+                        <option value={''}>--Faction--</option>
+                        {_.sortBy(factionsInGame(events)).map((f) => (
+                            <option key={f} value={f}>
+                                {f}
+                            </option>
+                        ))}
+                    </Select>
+                    <Select
+                        onChange={(e) =>
+                            setTechToDeresearch(
+                                technologies.find(
+                                    (t) => e.target.value === t.name
+                                )
+                            )
+                        }
+                    >
+                        <option value={''}>--Tech--</option>
+                        {_.sortBy(
+                            factionToDeresearchTech
+                                ? technologiesResearchedByFaction(
+                                      factionToDeresearchTech,
+                                      events
+                                  )
+                                : []
+                        ).map(({ name }) => (
+                            <option key={name} value={name}>
+                                {name}
+                            </option>
+                        ))}
+                    </Select>
+                    <Button
+                        onClick={async () => {
+                            if (factionToDeresearchTech && techToDeresearch) {
+                                await publishPlayerDeresearchedTechnologyEvent(
+                                    techToDeresearch,
+                                    factionToDeresearchTech
+                                );
+                            }
+                        }}
+                    >
+                        Deresearch
                     </Button>
                 </InputsRow>
             </InputsColumn>
