@@ -8,13 +8,17 @@ import dihmon from './assets/factionSheets/dih.webp';
 import ghoti from './assets/factionSheets/ghoti.webp';
 import glimmer from './assets/factionSheets/glimmer.webp';
 import l1z1x from './assets/factionSheets/l1z1x.webp';
+import liZho from './assets/factionSheets/li-zho.webp';
 import mahact from './assets/factionSheets/mahact.webp';
 import mirveda from './assets/factionSheets/mirveda.webp';
+import monks from './assets/factionSheets/monks.webp';
 import nivyn from './assets/factionSheets/nivyn.webp';
 import nokar from './assets/factionSheets/nokar.webp';
+import nomad from './assets/factionSheets/nomad.webp';
 import rohdna from './assets/factionSheets/rohdna.webp';
 import tnelis from './assets/factionSheets/tnelis.webp';
 import vaden from './assets/factionSheets/vaden.webp';
+import yssaril from './assets/factionSheets/yssaril.webp';
 import { PlanetName } from './planets';
 import {
     arborecSystemTile,
@@ -470,7 +474,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Nekro Virus':
             return '';
         case 'The Nomad':
-            return '';
+            return nomad;
         case 'The Titans of Ul':
             return '';
         case 'The Universities of Jol-Nar':
@@ -484,7 +488,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Yin Brotherhood':
             return '';
         case 'The Yssaril Tribes':
-            return '';
+            return yssaril;
         case 'The Shipwrights of Ark':
             return '';
         case 'The Celdauri Trade Confederation':
@@ -506,7 +510,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Kortali Tribunal':
             return '';
         case 'The Li-Zho Dynasty':
-            return '';
+            return liZho;
         case "The L'tokk Khrask":
             return '';
         case 'The Mirveda Protectorate':
@@ -546,7 +550,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Berserkers of Kjalengard':
             return berserkers;
         case 'The Monks of Kolume':
-            return '';
+            return monks;
         case 'The Kyro Sodality':
             return '';
         case 'The Lanefir Remnants':
