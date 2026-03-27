@@ -9,6 +9,7 @@ const playerColors = [
     'Orange',
     'Pink',
     'Purple',
+    'Teal', //Dan's painted pieces
 ] as const;
 
 type PlayerColor = (typeof playerColors)[number];
@@ -31,6 +32,8 @@ const hexPlayerColor = (pc: PlayerColor): string => {
             return '#f212c1';
         case 'Purple':
             return '#7b00c5';
+        case 'Teal':
+            return '#008080';
     }
 };
 
