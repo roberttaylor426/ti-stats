@@ -41,6 +41,11 @@ type MapTilesSelectedEvent = {
     selections: Record<number, SystemTileNumber>;
 };
 
+type GetReadyMusicTriggeredEvent = {
+    type: 'GetReadyMusicTriggered';
+    time: number;
+};
+
 type GameSetupCompletedEvent = {
     type: 'GameSetupCompleted';
     time: number;
@@ -284,6 +289,10 @@ const lastIndexOfEventType = (events: Event[], eg: EventGuard<Event>): number =>
         events.map((e, index) => (eg(e) ? index : -1)).filter((n) => n !== -1)
     ) || -1;
 
+const isGetReadyMusicTriggeredEvent = (
+    e: Event
+): e is GetReadyMusicTriggeredEvent => e.type === 'GetReadyMusicTriggered';
+
 const isPlayersAssignedFactionsAndColorsEvent = (
     e: Event
 ): e is PlayersAssignedFactionsAndColorsEvent =>
@@ -372,6 +381,7 @@ type Event =
     | CommandTokensRemovedDuringStatusPhaseEvent
     | GameSetupCompletedEvent
     | GammaWormholeFoundEvent
+    | GetReadyMusicTriggeredEvent
     | MapTileAddedToBoardEvent
     | MapTilesSelectedEvent
     | MiragePlanetFoundEvent
@@ -915,6 +925,7 @@ export {
     isAgendaPhaseStartedEvent,
     isGameSetupCompletedEvent,
     isGammaWormholeFoundEvent,
+    isGetReadyMusicTriggeredEvent,
     isItAgendaPhase,
     isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,

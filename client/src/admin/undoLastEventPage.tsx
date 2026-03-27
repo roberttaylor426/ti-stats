@@ -50,6 +50,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Game setup completed';
         case 'GammaWormholeFound':
             return `Gamma wormhole found - ${systemTileDescription(e.tileNumber)}`;
+        case 'GetReadyMusicTriggered':
+            return 'Get ready music triggered';
         case 'MapTileAddedToBoard':
             return 'Map tile added to board';
         case 'MapTilesSelected':

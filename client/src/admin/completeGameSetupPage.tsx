@@ -27,6 +27,14 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
         useState<Faction>();
     const [techToResearch, setTechToResearch] = useState<Technology>();
 
+    const publishGetReadyMusicTriggeredEvent = async () => {
+        const newEvent: Event = {
+            type: 'GetReadyMusicTriggered',
+            time: new Date().getTime(),
+        };
+        await publishNewEvents([newEvent]);
+    };
+
     const publishPlayerResearchedTechnologyEvent = async (
         t: Technology,
         f: Faction
@@ -66,6 +74,13 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
             </ol>
             {factionsInGameThatNeedToChooseStartingTech.length > 0 && (
                 <InputsColumn>
+                    <Button
+                        onClick={async () => {
+                            await publishGetReadyMusicTriggeredEvent();
+                        }}
+                    >
+                        Play get ready music
+                    </Button>
                     <InputTitle>Research tech</InputTitle>
                     <InputsRow>
                         <Select

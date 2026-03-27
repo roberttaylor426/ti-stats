@@ -17,6 +17,7 @@ import {
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isGetReadyMusicTriggeredEvent,
     isItAgendaPhase,
     isPlayerFinishedTurnEvent,
     isPlayerScoredVictoryPointEvent,
@@ -70,11 +71,34 @@ const HorizontalStatusPage: React.FC = () => {
             .filter((fs) => fs.score >= 10)
     );
 
+    const [getReadyMusicPlayed, setGetReadyMusicPlayed] = useState<number>();
+    const [getReadyMusicPlayer, setGetReadyMusicPlayer] = useState<Howl>();
+
     const [factionsWithVictoryTunes, setFactionsWithVictoryTunes] = useState<
         Faction[] | undefined
     >();
     const [victoryTunePlayed, setVictoryTunePlayed] = useState<number>();
     const [victoryTunePlayer, setVictoryTunePlayer] = useState<Howl>();
+
+    useEffect(() => {
+        const getReadyMusicTriggeredTimestamp = _.last(
+            events.filter(isGetReadyMusicTriggeredEvent)
+        )?.time;
+        if (
+            getReadyMusicPlayed !== getReadyMusicTriggeredTimestamp &&
+            !getReadyMusicPlayer
+        ) {
+            const player = new Howl({ src: ['/music/get-ready.mp3'] });
+            player.play();
+            setGetReadyMusicPlayer(player);
+            setGetReadyMusicPlayed(getReadyMusicTriggeredTimestamp);
+        }
+
+        if (!getReadyMusicTriggeredTimestamp && getReadyMusicPlayer) {
+            getReadyMusicPlayer.stop();
+            setGetReadyMusicPlayer(undefined);
+        }
+    }, [events, getReadyMusicPlayed, getReadyMusicPlayer]);
 
     useAsyncEffect(async () => {
         if (factionsWithVictoryTunes === undefined) {
@@ -315,6 +339,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'CommandTokensGainedAndRedistributedDuringStatusPhase':
                 case 'CommandTokensRemovedDuringStatusPhase':
                 case 'GameSetupCompleted':
+                case 'GetReadyMusicTriggered':
                 case 'MapTilesSelected':
                 case 'ObjectivesScoredDuringStatusPhase':
                 case 'PlanetEnhanced':
