@@ -100,6 +100,7 @@ import {
     scanlinkDroneNetwork,
     selfAssemblyRoutines,
     slingRelay,
+    technologies,
     Technology,
 } from './technologies';
 
@@ -715,8 +716,6 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
             return [];
         case 'The Arborec':
             return [magenDefenseGrid];
-        case 'The Argent Flight':
-            return [];
         case 'The Barony of Letnev':
             return [antimassDeflectors, plasmaScoring];
         case 'The Clan of Saar':
@@ -756,20 +755,14 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
             ];
         case "The Vuil'Raith Cabal":
             return [selfAssemblyRoutines];
-        case 'The Winnu':
-            return [];
         case 'The Xxcha Kingdom':
             return [gravitonLaserSystem];
         case 'The Yin Brotherhood':
             return [sarweenTools];
         case 'The Yssaril Tribes':
             return [neuralMotivator];
-        case 'The Council Keleres':
-            return [];
         case 'The Shipwrights of Ark':
             return [sarweenTools, aiDevelopmentAlgorithm];
-        case 'The Celdauri Trade Confederation':
-            return [];
         case 'The Savages of Cymiae':
             return [aiDevelopmentAlgorithm, neuralMotivator];
         case 'The Dih-Mohn Flotilla':
@@ -804,16 +797,18 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
             return [bioStims];
         case "Roh'Dhna Mechatronics":
             return [sarweenTools, psychoArchaeology];
-        case 'The Tnelis Syndicate':
-            return [];
-        case 'The Vaden Banking Clans':
-            return [];
         case 'The Vaylerian Scourge':
             return [darkEnergyTap, neuralMotivator];
         case 'The Veldyr Sovereignty':
             return [darkEnergyTap, aiDevelopmentAlgorithm];
         case 'The Zelian Purifier':
             return [antimassDeflectors, aiDevelopmentAlgorithm];
+        case 'The Argent Flight':
+        case 'The Winnu':
+        case 'The Council Keleres':
+        case 'The Celdauri Trade Confederation':
+        case 'The Vaden Banking Clans':
+        case 'The Tnelis Syndicate':
         case 'The Bentor Conglomerate':
         case 'The Cheiran Hordes':
         case 'The Edyn Mandate':
@@ -824,6 +819,104 @@ const startingTechsForFaction = (f: Faction): Technology[] => {
         case 'The Kyro Sodality':
         case 'The Lanefir Remnants':
         case 'The Nokar Sellships':
+            return [];
+    }
+};
+
+const startingTechChoicesForFaction = (f: Faction): Technology[] => {
+    switch (f) {
+        case 'The Argent Flight':
+            return [neuralMotivator, sarweenTools, plasmaScoring];
+        case 'The Winnu':
+            return [
+                neuralMotivator,
+                psychoArchaeology,
+                antimassDeflectors,
+                darkEnergyTap,
+                sarweenTools,
+                scanlinkDroneNetwork,
+                plasmaScoring,
+                aiDevelopmentAlgorithm,
+            ];
+        case 'The Council Keleres':
+            return technologies;
+        case 'The Celdauri Trade Confederation':
+            return [antimassDeflectors, sarweenTools, plasmaScoring];
+        case 'The Vaden Banking Clans':
+            return [antimassDeflectors, sarweenTools, neuralMotivator];
+        case 'The Tnelis Syndicate':
+            return [plasmaScoring, antimassDeflectors, neuralMotivator];
+        case 'The Bentor Conglomerate':
+            return [darkEnergyTap, scanlinkDroneNetwork, psychoArchaeology];
+        case 'The Cheiran Hordes':
+            return [magenDefenseGrid, selfAssemblyRoutines];
+        case 'The Edyn Mandate':
+            return technologies;
+        case 'The Ghoti Wayfarers':
+            return [gravityDrive, slingRelay];
+        case 'The GLEdge Union':
+            return [
+                aiDevelopmentAlgorithm,
+                scanlinkDroneNetwork,
+                psychoArchaeology,
+            ];
+        case 'The Berserkers of Kjalengard':
+            return technologies;
+        case 'The Monks of Kolume':
+            return [gravitonLaserSystem, predictiveIntelligence];
+        case 'The Kyro Sodality':
+            return [daxciveAnimators];
+        case 'The Lanefir Remnants':
+            return [
+                darkEnergyTap,
+                scanlinkDroneNetwork,
+                aiDevelopmentAlgorithm,
+            ];
+        case 'The Nokar Sellships':
+            return [aiDevelopmentAlgorithm, darkEnergyTap, psychoArchaeology];
+        case 'Sardakk N’orr':
+        case 'The Arborec':
+        case 'The Barony of Letnev':
+        case 'The Clan of Saar':
+        case 'The Embers of Muaat':
+        case 'The Emirates of Hacan':
+        case 'The Empyrean':
+        case 'The Federation of Sol':
+        case 'The Ghosts of Creuss':
+        case 'The L1Z1X Mindnet':
+        case 'The Mahact Gene-Sorcerers':
+        case 'The Mentak Coalition':
+        case 'The Naalu Collective':
+        case 'The Naaz-Rokha Alliance':
+        case 'The Nekro Virus':
+        case 'The Nomad':
+        case 'The Titans of Ul':
+        case 'The Universities of Jol-Nar':
+        case "The Vuil'Raith Cabal":
+        case 'The Xxcha Kingdom':
+        case 'The Yin Brotherhood':
+        case 'The Yssaril Tribes':
+        case 'The Shipwrights of Ark':
+        case 'The Savages of Cymiae':
+        case 'The Dih-Mohn Flotilla':
+        case 'The Florzen Profiteers':
+        case 'The Free Systems Compact':
+        case 'The Ghemina Raiders':
+        case 'The Augurs of Illyxum':
+        case 'The Kollecc Society':
+        case 'The Kortali Tribunal':
+        case 'The Li-Zho Dynasty':
+        case "The L'tokk Khrask":
+        case 'The Mirveda Protectorate':
+        case 'The Glimmer of Mortheus':
+        case 'The Myko-Mentori':
+        case 'The Nivyn Star Kings':
+        case 'The Olradin League':
+        case 'The Zealots of Rhodun':
+        case "Roh'Dhna Mechatronics":
+        case 'The Vaylerian Scourge':
+        case 'The Veldyr Sovereignty':
+        case 'The Zelian Purifier':
             return [];
     }
 };
@@ -913,6 +1006,7 @@ export {
     planetsOutsideOfGalaxy,
     selectedFaction,
     shortName,
+    startingTechChoicesForFaction,
     startingTechsForFaction,
     superShortName,
 };

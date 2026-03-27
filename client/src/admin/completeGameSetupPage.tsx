@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import _ from 'underscore';
 
 import { Event, factionsInGame, techsAvailableToResearch } from '../events';
-import { Faction, startingTechsForFaction } from '../factions';
+import { Faction, startingTechChoicesForFaction } from '../factions';
 import { technologies, Technology } from '../technologies';
 import { notUndefined } from '../util';
 import { AdminPageProps } from './adminPageProps';
@@ -17,8 +17,10 @@ import { Select } from './components/select';
 const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
     const { events, publishNewEvents } = props;
 
-    const factionsInGameThatNeedToPickStartingTech = factionsInGame(events)
-        .map((f) => (startingTechsForFaction(f).length === 0 ? f : undefined))
+    const factionsInGameThatNeedToChooseStartingTech = factionsInGame(events)
+        .map((f) =>
+            startingTechChoicesForFaction(f).length > 0 ? f : undefined
+        )
         .filter(notUndefined);
 
     const [factionToResearchTech, setFactionToResearchTech] =
@@ -58,11 +60,11 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
                     secret objective deck without revealing them.
                 </li>
                 <li>The speaker reveals the first two stage I objectives.</li>
-                {factionsInGameThatNeedToPickStartingTech.length > 0 && (
+                {factionsInGameThatNeedToChooseStartingTech.length > 0 && (
                     <li>Pick faction-specific starting techs.</li>
                 )}
             </ol>
-            {factionsInGameThatNeedToPickStartingTech.length > 0 && (
+            {factionsInGameThatNeedToChooseStartingTech.length > 0 && (
                 <InputsColumn>
                     <InputTitle>Research tech</InputTitle>
                     <InputsRow>
@@ -75,7 +77,7 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
                         >
                             <option value={''}>--Faction--</option>
                             {_.sortBy(
-                                factionsInGameThatNeedToPickStartingTech
+                                factionsInGameThatNeedToChooseStartingTech
                             ).map((f) => (
                                 <option key={f} value={f}>
                                     {f}
@@ -93,9 +95,16 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
                         >
                             <option value={''}>--Tech--</option>
                             {_.sortBy(
-                                techsAvailableToResearch(
-                                    factionToResearchTech,
-                                    events
+                                _.intersection(
+                                    techsAvailableToResearch(
+                                        factionToResearchTech,
+                                        events
+                                    ),
+                                    factionToResearchTech
+                                        ? startingTechChoicesForFaction(
+                                              factionToResearchTech
+                                          )
+                                        : []
                                 )
                             ).map(({ name }) => (
                                 <option key={name} value={name}>
