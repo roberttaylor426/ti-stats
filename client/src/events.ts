@@ -103,6 +103,13 @@ type PlayerCompletedStrategyCardPrimaryActionEvent = {
     faction: Faction;
 };
 
+type PlayerCompletedStrategyCardSecondaryActionEvent = {
+    type: 'PlayerCompletedStrategyCardSecondaryAction';
+    time: number;
+    strategyCard: StrategyCard;
+    faction: Faction;
+};
+
 type PlayerAttackedSystemEvent = {
     type: 'PlayerAttackedSystem';
     time: number;
@@ -405,6 +412,7 @@ type Event =
     | PlayersAssignedFactionsAndColorsEvent
     | PlayerAttackedSystemEvent
     | PlayerCompletedStrategyCardPrimaryActionEvent
+    | PlayerCompletedStrategyCardSecondaryActionEvent
     | PlayerFinishedTurnEvent
     | PlayerPlayedStrategyCardEvent
     | PlayerDeresearchedTechnologyEvent

@@ -345,6 +345,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'PlanetEnhanced':
                 case 'PlayersAssignedFactionsAndColors':
                 case 'PlayerCompletedStrategyCardPrimaryAction':
+                case 'PlayerCompletedStrategyCardSecondaryAction':
                 case 'PlayerDeresearchedTechnology':
                 case 'PlayerFinishedTurn':
                 case 'PlayerScoredVictoryPoint':
