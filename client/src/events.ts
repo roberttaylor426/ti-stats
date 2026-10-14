@@ -9,7 +9,7 @@ import {
     selectedFaction,
 } from './factions';
 import { PlanetName, planets, ResourcesAndInfluence } from './planets';
-import { numberOfPlayersInGame, PlayerColor } from './playerColors';
+import { PlayerColor } from './playerColors';
 import { StrategyCard } from './strategyCards';
 import {
     ghostsOfCreussHomeTileNumber,
@@ -526,13 +526,13 @@ const currentPlayerTurnInStrategyPhase = (
     events: Event[]
 ): Faction | undefined => {
     const speaker = currentSpeaker(events);
+    const factions = factionsInGame(events);
     const playerOrder = currentStrategyPhasePlayerOrder(events);
 
     const playerSelectedStrategyCardEvents =
         playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events);
-
     if (
-        playerSelectedStrategyCardEvents.length >= numberOfPlayersInGame ||
+        playerSelectedStrategyCardEvents.length >= factions.length ||
         !speaker ||
         !playerOrder
     ) {
@@ -543,7 +543,7 @@ const currentPlayerTurnInStrategyPhase = (
 
     return playerOrder[
         (speakerIndex + playerSelectedStrategyCardEvents.length) %
-            numberOfPlayersInGame
+            factions.length
     ];
 };
 

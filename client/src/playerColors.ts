@@ -1,5 +1,3 @@
-const numberOfPlayersInGame = 6;
-
 const playerColors = [
     'Black',
     'Red',
@@ -37,4 +35,4 @@ const hexPlayerColor = (pc: PlayerColor): string => {
     }
 };
 
-export { hexPlayerColor, numberOfPlayersInGame, PlayerColor, playerColors };
+export { hexPlayerColor, PlayerColor, playerColors };

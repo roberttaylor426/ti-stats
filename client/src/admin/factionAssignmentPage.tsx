@@ -15,11 +15,7 @@ import {
     selectedFaction,
     startingTechsForFaction,
 } from '../factions';
-import {
-    numberOfPlayersInGame,
-    PlayerColor,
-    playerColors,
-} from '../playerColors';
+import { PlayerColor, playerColors } from '../playerColors';
 import { isPlanetlessSystemTile } from '../systemTiles';
 import { notUndefined, range } from '../util';
 import { AdminPageProps } from './adminPageProps';
@@ -27,36 +23,46 @@ import { Button } from './components/button';
 import { PageTitle } from './components/pageTitle';
 import { Select } from './components/select';
 
+const maxNumberOfPlayersInGame = 6;
+const minNumberOfPlayersInGame = 3;
+
 const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
     const { publishNewEvents } = props;
     const [factionSelections, setFactionSelections] = useState<
-        Record<number, FactionSelection>
-    >({});
+        FactionSelection[]
+    >(Array(maxNumberOfPlayersInGame));
 
     const [playerColorSelections, setPlayerColorSelections] = useState<
-        Record<number, PlayerColor>
-    >({});
+        PlayerColor[]
+    >(Array(maxNumberOfPlayersInGame));
 
     const publishPlayerFactionAndColorAssignmentEvents = async () => {
-        if (
-            Object.keys(factionSelections).length === numberOfPlayersInGame &&
-            Object.keys(playerColorSelections).length === numberOfPlayersInGame
-        ) {
+        const factionColorAssignments = factionSelections
+            .map((f, index) => ({
+                faction: f,
+                color: playerColorSelections[index],
+            }))
+            .filter((a) => a.faction && a.color);
+
+        const factionsWithAssignedColors = factionColorAssignments.map(
+            (fca) => fca.faction
+        );
+
+        if (factionColorAssignments.length >= minNumberOfPlayersInGame) {
             const newEvents: Event[] = [
                 {
                     type: 'PlayersAssignedFactionsAndColors',
                     time: new Date().getTime(),
-                    colorAssignments: range(numberOfPlayersInGame).reduce(
+                    colorAssignments: factionColorAssignments.reduce(
                         (acc, n) => ({
                             ...acc,
-                            [selectedFaction(factionSelections[n + 1])]:
-                                playerColorSelections[n + 1],
+                            [selectedFaction(n.faction)]: n.color,
                         }),
                         {} as Record<Faction, PlayerColor>
                     ),
-                    factionSelections: Object.values(factionSelections),
+                    factionSelections: factionsWithAssignedColors,
                 },
-                ...Object.values(factionSelections).flatMap((fs) =>
+                ...factionsWithAssignedColors.flatMap((fs) =>
                     homeworldsForFactionSelection(fs).map(
                         (p) =>
                             ({
@@ -67,7 +73,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                             }) as const
                     )
                 ),
-                ...Object.values(factionSelections).flatMap((fs) =>
+                ...factionsWithAssignedColors.flatMap((fs) =>
                     planetsOutsideOfGalaxy(selectedFaction(fs)).map(
                         (p) =>
                             ({
@@ -78,7 +84,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                             }) as const
                     )
                 ),
-                ...Object.values(factionSelections)
+                ...factionsWithAssignedColors
                     .map((fs) => {
                         const fst = factionSystemTile(fs);
                         return isPlanetlessSystemTile(fst)
@@ -91,7 +97,7 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
                             : undefined;
                     })
                     .filter(notUndefined),
-                ...Object.values(factionSelections)
+                ...factionsWithAssignedColors
                     .map((fs) => selectedFaction(fs))
                     .flatMap((f) =>
                         startingTechsForFaction(f).map(
@@ -116,21 +122,23 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
             {range(6).map((n) => (
                 <FactionSelectionRow
                     key={n}
-                    factionSelectedOnRow={factionSelections[n + 1]}
-                    playerColorSelectedOnRow={playerColorSelections[n + 1]}
+                    factionSelectedOnRow={factionSelections[n]}
+                    playerColorSelectedOnRow={playerColorSelections[n]}
                     factionSelections={factionSelections}
                     playerColorSelections={playerColorSelections}
                     onFactionSelected={(f) =>
-                        setFactionSelections({
-                            ...factionSelections,
-                            [n + 1]: f,
-                        })
+                        setFactionSelections([
+                            ...factionSelections.slice(0, n),
+                            f,
+                            ...factionSelections.slice(n + 1),
+                        ])
                     }
                     onPlayerColorSelected={(c) =>
-                        setPlayerColorSelections({
-                            ...playerColorSelections,
-                            [n + 1]: c,
-                        })
+                        setPlayerColorSelections([
+                            ...playerColorSelections.slice(0, n),
+                            c,
+                            ...playerColorSelections.slice(n + 1),
+                        ])
                     }
                 />
             ))}
@@ -144,8 +152,8 @@ const FactionAssignmentPage: React.FC<AdminPageProps> = (props) => {
 type FactionSelectionRowProps = {
     factionSelectedOnRow: FactionSelection | undefined;
     playerColorSelectedOnRow: PlayerColor | undefined;
-    factionSelections: Record<number, FactionSelection>;
-    playerColorSelections: Record<number, PlayerColor>;
+    factionSelections: FactionSelection[];
+    playerColorSelections: PlayerColor[];
     onFactionSelected: (f: FactionSelection) => void;
     onPlayerColorSelected: (p: PlayerColor) => void;
 };
@@ -186,7 +194,8 @@ const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
                         (f) =>
                             (factionSelectedOnRow &&
                                 selectedFaction(factionSelectedOnRow) === f) ||
-                            !Object.values(factionSelections)
+                            !factionSelections
+                                .filter(notUndefined)
                                 .map((fs) => selectedFaction(fs))
                                 .includes(f)
                     )
@@ -222,7 +231,8 @@ const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
                                 (factionSelectedOnRow &&
                                     selectedFaction(factionSelectedOnRow) ===
                                         f) ||
-                                !Object.values(factionSelections)
+                                !factionSelections
+                                    .filter(notUndefined)
                                     .map((fs) => selectedFaction(fs))
                                     .includes(f)
                         )
@@ -245,7 +255,7 @@ const FactionSelectionRow: React.FC<FactionSelectionRowProps> = ({
                     .filter(
                         (c) =>
                             playerColorSelectedOnRow === c ||
-                            !Object.values(playerColorSelections).includes(c)
+                            !playerColorSelections.includes(c)
                     )
                     .map((c) => (
                         <option key={c} value={c}>

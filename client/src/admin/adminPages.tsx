@@ -8,6 +8,7 @@ import {
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
     Event,
+    factionsInGame,
     isGameSetupCompletedEvent,
     isItAgendaPhase,
     isMapTilesSelectedEvent,
@@ -16,7 +17,6 @@ import {
     lastIndexOfEventType,
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
 } from '../events';
-import { numberOfPlayersInGame } from '../playerColors';
 import { AgendaPhasePage } from './agendaPhasePage';
 import { CompleteGameSetupPage } from './completeGameSetupPage';
 import { FactionAssignmentPage } from './factionAssignmentPage';
@@ -151,7 +151,7 @@ const isStartRoundPageVisible = (events: Event[]) => {
 
 const isSelectStrategyCardPageVisible = (events: Event[]) =>
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events).length <
-    numberOfPlayersInGame;
+    factionsInGame(events).length;
 
 const StyledAdminPage = styled.div`
     display: flex;

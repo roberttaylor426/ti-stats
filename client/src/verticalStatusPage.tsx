@@ -34,6 +34,7 @@ import {
 import {
     Faction,
     factionQuote,
+    factions,
     factionSheetImage,
     superShortName,
 } from './factions';
@@ -43,7 +44,6 @@ import {
     PlanetTrait,
     ResourcesAndInfluence,
 } from './planets';
-import { numberOfPlayersInGame } from './playerColors';
 import {
     color,
     initiative,
@@ -621,6 +621,7 @@ const avTimesTakenPositionLabel = (
     );
 
     return timeBasedPositionLabel(
+        factions.length,
         numberOfFactionsWithLessAvTime,
         anotherFactionHasTheSameAvTime
     );
@@ -653,6 +654,7 @@ const maxTimesTakenPositionLabel = (
     );
 
     return timeBasedPositionLabel(
+        factions.length,
         numberOfFactionsWithLessMaxTime,
         anotherFactionHasTheSameMaxTime
     );
@@ -670,6 +672,7 @@ const positionLabel = (
 };
 
 const timeBasedPositionLabel = (
+    numberOfFactionsInGame: number,
     numberOfFactionsWithMore: number,
     anotherFactionHasTheSameAmount: boolean
 ) => {
@@ -680,7 +683,7 @@ const timeBasedPositionLabel = (
 
     return label === '1st'
         ? 'Fastest'
-        : label === `${numberOfPlayersInGame}th`
+        : label === `${numberOfFactionsInGame}th`
           ? 'Slowest'
           : `${label} fastest`;
 };
