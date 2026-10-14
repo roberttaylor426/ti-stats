@@ -31,6 +31,7 @@ import { StatsContainer, StatsTitle } from './stats';
 import {
     ghostsOfCreussHomeTileNumber,
     isHyperlaneSystemTile,
+    isHyperlaneSystemTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
     systemTile,
@@ -111,13 +112,28 @@ const GalaxyPage: React.FC = () => {
                                 {tilesAtBeginningOfColumn(columnIndex, events)}
                                 {range(tilesPerColumn(columnIndex)).map(
                                     (rowIndex) => {
+                                        const index = tileIndex(
+                                            columnIndex,
+                                            rowIndex
+                                        );
                                         const systemTileNumber =
                                             mapTilesSelectedEvent?.selections[
-                                                tileIndex(columnIndex, rowIndex)
+                                                index
                                             ];
                                         return (
                                             <HighlightableSystemTile
-                                                key={`tile ${tileIndex(columnIndex, rowIndex)}`}
+                                                key={`tile ${index}`}
+                                                rotateAngle={
+                                                    systemTileNumber &&
+                                                    isHyperlaneSystemTileNumber(
+                                                        systemTileNumber
+                                                    ) &&
+                                                    index === 14
+                                                        ? 60
+                                                        : index === 26
+                                                          ? 120
+                                                          : 0
+                                                }
                                                 systemTileNumber={
                                                     systemTileNumber
                                                 }
@@ -554,9 +570,14 @@ const TileColumnRow = styled.div`
     }
 `;
 
-const Tile = styled.img`
+type TileProps = {
+    $rotateAngle: number;
+};
+
+const Tile = styled.img<TileProps>`
     min-width: 0;
     min-height: 0;
+    transform: rotate(${(props) => props.$rotateAngle}deg);
 `;
 
 const DummyTile = styled.div`
@@ -732,6 +753,7 @@ type HighlightableTileProps = {
     systemUnderAttack: boolean;
     showMirageToken: boolean;
     showGammaWormholeToken: boolean;
+    rotateAngle?: number;
 };
 
 const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
@@ -740,11 +762,13 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
     systemUnderAttack,
     showMirageToken,
     showGammaWormholeToken,
+    rotateAngle,
 }) => (
     <StyledHighlightableTile>
         <Tile
             src={systemTileImage(systemTileNumber)}
             alt={`System tile ${systemTileNumber}`}
+            $rotateAngle={rotateAngle || 0}
         />
         {showMirageToken && (
             <MirageTokenContainer>

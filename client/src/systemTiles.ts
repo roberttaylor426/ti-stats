@@ -228,9 +228,11 @@ const isHyperlaneSystemTileNumber = (
 
 const isSystemTileNumber = (n: number): n is SystemTileNumber =>
     Number.isInteger(n) &&
-    !![...planetlessSystemTileNumbers, ...systemWithPlanetsTileNumbers].find(
-        (tn) => tn === n
-    );
+    !![
+        ...planetlessSystemTileNumbers,
+        ...systemWithPlanetsTileNumbers,
+        ...hyperlaneSystemTileNumbers,
+    ].find((tn) => tn === n);
 
 const ghostsOfCreussGalaxyTileNumber = 17;
 const mecatolRexTileNumber = 18;

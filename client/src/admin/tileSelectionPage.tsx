@@ -119,6 +119,7 @@ const parseTtsMapString = (
     const tiles = s
         .split(' ')
         .map((s) => s.trim())
+        .map((s) => s.replace(/A\d+$/, ''))
         .map((s) => Number.parseInt(s))
         .map((s) => (isSystemTileNumber(s) ? s : undefined));
 
