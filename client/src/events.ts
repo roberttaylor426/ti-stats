@@ -830,13 +830,16 @@ const timesTakenPerPlayerPerTurn = (
 ): Record<Faction, number[]> =>
     events.reduce(
         (acc, n) => {
-            if (n.type === 'ActionPhaseStarted') {
+            if (n.type === 'RoundStarted' || n.type === 'ActionPhaseStarted') {
                 return {
                     ...acc,
                     playerTurnStartedTime: n.time,
                 };
             }
-            if (n.type === 'PlayerCompletedStrategyCardPrimaryAction') {
+            if (
+                n.type === 'PlayerSelectedStrategyCard' ||
+                n.type === 'PlayerCompletedStrategyCardPrimaryAction'
+            ) {
                 return {
                     playerTurnTimes: {
                         ...acc.playerTurnTimes,
