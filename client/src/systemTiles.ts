@@ -1,150 +1,152 @@
-import tile0 from './assets/tiles/ST_0.webp';
-import tile1 from './assets/tiles/ST_1.webp';
-import tile2 from './assets/tiles/ST_2.webp';
-import tile3 from './assets/tiles/ST_3.webp';
-import tile4 from './assets/tiles/ST_4.webp';
-import tile5 from './assets/tiles/ST_5.webp';
-import tile6 from './assets/tiles/ST_6.webp';
-import tile7 from './assets/tiles/ST_7.webp';
-import tile8 from './assets/tiles/ST_8.webp';
-import tile9 from './assets/tiles/ST_9.webp';
-import tile10 from './assets/tiles/ST_10.webp';
-import tile11 from './assets/tiles/ST_11.webp';
-import tile12 from './assets/tiles/ST_12.webp';
-import tile13 from './assets/tiles/ST_13.webp';
-import tile14 from './assets/tiles/ST_14.webp';
-import tile15 from './assets/tiles/ST_15.webp';
-import tile16 from './assets/tiles/ST_16.webp';
-import tile17 from './assets/tiles/ST_17.webp';
-import tile18 from './assets/tiles/ST_18.webp';
-import tile19 from './assets/tiles/ST_19.webp';
-import tile20 from './assets/tiles/ST_20.webp';
-import tile21 from './assets/tiles/ST_21.webp';
-import tile22 from './assets/tiles/ST_22.webp';
-import tile23 from './assets/tiles/ST_23.webp';
-import tile24 from './assets/tiles/ST_24.webp';
-import tile25 from './assets/tiles/ST_25.webp';
-import tile26 from './assets/tiles/ST_26.webp';
-import tile27 from './assets/tiles/ST_27.webp';
-import tile28 from './assets/tiles/ST_28.webp';
-import tile29 from './assets/tiles/ST_29.webp';
-import tile30 from './assets/tiles/ST_30.webp';
-import tile31 from './assets/tiles/ST_31.webp';
-import tile32 from './assets/tiles/ST_32.webp';
-import tile33 from './assets/tiles/ST_33.webp';
-import tile34 from './assets/tiles/ST_34.webp';
-import tile35 from './assets/tiles/ST_35.webp';
-import tile36 from './assets/tiles/ST_36.webp';
-import tile37 from './assets/tiles/ST_37.webp';
-import tile38 from './assets/tiles/ST_38.webp';
-import tile39 from './assets/tiles/ST_39.webp';
-import tile40 from './assets/tiles/ST_40.webp';
-import tile41 from './assets/tiles/ST_41.webp';
-import tile42 from './assets/tiles/ST_42.webp';
-import tile43 from './assets/tiles/ST_43.webp';
-import tile44 from './assets/tiles/ST_44.webp';
-import tile45 from './assets/tiles/ST_45.webp';
-import tile46 from './assets/tiles/ST_46.webp';
-import tile47 from './assets/tiles/ST_47.webp';
-import tile48 from './assets/tiles/ST_48.webp';
-import tile49 from './assets/tiles/ST_49.webp';
-import tile50 from './assets/tiles/ST_50.webp';
-import tile51 from './assets/tiles/ST_51.webp';
-import tile52 from './assets/tiles/ST_52.webp';
-import tile53 from './assets/tiles/ST_53.webp';
-import tile54 from './assets/tiles/ST_54.webp';
-import tile55 from './assets/tiles/ST_55.webp';
-import tile56 from './assets/tiles/ST_56.webp';
-import tile57 from './assets/tiles/ST_57.webp';
-import tile58 from './assets/tiles/ST_58.webp';
-import tile59 from './assets/tiles/ST_59.webp';
-import tile60 from './assets/tiles/ST_60.webp';
-import tile61 from './assets/tiles/ST_61.webp';
-import tile62 from './assets/tiles/ST_62.webp';
-import tile63 from './assets/tiles/ST_63.webp';
-import tile64 from './assets/tiles/ST_64.webp';
-import tile65 from './assets/tiles/ST_65.webp';
-import tile66 from './assets/tiles/ST_66.webp';
-import tile67 from './assets/tiles/ST_67.webp';
-import tile68 from './assets/tiles/ST_68.webp';
-import tile69 from './assets/tiles/ST_69.webp';
-import tile70 from './assets/tiles/ST_70.webp';
-import tile71 from './assets/tiles/ST_71.webp';
-import tile72 from './assets/tiles/ST_72.webp';
-import tile73 from './assets/tiles/ST_73.webp';
-import tile74 from './assets/tiles/ST_74.webp';
-import tile75 from './assets/tiles/ST_75.webp';
-import tile76 from './assets/tiles/ST_76.webp';
-import tile77 from './assets/tiles/ST_77.webp';
-import tile78 from './assets/tiles/ST_78.webp';
-import tile79 from './assets/tiles/ST_79.webp';
-import tile80 from './assets/tiles/ST_80.webp';
-import tile81 from './assets/tiles/ST_81.webp';
-import tile82 from './assets/tiles/ST_82.webp';
-import tile3201 from './assets/tiles/ST_3201.webp';
-import tile3202 from './assets/tiles/ST_3202.webp';
-import tile3203 from './assets/tiles/ST_3203.webp';
-import tile3204 from './assets/tiles/ST_3204.webp';
-import tile3205 from './assets/tiles/ST_3205.webp';
-import tile3206 from './assets/tiles/ST_3206.webp';
-import tile3207 from './assets/tiles/ST_3207.webp';
-import tile3208 from './assets/tiles/ST_3208.webp';
-import tile3209 from './assets/tiles/ST_3209.webp';
-import tile3210 from './assets/tiles/ST_3210.webp';
-import tile3211 from './assets/tiles/ST_3211.webp';
-import tile3212 from './assets/tiles/ST_3212.webp';
-import tile3213 from './assets/tiles/ST_3213.webp';
-import tile3214 from './assets/tiles/ST_3214.webp';
-import tile3215 from './assets/tiles/ST_3215.webp';
-import tile3216 from './assets/tiles/ST_3216.webp';
-import tile3217 from './assets/tiles/ST_3217.webp';
-import tile3218 from './assets/tiles/ST_3218.webp';
-import tile3219 from './assets/tiles/ST_3219.webp';
-import tile3220 from './assets/tiles/ST_3220.webp';
-import tile3221 from './assets/tiles/ST_3221.webp';
-import tile3222 from './assets/tiles/ST_3222.webp';
-import tile3223 from './assets/tiles/ST_3223.webp';
-import tile3224 from './assets/tiles/ST_3224.webp';
-import tile3226 from './assets/tiles/ST_3226.webp';
-import tile3227 from './assets/tiles/ST_3227.webp';
-import tile3228 from './assets/tiles/ST_3228.webp';
-import tile3229 from './assets/tiles/ST_3229.webp';
-import tile3230 from './assets/tiles/ST_3230.webp';
-import tile3231 from './assets/tiles/ST_3231.webp';
-import tile3232 from './assets/tiles/ST_3232.webp';
-import tile3233 from './assets/tiles/ST_3233.webp';
-import tile3234 from './assets/tiles/ST_3234.webp';
-import tile3235 from './assets/tiles/ST_3235.webp';
-import tile4253 from './assets/tiles/ST_4253.webp';
-import tile4254 from './assets/tiles/ST_4254.webp';
-import tile4255 from './assets/tiles/ST_4255.webp';
-import tile4256 from './assets/tiles/ST_4256.webp';
-import tile4257 from './assets/tiles/ST_4257.webp';
-import tile4258 from './assets/tiles/ST_4258.webp';
-import tile4259 from './assets/tiles/ST_4259.webp';
-import tile4260 from './assets/tiles/ST_4260.webp';
-import tile4261 from './assets/tiles/ST_4261.webp';
-import tile4262 from './assets/tiles/ST_4262.webp';
-import tile4263 from './assets/tiles/ST_4263.webp';
-import tile4264 from './assets/tiles/ST_4264.webp';
-import tile4265 from './assets/tiles/ST_4265.webp';
-import tile4266 from './assets/tiles/ST_4266.webp';
-import tile4267 from './assets/tiles/ST_4267.webp';
-import tile4268 from './assets/tiles/ST_4268.webp';
-import tile4269 from './assets/tiles/ST_4269.webp';
-import tile4270 from './assets/tiles/ST_4270.webp';
-import tile4271 from './assets/tiles/ST_4271.webp';
-import tile4272 from './assets/tiles/ST_4272.webp';
-import tile4273 from './assets/tiles/ST_4273.webp';
-import tile4274 from './assets/tiles/ST_4274.webp';
-import tile4275 from './assets/tiles/ST_4275.webp';
-import tile4276 from './assets/tiles/ST_4276.webp';
+import tile0 from './assets/systemTiles/ST_0.webp';
+import tile1 from './assets/systemTiles/ST_1.webp';
+import tile2 from './assets/systemTiles/ST_2.webp';
+import tile3 from './assets/systemTiles/ST_3.webp';
+import tile4 from './assets/systemTiles/ST_4.webp';
+import tile5 from './assets/systemTiles/ST_5.webp';
+import tile6 from './assets/systemTiles/ST_6.webp';
+import tile7 from './assets/systemTiles/ST_7.webp';
+import tile8 from './assets/systemTiles/ST_8.webp';
+import tile9 from './assets/systemTiles/ST_9.webp';
+import tile10 from './assets/systemTiles/ST_10.webp';
+import tile11 from './assets/systemTiles/ST_11.webp';
+import tile12 from './assets/systemTiles/ST_12.webp';
+import tile13 from './assets/systemTiles/ST_13.webp';
+import tile14 from './assets/systemTiles/ST_14.webp';
+import tile15 from './assets/systemTiles/ST_15.webp';
+import tile16 from './assets/systemTiles/ST_16.webp';
+import tile17 from './assets/systemTiles/ST_17.webp';
+import tile18 from './assets/systemTiles/ST_18.webp';
+import tile19 from './assets/systemTiles/ST_19.webp';
+import tile20 from './assets/systemTiles/ST_20.webp';
+import tile21 from './assets/systemTiles/ST_21.webp';
+import tile22 from './assets/systemTiles/ST_22.webp';
+import tile23 from './assets/systemTiles/ST_23.webp';
+import tile24 from './assets/systemTiles/ST_24.webp';
+import tile25 from './assets/systemTiles/ST_25.webp';
+import tile26 from './assets/systemTiles/ST_26.webp';
+import tile27 from './assets/systemTiles/ST_27.webp';
+import tile28 from './assets/systemTiles/ST_28.webp';
+import tile29 from './assets/systemTiles/ST_29.webp';
+import tile30 from './assets/systemTiles/ST_30.webp';
+import tile31 from './assets/systemTiles/ST_31.webp';
+import tile32 from './assets/systemTiles/ST_32.webp';
+import tile33 from './assets/systemTiles/ST_33.webp';
+import tile34 from './assets/systemTiles/ST_34.webp';
+import tile35 from './assets/systemTiles/ST_35.webp';
+import tile36 from './assets/systemTiles/ST_36.webp';
+import tile37 from './assets/systemTiles/ST_37.webp';
+import tile38 from './assets/systemTiles/ST_38.webp';
+import tile39 from './assets/systemTiles/ST_39.webp';
+import tile40 from './assets/systemTiles/ST_40.webp';
+import tile41 from './assets/systemTiles/ST_41.webp';
+import tile42 from './assets/systemTiles/ST_42.webp';
+import tile43 from './assets/systemTiles/ST_43.webp';
+import tile44 from './assets/systemTiles/ST_44.webp';
+import tile45 from './assets/systemTiles/ST_45.webp';
+import tile46 from './assets/systemTiles/ST_46.webp';
+import tile47 from './assets/systemTiles/ST_47.webp';
+import tile48 from './assets/systemTiles/ST_48.webp';
+import tile49 from './assets/systemTiles/ST_49.webp';
+import tile50 from './assets/systemTiles/ST_50.webp';
+import tile51 from './assets/systemTiles/ST_51.webp';
+import tile52 from './assets/systemTiles/ST_52.webp';
+import tile53 from './assets/systemTiles/ST_53.webp';
+import tile54 from './assets/systemTiles/ST_54.webp';
+import tile55 from './assets/systemTiles/ST_55.webp';
+import tile56 from './assets/systemTiles/ST_56.webp';
+import tile57 from './assets/systemTiles/ST_57.webp';
+import tile58 from './assets/systemTiles/ST_58.webp';
+import tile59 from './assets/systemTiles/ST_59.webp';
+import tile60 from './assets/systemTiles/ST_60.webp';
+import tile61 from './assets/systemTiles/ST_61.webp';
+import tile62 from './assets/systemTiles/ST_62.webp';
+import tile63 from './assets/systemTiles/ST_63.webp';
+import tile64 from './assets/systemTiles/ST_64.webp';
+import tile65 from './assets/systemTiles/ST_65.webp';
+import tile66 from './assets/systemTiles/ST_66.webp';
+import tile67 from './assets/systemTiles/ST_67.webp';
+import tile68 from './assets/systemTiles/ST_68.webp';
+import tile69 from './assets/systemTiles/ST_69.webp';
+import tile70 from './assets/systemTiles/ST_70.webp';
+import tile71 from './assets/systemTiles/ST_71.webp';
+import tile72 from './assets/systemTiles/ST_72.webp';
+import tile73 from './assets/systemTiles/ST_73.webp';
+import tile74 from './assets/systemTiles/ST_74.webp';
+import tile75 from './assets/systemTiles/ST_75.webp';
+import tile76 from './assets/systemTiles/ST_76.webp';
+import tile77 from './assets/systemTiles/ST_77.webp';
+import tile78 from './assets/systemTiles/ST_78.webp';
+import tile79 from './assets/systemTiles/ST_79.webp';
+import tile80 from './assets/systemTiles/ST_80.webp';
+import tile81 from './assets/systemTiles/ST_81.webp';
+import tile82 from './assets/systemTiles/ST_82.webp';
+import tile83 from './assets/systemTiles/ST_83A.webp';
+import tile85 from './assets/systemTiles/ST_85A.webp';
+import tile87 from './assets/systemTiles/ST_87A.webp';
+import tile3201 from './assets/systemTiles/ST_3201.webp';
+import tile3202 from './assets/systemTiles/ST_3202.webp';
+import tile3203 from './assets/systemTiles/ST_3203.webp';
+import tile3204 from './assets/systemTiles/ST_3204.webp';
+import tile3205 from './assets/systemTiles/ST_3205.webp';
+import tile3206 from './assets/systemTiles/ST_3206.webp';
+import tile3207 from './assets/systemTiles/ST_3207.webp';
+import tile3208 from './assets/systemTiles/ST_3208.webp';
+import tile3209 from './assets/systemTiles/ST_3209.webp';
+import tile3210 from './assets/systemTiles/ST_3210.webp';
+import tile3211 from './assets/systemTiles/ST_3211.webp';
+import tile3212 from './assets/systemTiles/ST_3212.webp';
+import tile3213 from './assets/systemTiles/ST_3213.webp';
+import tile3214 from './assets/systemTiles/ST_3214.webp';
+import tile3215 from './assets/systemTiles/ST_3215.webp';
+import tile3216 from './assets/systemTiles/ST_3216.webp';
+import tile3217 from './assets/systemTiles/ST_3217.webp';
+import tile3218 from './assets/systemTiles/ST_3218.webp';
+import tile3219 from './assets/systemTiles/ST_3219.webp';
+import tile3220 from './assets/systemTiles/ST_3220.webp';
+import tile3221 from './assets/systemTiles/ST_3221.webp';
+import tile3222 from './assets/systemTiles/ST_3222.webp';
+import tile3223 from './assets/systemTiles/ST_3223.webp';
+import tile3224 from './assets/systemTiles/ST_3224.webp';
+import tile3226 from './assets/systemTiles/ST_3226.webp';
+import tile3227 from './assets/systemTiles/ST_3227.webp';
+import tile3228 from './assets/systemTiles/ST_3228.webp';
+import tile3229 from './assets/systemTiles/ST_3229.webp';
+import tile3230 from './assets/systemTiles/ST_3230.webp';
+import tile3231 from './assets/systemTiles/ST_3231.webp';
+import tile3232 from './assets/systemTiles/ST_3232.webp';
+import tile3233 from './assets/systemTiles/ST_3233.webp';
+import tile3234 from './assets/systemTiles/ST_3234.webp';
+import tile3235 from './assets/systemTiles/ST_3235.webp';
+import tile4253 from './assets/systemTiles/ST_4253.webp';
+import tile4254 from './assets/systemTiles/ST_4254.webp';
+import tile4255 from './assets/systemTiles/ST_4255.webp';
+import tile4256 from './assets/systemTiles/ST_4256.webp';
+import tile4257 from './assets/systemTiles/ST_4257.webp';
+import tile4258 from './assets/systemTiles/ST_4258.webp';
+import tile4259 from './assets/systemTiles/ST_4259.webp';
+import tile4260 from './assets/systemTiles/ST_4260.webp';
+import tile4261 from './assets/systemTiles/ST_4261.webp';
+import tile4262 from './assets/systemTiles/ST_4262.webp';
+import tile4263 from './assets/systemTiles/ST_4263.webp';
+import tile4264 from './assets/systemTiles/ST_4264.webp';
+import tile4265 from './assets/systemTiles/ST_4265.webp';
+import tile4266 from './assets/systemTiles/ST_4266.webp';
+import tile4267 from './assets/systemTiles/ST_4267.webp';
+import tile4268 from './assets/systemTiles/ST_4268.webp';
+import tile4269 from './assets/systemTiles/ST_4269.webp';
+import tile4270 from './assets/systemTiles/ST_4270.webp';
+import tile4271 from './assets/systemTiles/ST_4271.webp';
+import tile4272 from './assets/systemTiles/ST_4272.webp';
+import tile4273 from './assets/systemTiles/ST_4273.webp';
+import tile4274 from './assets/systemTiles/ST_4274.webp';
+import tile4275 from './assets/systemTiles/ST_4275.webp';
+import tile4276 from './assets/systemTiles/ST_4276.webp';
 import {
     factionsWithFixedHomeworlds,
     factionWithFixedHomeworldsSystemTile,
 } from './factions';
 import { PlanetName } from './planets';
-import { not } from './util';
 
 type PlanetlessSystemTile = {
     tileNumber: PlanetlessSystemTileNumber;
@@ -157,13 +159,24 @@ type SystemWithPlanetsTile = {
     planets: PlanetName[];
 };
 
-type SystemTile = PlanetlessSystemTile | SystemWithPlanetsTile;
+type HyperlaneSystemTile = {
+    tileNumber: HyperlaneSystemTileNumber;
+    image: string;
+};
+
+type SystemTile =
+    | PlanetlessSystemTile
+    | SystemWithPlanetsTile
+    | HyperlaneSystemTile;
 
 const isSystemWithPlanetsTile = (t: SystemTile): t is SystemWithPlanetsTile =>
     isSystemWithPlanetsTileNumber(t.tileNumber);
 
 const isPlanetlessSystemTile = (t: SystemTile): t is PlanetlessSystemTile =>
-    not(isSystemWithPlanetsTileNumber)(t.tileNumber);
+    isPlanetlessSystemTileNumber(t.tileNumber);
+
+const isHyperlaneSystemTile = (t: SystemTile): t is HyperlaneSystemTile =>
+    isHyperlaneSystemTileNumber(t.tileNumber);
 
 const planetlessSystemTileNumbers = [
     17, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 77, 78, 79, 80, 81,
@@ -186,9 +199,17 @@ const systemWithPlanetsTileNumbers = [
 type SystemWithPlanetsTileNumber =
     (typeof systemWithPlanetsTileNumbers)[number];
 
-type SystemTileNumber =
+const hyperlaneSystemTileNumbers = [83, 85, 87, 87] as const;
+
+type HyperlaneSystemTileNumber = (typeof hyperlaneSystemTileNumbers)[number];
+
+type InteractableSystemTileNumber =
     | PlanetlessSystemTileNumber
     | SystemWithPlanetsTileNumber;
+
+type SystemTileNumber =
+    | InteractableSystemTileNumber
+    | HyperlaneSystemTileNumber;
 
 const isSystemWithPlanetsTileNumber = (
     stn: SystemTileNumber
@@ -197,7 +218,13 @@ const isSystemWithPlanetsTileNumber = (
 
 const isPlanetlessSystemTileNumber = (
     stn: SystemTileNumber
-): stn is PlanetlessSystemTileNumber => !isSystemWithPlanetsTileNumber(stn);
+): stn is PlanetlessSystemTileNumber =>
+    !!planetlessSystemTileNumbers.find((n) => n === stn);
+
+const isHyperlaneSystemTileNumber = (
+    stn: SystemTileNumber
+): stn is HyperlaneSystemTileNumber =>
+    !!hyperlaneSystemTileNumbers.find((n) => n === stn);
 
 const isSystemTileNumber = (n: number): n is SystemTileNumber =>
     Number.isInteger(n) &&
@@ -943,6 +970,18 @@ const systemTiles: SystemTile[] = [
         tileNumber: 4276,
         image: tile4276,
     },
+    {
+        tileNumber: 83,
+        image: tile83,
+    },
+    {
+        tileNumber: 85,
+        image: tile85,
+    },
+    {
+        tileNumber: 87,
+        image: tile87,
+    },
 ];
 
 const systemTile = (stn: SystemTileNumber): SystemTile =>
@@ -956,7 +995,7 @@ const systemTileImage = (stn?: SystemTileNumber) =>
     !!stn ? systemTile(stn).image : tile0;
 
 const systemTileDescription = (stn: SystemTileNumber): string =>
-    `${stn} - ${isSystemWithPlanetsTileNumber(stn) ? systemWithPlanetsTileDescription(stn) : planetlessSystemTileDescription(stn)}`;
+    `${stn} - ${isSystemWithPlanetsTileNumber(stn) ? systemWithPlanetsTileDescription(stn) : isPlanetlessSystemTileNumber(stn) ? planetlessSystemTileDescription(stn) : hyperlaneSystemTileDescription(stn)}`;
 
 const systemWithPlanetsTileDescription = (
     stn: SystemWithPlanetsTileNumber
@@ -1022,6 +1061,9 @@ const planetlessSystemTileDescription = (
     }
 };
 
+const hyperlaneSystemTileDescription = (_: HyperlaneSystemTileNumber): string =>
+    'Hyperlane';
+
 export {
     arborecSystemTile,
     argentFlightSystemTile,
@@ -1047,7 +1089,10 @@ export {
     ghotiWayferersSystemTile,
     gledgeUnionSystemTile,
     glimmerOfMortheusSystemTile,
+    InteractableSystemTileNumber,
     isFactionSystemTile,
+    isHyperlaneSystemTile,
+    isHyperlaneSystemTileNumber,
     isPlanetlessSystemTile,
     isPlanetlessSystemTileNumber,
     isSystemTileNumber,

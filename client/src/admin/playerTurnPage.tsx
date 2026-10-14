@@ -35,7 +35,9 @@ import { tileIndex } from '../galaxy';
 import { PlanetName, planets } from '../planets';
 import { StrategyCard } from '../strategyCards';
 import {
+    InteractableSystemTileNumber,
     isFactionSystemTile,
+    isHyperlaneSystemTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
     PlanetlessSystemTileNumber,
@@ -105,7 +107,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         useState<Faction>();
 
     const [selectedSystemToAttack, setSelectedSystemToAttack] =
-        useState<SystemTileNumber>();
+        useState<InteractableSystemTileNumber>();
     const [selectedFactionDefendingSystem, setSelectedFactionDefendingSystem] =
         useState<Faction>();
 
@@ -120,7 +122,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     const [
         selectedSystemToAddGammaWormholeTo,
         setSelectedSystemToAddGammaWormholeTo,
-    ] = useState<SystemTileNumber>();
+    ] = useState<InteractableSystemTileNumber>();
 
     const planetControlledEvent = (
         p: PlanetName,
@@ -286,7 +288,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const publishPlayerAttackedSystemEvent = async (
         f: Faction,
-        tn: SystemTileNumber,
+        tn: InteractableSystemTileNumber,
         defender: Faction
     ): Promise<boolean> => {
         const newEvent: Event = {
@@ -302,7 +304,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const publishGammaWormholeFoundEvent = async (
         f: Faction,
-        tn: SystemTileNumber
+        tn: InteractableSystemTileNumber
     ): Promise<boolean> => {
         const newEvent: Event = {
             type: 'GammaWormholeFound',
@@ -318,11 +320,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const planetsOnTheBoard: PlanetName[] = systemTilesInPlay
         .flatMap((stn) =>
-            isPlanetlessSystemTileNumber(stn)
-                ? hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, stn)
-                    ? (['Mirage'] as const)
-                    : []
-                : systemTilePlanets(events, stn)
+            isHyperlaneSystemTileNumber(stn)
+                ? []
+                : isPlanetlessSystemTileNumber(stn)
+                  ? hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, stn)
+                      ? (['Mirage'] as const)
+                      : []
+                  : systemTilePlanets(stn)
         )
         .filter(
             (p) =>
@@ -352,18 +356,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         stn: SystemTileNumber
     ): Faction[] =>
         _.uniq(
-            isPlanetlessSystemTileNumber(stn)
-                ? [factionCurrentlyControllingPlanetlessSystemTile(stn)].filter(
-                      notUndefined
-                  )
-                : systemWithPlanetsTile(stn)
-                      .planets.map((p) =>
-                          latestPlanetControlledEventsByPlanet(events).find(
-                              (e) => e.planet === p
-                          )
-                      )
-                      .filter(notUndefined)
-                      .map((e) => e.faction)
+            isHyperlaneSystemTileNumber(stn)
+                ? []
+                : isPlanetlessSystemTileNumber(stn)
+                  ? [
+                        factionCurrentlyControllingPlanetlessSystemTile(stn),
+                    ].filter(notUndefined)
+                  : systemWithPlanetsTile(stn)
+                        .planets.map((p) =>
+                            latestPlanetControlledEventsByPlanet(events).find(
+                                (e) => e.planet === p
+                            )
+                        )
+                        .filter(notUndefined)
+                        .map((e) => e.faction)
         );
 
     const factionCurrentlyControllingPlanetlessSystemTile = (
@@ -714,7 +720,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                         onChange={(e) => {
                             const systemToAttack = Number.parseInt(
                                 e.target.value
-                            ) as SystemTileNumber;
+                            ) as InteractableSystemTileNumber;
                             setSelectedSystemToAttack(systemToAttack);
 
                             if (
@@ -957,7 +963,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                 setSelectedSystemToAddGammaWormholeTo(
                                     Number.parseInt(
                                         e.target.value
-                                    ) as SystemTileNumber
+                                    ) as InteractableSystemTileNumber
                                 );
                             }}
                             value={selectedSystemToAddGammaWormholeTo || ''}

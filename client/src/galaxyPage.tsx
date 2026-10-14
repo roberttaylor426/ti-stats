@@ -2,11 +2,11 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
-import gammaWormholeToken from './assets/tiles/GammaToken.webp';
-import mirageToken from './assets/tiles/MirageToken.webp';
-import tile51 from './assets/tiles/ST_51.webp';
-import tile82 from './assets/tiles/ST_82.webp';
-import tile82Back from './assets/tiles/ST_82_Back.webp';
+import gammaWormholeToken from './assets/systemTiles/GammaToken.webp';
+import mirageToken from './assets/systemTiles/MirageToken.webp';
+import tile51 from './assets/systemTiles/ST_51.webp';
+import tile82 from './assets/systemTiles/ST_82.webp';
+import tile82Back from './assets/systemTiles/ST_82_Back.webp';
 import {
     Event,
     factionsInGame,
@@ -30,6 +30,7 @@ import { Stars } from './stars';
 import { StatsContainer, StatsTitle } from './stats';
 import {
     ghostsOfCreussHomeTileNumber,
+    isHyperlaneSystemTile,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
     systemTile,
@@ -39,7 +40,16 @@ import {
 } from './systemTiles';
 import { useAttackAlarms } from './useAttackAlarms';
 import { useEvents } from './useEvents';
-import { notUndefined, range } from './util';
+import { notUndefined, range } from './util'; /*
+ Extract common scoreboard component
+ Extract all pages into separate files
+ Support tile changes in game (Creuss, Muaat heroes)
+ Digitize the VP tracks
+ Ability to lose a tech (Jol Nar)
+ Can we keep track of votes?
+ Mallice and Creuss tiles overlap certain tiles added to the galaxy
+ Rename stuff in statusPage and tickerPage
+*/
 
 /*
  Extract common scoreboard component
@@ -664,6 +674,10 @@ const controllingPlayerColors = (
     const st = systemTileNumber ? systemTile(systemTileNumber) : undefined;
 
     if (!st) {
+        return undefined;
+    }
+
+    if (isHyperlaneSystemTile(st)) {
         return undefined;
     }
 

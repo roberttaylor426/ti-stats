@@ -13,12 +13,12 @@ import { numberOfPlayersInGame, PlayerColor } from './playerColors';
 import { StrategyCard } from './strategyCards';
 import {
     ghostsOfCreussHomeTileNumber,
-    isSystemWithPlanetsTile,
+    InteractableSystemTileNumber,
     malliceTileNumber,
     PlanetlessSystemTile,
     PlanetlessSystemTileNumber,
-    systemTile,
     SystemTileNumber,
+    systemWithPlanetsTile,
     SystemWithPlanetsTileNumber,
 } from './systemTiles';
 import {
@@ -107,7 +107,7 @@ type PlayerAttackedSystemEvent = {
     type: 'PlayerAttackedSystem';
     time: number;
     faction: Faction;
-    tileNumber: SystemTileNumber;
+    tileNumber: InteractableSystemTileNumber;
     defender: Faction;
 };
 
@@ -157,7 +157,7 @@ type MiragePlanetFoundEvent = {
 type GammaWormholeFoundEvent = {
     type: 'GammaWormholeFound';
     time: number;
-    tileNumber: SystemTileNumber;
+    tileNumber: InteractableSystemTileNumber;
     faction: Faction;
 };
 
@@ -478,21 +478,10 @@ const hasMiragePlanetBeenFoundOnSystemTile = (
 ): boolean =>
     hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, tile.tileNumber);
 
-const systemTilePlanets = (
-    events: Event[],
-    stn: SystemTileNumber
-): PlanetName[] => {
-    const st = systemTile(stn);
+const systemTilePlanets = (stn: SystemWithPlanetsTileNumber): PlanetName[] => {
+    const st = systemWithPlanetsTile(stn);
 
-    if (isSystemWithPlanetsTile(st)) {
-        return st.planets;
-    }
-
-    if (hasMiragePlanetBeenFoundOnSystemTile(events, st)) {
-        return ['Mirage'];
-    }
-
-    return [];
+    return st.planets;
 };
 
 const currentSpeaker = (events: Event[]): Faction | undefined =>
