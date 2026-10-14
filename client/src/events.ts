@@ -510,9 +510,7 @@ const factionAtTileIndex = (
         : undefined;
 };
 
-const currentStrategyPhasePlayerOrder = (
-    events: Event[]
-): Faction[] | undefined =>
+const currentStrategyPhasePlayerOrder = (events: Event[]): Faction[] =>
     [
         factionAtTileIndex(1, events),
         factionAtTileIndex(16, events),
@@ -520,13 +518,13 @@ const currentStrategyPhasePlayerOrder = (
         factionAtTileIndex(37, events),
         factionAtTileIndex(22, events),
         factionAtTileIndex(4, events),
-    ] as Faction[];
+    ].filter(notUndefined);
 
 const currentPlayerTurnInStrategyPhase = (
     events: Event[]
 ): Faction | undefined => {
-    const speaker = currentSpeaker(events);
     const factions = factionsInGame(events);
+    const speaker = currentSpeaker(events);
     const playerOrder = currentStrategyPhasePlayerOrder(events);
 
     const playerSelectedStrategyCardEvents =
