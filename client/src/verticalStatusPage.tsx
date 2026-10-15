@@ -27,7 +27,7 @@ import {
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     resourcesAndInfluenceForFaction,
     roundsStartedSinceStrategyCardWasPlayed,
-    strategyCardPlayedByPlayerOnPreviousTurnThisRound,
+    strategyCardAlreadyPlayedByPlayerThisRound,
     TimesTaken,
     timesTakenPerPlayer,
 } from './events';
@@ -266,7 +266,7 @@ const VerticalStatusPage: React.FC = () => {
                                                 <StrategyCardImage
                                                     src={strategyCardImage(
                                                         strategyCardSelectedByActivePlayerInActionPhase,
-                                                        strategyCardPlayedByPlayerOnPreviousTurnThisRound(
+                                                        strategyCardAlreadyPlayedByPlayerThisRound(
                                                             events,
                                                             activePlayerInActionPhase
                                                         )

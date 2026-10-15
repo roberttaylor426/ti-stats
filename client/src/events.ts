@@ -15,7 +15,6 @@ import {
     ghostsOfCreussHomeTileNumber,
     InteractableSystemTileNumber,
     malliceTileNumber,
-    PlanetlessSystemTile,
     PlanetlessSystemTileNumber,
     SystemTileNumber,
     systemWithPlanetsTile,
@@ -381,6 +380,11 @@ const isPlayerCompletedStrategyCardPrimaryActionEvent = (
 ): e is PlayerCompletedStrategyCardPrimaryActionEvent =>
     e.type === 'PlayerCompletedStrategyCardPrimaryAction';
 
+const isPlayerCompletedStrategyCardSecondaryActionEvent = (
+    e: Event
+): e is PlayerCompletedStrategyCardSecondaryActionEvent =>
+    e.type === 'PlayerCompletedStrategyCardSecondaryAction';
+
 const isRoundEndedEvent = (e: Event): e is RoundEndedEvent =>
     e.type === 'RoundEnded';
 
@@ -480,12 +484,6 @@ const hasGammaWormholeBeenFoundOnSystemTileWithNumber = (
     stn: SystemTileNumber
 ): boolean => events.find(isGammaWormholeFoundEvent)?.tileNumber === stn;
 
-const hasMiragePlanetBeenFoundOnSystemTile = (
-    events: Event[],
-    tile: PlanetlessSystemTile
-): boolean =>
-    hasMiragePlanetBeenFoundOnSystemTileWithNumber(events, tile.tileNumber);
-
 const systemTilePlanets = (stn: SystemWithPlanetsTileNumber): PlanetName[] => {
     const st = systemWithPlanetsTile(stn);
 
@@ -518,7 +516,7 @@ const factionAtTileIndex = (
         : undefined;
 };
 
-const currentStrategyPhasePlayerOrder = (events: Event[]): Faction[] =>
+const orderOfPlayersAroundGalaxy = (events: Event[]): Faction[] =>
     [
         factionAtTileIndex(1, events),
         factionAtTileIndex(16, events),
@@ -533,14 +531,13 @@ const currentPlayerTurnInStrategyPhase = (
 ): Faction | undefined => {
     const factions = factionsInGame(events);
     const speaker = currentSpeaker(events);
-    const playerOrder = currentStrategyPhasePlayerOrder(events);
+    const playerOrder = orderOfPlayersAroundGalaxy(events);
 
     const playerSelectedStrategyCardEvents =
         playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events);
     if (
         playerSelectedStrategyCardEvents.length >= factions.length ||
-        !speaker ||
-        !playerOrder
+        !speaker
     ) {
         return undefined;
     }
@@ -550,6 +547,50 @@ const currentPlayerTurnInStrategyPhase = (
     return playerOrder[
         (speakerIndex + playerSelectedStrategyCardEvents.length) %
             factions.length
+    ];
+};
+
+const currentPlayerToPerformStrategyCardActionInActionPhase = (
+    events: Event[],
+    activePlayerInActionPhase: Faction
+): Faction | undefined => {
+    const strategyCardPlayedThisTurn = strategyCardPlayedByPlayerThisTurn(
+        events,
+        activePlayerInActionPhase
+    );
+
+    if (!strategyCardPlayedThisTurn) {
+        return undefined;
+    }
+
+    const playerOrder = orderOfPlayersAroundGalaxy(events);
+
+    const lastPlayerPlayedStrategyCardIndex = lastIndexOfEventType(
+        events,
+        isPlayerPlayedStrategyCardEvent
+    );
+
+    const strategyCardActionEventsSinceStrategyCardPlayed = events
+        .slice(lastPlayerPlayedStrategyCardIndex + 1)
+        .filter(
+            (e) =>
+                isPlayerCompletedStrategyCardPrimaryActionEvent(e) ||
+                isPlayerCompletedStrategyCardSecondaryActionEvent(e)
+        );
+
+    if (
+        strategyCardActionEventsSinceStrategyCardPlayed.length ===
+        playerOrder.length
+    ) {
+        return undefined;
+    }
+
+    const activePlayerIndex = playerOrder.indexOf(activePlayerInActionPhase);
+
+    return playerOrder[
+        (activePlayerIndex +
+            strategyCardActionEventsSinceStrategyCardPlayed.length) %
+            playerOrder.length
     ];
 };
 
@@ -697,7 +738,7 @@ const planetsControlledByFaction = (
         )
         .map((e) => e.planet);
 
-const strategyCardPlayedByPlayerOnPreviousTurnThisRound = (
+const strategyCardAlreadyPlayedByPlayerThisRound = (
     events: Event[],
     faction: Faction
 ): boolean => {
@@ -929,6 +970,7 @@ const isItAgendaPhase = (events: Event[]) => {
 export {
     ActionPhaseStartedEvent,
     ColumnForNewMapTile,
+    currentPlayerToPerformStrategyCardActionInActionPhase,
     currentPlayerTurnInActionPhase,
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
@@ -941,7 +983,6 @@ export {
     hasGammaWormholeBeenFoundOnSystemTileWithNumber,
     hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
-    hasMiragePlanetBeenFoundOnSystemTile,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     initiativeOrderWhenMostRecentActionPhaseStarted,
     isActionPhaseStartedEvent,
@@ -957,6 +998,7 @@ export {
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     isPlanetlessSystemControlledEvent,
+    isPlayerCompletedStrategyCardSecondaryActionEvent,
     isPlayerDeresearchedTechnologyEvent,
     isPlayerFinishedTurnEvent,
     isPlayerPlayedStrategyCardEvent,
@@ -974,6 +1016,7 @@ export {
     MapTileAddedToBoardEvent,
     MapTileAddedToBoardPosition,
     MapTilesSelectedEvent,
+    orderOfPlayersAroundGalaxy,
     PlanetControlledEvent,
     PlanetlessSystemControlledEvent,
     planetsControlledByFaction,
@@ -988,7 +1031,7 @@ export {
     roundsStartedSinceStrategyCardWasPlayed,
     RoundStartedEvent,
     RowForNewMapTile,
-    strategyCardPlayedByPlayerOnPreviousTurnThisRound,
+    strategyCardAlreadyPlayedByPlayerThisRound,
     strategyCardPlayedByPlayerThisTurn,
     strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,

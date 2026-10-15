@@ -60,6 +60,13 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
     return (
         <StyledCompleteGameSetupPage>
             <PageTitle {...props} title={'Game setup'} />
+            <Button
+                onClick={async () => {
+                    await publishGetReadyMusicTriggeredEvent();
+                }}
+            >
+                Play get ready music
+            </Button>
             <ol>
                 <li>Check faction starting components</li>
                 <li>
@@ -74,13 +81,6 @@ const CompleteGameSetupPage: React.FC<AdminPageProps> = (props) => {
             </ol>
             {factionsInGameThatNeedToChooseStartingTech.length > 0 && (
                 <InputsColumn>
-                    <Button
-                        onClick={async () => {
-                            await publishGetReadyMusicTriggeredEvent();
-                        }}
-                    >
-                        Play get ready music
-                    </Button>
                     <InputTitle>Research tech</InputTitle>
                     <InputsRow>
                         <Select

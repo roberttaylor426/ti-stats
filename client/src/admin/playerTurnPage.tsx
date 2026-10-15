@@ -4,6 +4,7 @@ import _, { identity } from 'underscore';
 
 import {
     ColumnForNewMapTile,
+    currentPlayerToPerformStrategyCardActionInActionPhase,
     currentPlayerTurnInActionPhase,
     Event,
     factionsInGame,
@@ -22,9 +23,8 @@ import {
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
     RowForNewMapTile,
-    strategyCardPlayedByPlayerOnPreviousTurnThisRound,
+    strategyCardAlreadyPlayedByPlayerThisRound,
     strategyCardPlayedByPlayerThisTurn,
-    strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,
     systemTilePlanets,
     technologiesResearchedByFaction,
@@ -247,6 +247,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         await publishNewEvents([newEvent]);
     };
 
+    const publishPlayerCompletedStrategyCardSecondaryActionEvent = async (
+        sc: StrategyCard,
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'PlayerCompletedStrategyCardSecondaryAction',
+            time: new Date().getTime(),
+            strategyCard: sc,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
     const publishTurnFinishedEvent = async (f: Faction, pass: boolean) => {
         const newEvent: Event = {
             type: 'PlayerFinishedTurn',
@@ -430,9 +444,8 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             (e) => e.faction === activePlayerInActionPhase
         )?.strategyCard;
 
-    const strategyCardPrimaryActionInProgress =
-        strategyCardPlayedByPlayerThisTurn(events, activePlayerInActionPhase) &&
-        !strategyCardPrimaryActionsCompletedByPlayerThisTurn(
+    const playerToPerformStrategyCardAction =
+        currentPlayerToPerformStrategyCardActionInActionPhase(
             events,
             activePlayerInActionPhase
         );
@@ -1002,7 +1015,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     </InputsRow>
                 </InputsColumn>
             )}
-            {!strategyCardPlayedByPlayerOnPreviousTurnThisRound(
+            {!strategyCardAlreadyPlayedByPlayerThisRound(
                 events,
                 activePlayerInActionPhase
             ) &&
@@ -1023,23 +1036,30 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             Play strategy card
                         </Button>
 
-                        {strategyCardPrimaryActionInProgress && (
+                        {playerToPerformStrategyCardAction && (
                             <Button
                                 onClick={() =>
-                                    publishPlayerCompletedStrategyCardPrimaryActionEvent(
-                                        strategyCardSelectedByActivePlayerInActionPhase,
-                                        activePlayerInActionPhase
-                                    )
+                                    activePlayerInActionPhase ===
+                                    playerToPerformStrategyCardAction
+                                        ? publishPlayerCompletedStrategyCardPrimaryActionEvent(
+                                              strategyCardSelectedByActivePlayerInActionPhase,
+                                              activePlayerInActionPhase
+                                          )
+                                        : publishPlayerCompletedStrategyCardSecondaryActionEvent(
+                                              strategyCardSelectedByActivePlayerInActionPhase,
+                                              activePlayerInActionPhase
+                                          )
                                 }
                             >
-                                Strategy card primary action completed
+                                {playerToPerformStrategyCardAction} completed
+                                strategy card action
                             </Button>
                         )}
                     </InputsColumn>
                 )}
             <InputsColumn>
                 <Button
-                    disabled={strategyCardPrimaryActionInProgress}
+                    disabled={!!playerToPerformStrategyCardAction}
                     onClick={async () => {
                         await publishTurnFinishedEvent(
                             activePlayerInActionPhase,
@@ -1052,7 +1072,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                     Turn finished
                 </Button>
             </InputsColumn>
-            {strategyCardPlayedByPlayerOnPreviousTurnThisRound(
+            {strategyCardAlreadyPlayedByPlayerThisRound(
                 events,
                 activePlayerInActionPhase
             ) && (
