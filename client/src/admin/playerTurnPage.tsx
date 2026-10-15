@@ -1047,7 +1047,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                           )
                                         : publishPlayerCompletedStrategyCardSecondaryActionEvent(
                                               strategyCardSelectedByActivePlayerInActionPhase,
-                                              activePlayerInActionPhase
+                                              playerToPerformStrategyCardAction
                                           )
                                 }
                             >

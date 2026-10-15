@@ -297,10 +297,47 @@ const isUnion =
     (x: Event): x is T1 | T2 =>
         isT1(x) || isT2(x);
 
+const isUnion5 =
+    <
+        T1 extends Event,
+        T2 extends Event,
+        T3 extends Event,
+        T4 extends Event,
+        T5 extends Event,
+    >(
+        isT1: EventGuard<T1>,
+        isT2: EventGuard<T2>,
+        isT3: EventGuard<T3>,
+        isT4: EventGuard<T4>,
+        isT5: EventGuard<T5>
+    ) =>
+    (x: Event): x is T1 | T2 | T3 | T4 | T5 =>
+        isT1(x) || isT2(x) || isT3(x) || isT4(x) || isT5(x);
+
 const lastIndexOfEventType = (events: Event[], eg: EventGuard<Event>): number =>
     _.last(
         events.map((e, index) => (eg(e) ? index : -1)).filter((n) => n !== -1)
     ) || -1;
+
+const isActionCardsDrawnDuringStatusPhaseEvent = (
+    e: Event
+): e is ActionCardsDrawnDuringStatusPhaseEvent =>
+    e.type === 'ActionCardsDrawnDuringStatusPhase';
+
+const isCardsReadiedDuringStatusPhaseEvent = (
+    e: Event
+): e is CardsReadiedDuringStatusPhaseEvent =>
+    e.type === 'CardsReadiedDuringStatusPhase';
+
+const isCommandTokensRemovedDuringStatusPhaseEvent = (
+    e: Event
+): e is CommandTokensRemovedDuringStatusPhaseEvent =>
+    e.type === 'CommandTokensRemovedDuringStatusPhase';
+
+const isCommandTokensGainedAndRedistributedDuringStatusPhaseEvent = (
+    e: Event
+): e is CommandTokensGainedAndRedistributedDuringStatusPhaseEvent =>
+    e.type === 'CommandTokensGainedAndRedistributedDuringStatusPhase';
 
 const isGetReadyMusicTriggeredEvent = (
     e: Event
@@ -329,6 +366,11 @@ const isAgendaPhaseStartedEvent = (e: Event): e is AgendaPhaseStartedEvent =>
 const isAgendaCardRevealedEvent = (e: Event): e is AgendaCardRevealedEvent =>
     e.type === 'AgendaCardRevealed';
 
+const isObjectivesScoredDuringStatusPhaseEvent = (
+    e: Event
+): e is ObjectivesScoredDuringStatusPhaseEvent =>
+    e.type === 'ObjectivesScoredDuringStatusPhase';
+
 const isPlanetControlledEvent = (e: Event): e is PlanetControlledEvent =>
     e.type === 'PlanetControlled';
 
@@ -345,6 +387,10 @@ const isMapTileAddedToBoardEvent = (e: Event): e is MapTileAddedToBoardEvent =>
 
 const isGammaWormholeFoundEvent = (e: Event): e is GammaWormholeFoundEvent =>
     e.type === 'GammaWormholeFound';
+
+const isPlayerAttackedSystemEvent = (
+    e: Event
+): e is PlayerAttackedSystemEvent => e.type === 'PlayerAttackedSystem';
 
 const isPlayerResearchedTechnologyEvent = (
     e: Event
@@ -393,6 +439,16 @@ const isPlanetEnhancedEvent = (e: Event): e is PlanetEnhancedEvent =>
 
 const isPlanetDestroyedEvent = (e: Event): e is PlanetDestroyedEvent =>
     e.type === 'PlanetDestroyed';
+
+const isPublicObjectiveRevealedDuringStatusPhaseEvent = (
+    e: Event
+): e is PublicObjectiveRevealedDuringStatusPhaseEvent =>
+    e.type === 'PublicObjectiveRevealedDuringStatusPhase';
+
+const isUnitsRepairedDuringStatusPhaseEvent = (
+    e: Event
+): e is UnitsRepairedDuringStatusPhaseEvent =>
+    e.type === 'UnitsRepairedDuringStatusPhase';
 
 type Event =
     | ActionCardsDrawnDuringStatusPhaseEvent
@@ -537,6 +593,8 @@ const currentPlayerTurnInStrategyPhase = (
         playerSelectedStrategyCardEventsFromStrategyPhaseThisRound(events);
     if (
         playerSelectedStrategyCardEvents.length >= factions.length ||
+        (playerSelectedStrategyCardEvents.length === 0 &&
+            _.last(events)?.type !== 'RoundStarted') ||
         !speaker
     ) {
         return undefined;
@@ -573,9 +631,10 @@ const currentPlayerToPerformStrategyCardActionInActionPhase = (
     const strategyCardActionEventsSinceStrategyCardPlayed = events
         .slice(lastPlayerPlayedStrategyCardIndex + 1)
         .filter(
-            (e) =>
-                isPlayerCompletedStrategyCardPrimaryActionEvent(e) ||
-                isPlayerCompletedStrategyCardSecondaryActionEvent(e)
+            isUnion(
+                isPlayerCompletedStrategyCardPrimaryActionEvent,
+                isPlayerCompletedStrategyCardSecondaryActionEvent
+            )
         );
 
     if (
@@ -781,22 +840,6 @@ const strategyCardPlayedByPlayerThisTurn = (
         .find((e) => e.faction === faction);
 };
 
-const strategyCardPrimaryActionsCompletedByPlayerThisTurn = (
-    events: Event[],
-    faction: Faction
-): boolean => {
-    const lastPlayerFinishedTurnIndex = lastIndexOfEventType(
-        events,
-        isPlayerFinishedTurnEvent
-    );
-
-    const eventsThisTurn = events.slice(lastPlayerFinishedTurnIndex + 1);
-
-    return !!eventsThisTurn
-        .filter(isPlayerCompletedStrategyCardPrimaryActionEvent)
-        .find((e) => e.faction === faction);
-};
-
 const techsAvailableToResearch = (
     f: Faction | undefined,
     events: Event[]
@@ -887,7 +930,8 @@ const timesTakenPerPlayerPerTurn = (
             }
             if (
                 n.type === 'PlayerSelectedStrategyCard' ||
-                n.type === 'PlayerCompletedStrategyCardPrimaryAction'
+                n.type === 'PlayerCompletedStrategyCardPrimaryAction' ||
+                n.type === 'PlayerCompletedStrategyCardSecondaryAction'
             ) {
                 return {
                     playerTurnTimes: {
@@ -898,29 +942,38 @@ const timesTakenPerPlayerPerTurn = (
                         ],
                     },
                     playerTurnStartedTime: n.time,
-                    strategyCardSecondaryActionsInProgress: true,
+                    strategyCardActionsInProgress:
+                        n.type === 'PlayerCompletedStrategyCardSecondaryAction',
                 };
             }
             if (n.type === 'PlayerFinishedTurn') {
                 return {
-                    playerTurnTimes: acc.strategyCardSecondaryActionsInProgress
-                        ? acc.playerTurnTimes
-                        : {
-                              ...acc.playerTurnTimes,
-                              [n.faction]: [
+                    playerTurnTimes: {
+                        ...acc.playerTurnTimes,
+                        [n.faction]: acc.strategyCardActionsInProgress
+                            ? [
+                                  ...acc.playerTurnTimes[n.faction].toSpliced(
+                                      -1
+                                  ),
+                                  (_.last(acc.playerTurnTimes[n.faction]) ||
+                                      0) +
+                                      n.time -
+                                      acc.playerTurnStartedTime,
+                              ]
+                            : [
                                   ...acc.playerTurnTimes[n.faction],
                                   n.time - acc.playerTurnStartedTime,
                               ],
-                          },
+                    },
                     playerTurnStartedTime: n.time,
-                    strategyCardSecondaryActionsInProgress: false,
+                    strategyCardActionsInProgress: false,
                 };
             }
 
             return acc;
         },
         {
-            strategyCardSecondaryActionsInProgress: false,
+            strategyCardActionsInProgress: false,
             playerTurnStartedTime: 0,
             playerTurnTimes: factionsInGame(events).reduce(
                 (acc, n) => ({ ...acc, [n]: [] }),
@@ -985,19 +1038,26 @@ export {
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     initiativeOrderWhenMostRecentActionPhaseStarted,
+    isActionCardsDrawnDuringStatusPhaseEvent,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isCardsReadiedDuringStatusPhaseEvent,
+    isCommandTokensGainedAndRedistributedDuringStatusPhaseEvent,
+    isCommandTokensRemovedDuringStatusPhaseEvent,
     isGameSetupCompletedEvent,
     isGammaWormholeFoundEvent,
     isGetReadyMusicTriggeredEvent,
     isItAgendaPhase,
     isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,
+    isObjectivesScoredDuringStatusPhaseEvent,
     isPlanetControlledEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
     isPlanetlessSystemControlledEvent,
+    isPlayerAttackedSystemEvent,
+    isPlayerCompletedStrategyCardPrimaryActionEvent,
     isPlayerCompletedStrategyCardSecondaryActionEvent,
     isPlayerDeresearchedTechnologyEvent,
     isPlayerFinishedTurnEvent,
@@ -1006,10 +1066,13 @@ export {
     isPlayersAssignedFactionsAndColorsEvent,
     isPlayerScoredVictoryPointEvent,
     isPlayerSelectedStrategyCardEvent,
+    isPublicObjectiveRevealedDuringStatusPhaseEvent,
     isRoundEndedEvent,
     isRoundStartedEvent,
     isSpeakerAssignedEvent,
     isUnion,
+    isUnion5,
+    isUnitsRepairedDuringStatusPhaseEvent,
     lastIndexOfEventType,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
@@ -1033,11 +1096,11 @@ export {
     RowForNewMapTile,
     strategyCardAlreadyPlayedByPlayerThisRound,
     strategyCardPlayedByPlayerThisTurn,
-    strategyCardPrimaryActionsCompletedByPlayerThisTurn,
     systemTileNumbersInPlay,
     systemTilePlanets,
     technologiesResearchedByFaction,
     techsAvailableToResearch,
     TimesTaken,
     timesTakenPerPlayer,
+    timesTakenPerPlayerPerTurn,
 };

@@ -1,12 +1,13 @@
 import { Howl } from 'howler';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import _ from 'underscore';
 import useAsyncEffect from 'use-async-effect';
 
 import { agendaCardBoldText } from './agendaCards';
 import { accentColor } from './colors';
 import {
+    currentPlayerToPerformStrategyCardActionInActionPhase,
     currentPlayerTurnInActionPhase,
     currentPlayerTurnInStrategyPhase,
     currentRoundNumber,
@@ -14,17 +15,30 @@ import {
     factionsInGame,
     GammaWormholeFoundEvent,
     hasGameStarted,
+    isActionCardsDrawnDuringStatusPhaseEvent,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
     isAgendaPhaseStartedEvent,
+    isCardsReadiedDuringStatusPhaseEvent,
+    isCommandTokensGainedAndRedistributedDuringStatusPhaseEvent,
+    isCommandTokensRemovedDuringStatusPhaseEvent,
     isGetReadyMusicTriggeredEvent,
     isItAgendaPhase,
+    isObjectivesScoredDuringStatusPhaseEvent,
+    isPlayerAttackedSystemEvent,
+    isPlayerCompletedStrategyCardPrimaryActionEvent,
+    isPlayerCompletedStrategyCardSecondaryActionEvent,
     isPlayerFinishedTurnEvent,
     isPlayerScoredVictoryPointEvent,
+    isPlayerSelectedStrategyCardEvent,
+    isPublicObjectiveRevealedDuringStatusPhaseEvent,
     isRoundStartedEvent,
     isUnion,
+    isUnion5,
+    isUnitsRepairedDuringStatusPhaseEvent,
     PlayerAttackedSystemEvent,
     playerScore,
+    timesTakenPerPlayerPerTurn,
 } from './events';
 import { Faction, shortName, superShortName } from './factions';
 import {
@@ -33,7 +47,11 @@ import {
     systemWithPlanetsTile,
     systemWithPlanetsTileDescription,
 } from './systemTiles';
-import { timeElapsedLabel } from './timeElapsed';
+import {
+    timeElapsedLabel,
+    timeRemainingForCurrentObligationInMillis,
+    timeRemainingLabel,
+} from './timeLabels';
 import { useEvents } from './useEvents';
 import { notUndefined } from './util';
 
@@ -41,11 +59,19 @@ const HorizontalStatusPage: React.FC = () => {
     const { events } = useEvents(3_000);
     const [currentTime, setCurrentTime] = useState(new Date().getTime());
 
+    const timesTaken = timesTakenPerPlayerPerTurn(events);
+
     const lastEvent = _.last(events);
 
-    const lastEventWhenPlayerTurnStarted = _.last(
+    const lastEventWhenPlayerObligationStarted = _.last(
         events.filter(
-            isUnion(isActionPhaseStartedEvent, isPlayerFinishedTurnEvent)
+            isUnion5(
+                isActionPhaseStartedEvent,
+                isPlayerFinishedTurnEvent,
+                isPlayerCompletedStrategyCardPrimaryActionEvent,
+                isPlayerCompletedStrategyCardSecondaryActionEvent,
+                isPlayerSelectedStrategyCardEvent
+            )
         )
     );
 
@@ -59,6 +85,12 @@ const HorizontalStatusPage: React.FC = () => {
     const activePlayerInStrategyPhase =
         currentPlayerTurnInStrategyPhase(events);
     const activePlayerInActionPhase = currentPlayerTurnInActionPhase(events);
+    const playerToPerformStrategyCardAction = activePlayerInActionPhase
+        ? currentPlayerToPerformStrategyCardActionInActionPhase(
+              events,
+              activePlayerInActionPhase
+          )
+        : undefined;
 
     const winningPlayer = _.first(
         factionsInGame(events)
@@ -156,6 +188,81 @@ const HorizontalStatusPage: React.FC = () => {
         victoryTunePlayer,
     ]);
 
+    const tickerTitleText = (lastEvent: Event): string => {
+        if (!hasGameStarted(events)) {
+            return 'Pax Magnifica, Bellum Gloriosum';
+        }
+
+        if (winningPlayer) {
+            return `${winningPlayer.faction} win!`;
+        }
+
+        if (activePlayerInStrategyPhase) {
+            return `${shortName(activePlayerInStrategyPhase)} pick`;
+        }
+
+        if (isPlayerSelectedStrategyCardEvent(lastEvent)) {
+            return 'All strategy cards picked';
+        }
+
+        if (isPlayerAttackedSystemEvent(lastEvent)) {
+            return `${shortName(lastEvent.faction)} attack!`;
+        }
+
+        if (activePlayerInActionPhase) {
+            if (
+                playerToPerformStrategyCardAction &&
+                playerToPerformStrategyCardAction !== activePlayerInActionPhase
+            ) {
+                return `${superShortName(playerToPerformStrategyCardAction)} to follow strategy card`;
+            }
+
+            return `${shortName(activePlayerInActionPhase)} turn`;
+        }
+
+        if (isPlayerFinishedTurnEvent(lastEvent)) {
+            return 'Score objectives, initiative order';
+        }
+
+        if (isObjectivesScoredDuringStatusPhaseEvent(lastEvent)) {
+            return 'Reveal public objective';
+        }
+
+        if (isPublicObjectiveRevealedDuringStatusPhaseEvent(lastEvent)) {
+            return 'Draw action cards';
+        }
+
+        if (isActionCardsDrawnDuringStatusPhaseEvent(lastEvent)) {
+            return 'Remove command tokens from board';
+        }
+
+        if (isCommandTokensRemovedDuringStatusPhaseEvent(lastEvent)) {
+            return 'Gain and redistribute command tokens';
+        }
+
+        if (
+            isCommandTokensGainedAndRedistributedDuringStatusPhaseEvent(
+                lastEvent
+            )
+        ) {
+            return 'Ready cards';
+        }
+
+        if (isCardsReadiedDuringStatusPhaseEvent(lastEvent)) {
+            return 'Repair units';
+        }
+
+        if (isUnitsRepairedDuringStatusPhaseEvent(lastEvent)) {
+            return 'Return strategy cards';
+        }
+
+        if (isItAgendaPhase(events)) {
+            return agendaCardTextToShowDuringAgendaPhase(events);
+        }
+
+        return '';
+    };
+
     return (
         <StyledHorizontalStatusPage>
             {lastEvent ? (
@@ -192,66 +299,29 @@ const HorizontalStatusPage: React.FC = () => {
                         <TickerContent>
                             <TickerText>
                                 <KeyTitle>
-                                    {!hasGameStarted(events)
-                                        ? 'Pax Magnifica, Bellum Gloriosum'
-                                        : winningPlayer
-                                          ? `${winningPlayer.faction} win!`
-                                          : activePlayerInStrategyPhase
-                                            ? `${shortName(activePlayerInStrategyPhase)} pick`
-                                            : lastEvent.type ===
-                                                'PlayerSelectedStrategyCard'
-                                              ? 'All strategy cards picked'
-                                              : lastEvent.type ===
-                                                  'PlayerAttackedSystem'
-                                                ? `${shortName(lastEvent.faction)} attack!`
-                                                : activePlayerInActionPhase
-                                                  ? `${shortName(activePlayerInActionPhase)} turn`
-                                                  : lastEvent.type ===
-                                                      'PlayerFinishedTurn'
-                                                    ? 'Score objectives, initiative order'
-                                                    : lastEvent.type ===
-                                                        'ObjectivesScoredDuringStatusPhase'
-                                                      ? 'Reveal public objective'
-                                                      : lastEvent.type ===
-                                                          'PublicObjectiveRevealedDuringStatusPhase'
-                                                        ? 'Draw action cards'
-                                                        : lastEvent.type ===
-                                                            'ActionCardsDrawnDuringStatusPhase'
-                                                          ? 'Remove command tokens from board'
-                                                          : lastEvent.type ===
-                                                              'CommandTokensRemovedDuringStatusPhase'
-                                                            ? 'Gain and redistribute command tokens'
-                                                            : lastEvent.type ===
-                                                                'CardsReadiedDuringStatusPhase'
-                                                              ? 'Repair units'
-                                                              : lastEvent.type ===
-                                                                  'UnitsRepairedDuringStatusPhase'
-                                                                ? 'Return strategy cards'
-                                                                : isItAgendaPhase(
-                                                                        events
-                                                                    )
-                                                                  ? agendaCardTextToShowDuringAgendaPhase(
-                                                                        events
-                                                                    )
-                                                                  : ''}
+                                    {tickerTitleText(lastEvent)}
                                 </KeyTitle>
                             </TickerText>
                             <TickerTriangle />
                         </TickerContent>
                         <Times>
-                            <TimeSpan>
-                                {hasGameStarted(events)
-                                    ? timeElapsedLabel(
-                                          activePlayerInActionPhase &&
-                                              lastEventWhenPlayerTurnStarted
-                                              ? lastEventWhenPlayerTurnStarted
-                                              : lastEvent,
-                                          winningPlayer?.asOf
-                                              ? winningPlayer.asOf
-                                              : currentTime
-                                      )
-                                    : noTimeElapsedString}
-                            </TimeSpan>
+                            <TimeRemaining
+                                faction={
+                                    playerToPerformStrategyCardAction ||
+                                    activePlayerInActionPhase ||
+                                    activePlayerInStrategyPhase
+                                }
+                                timesTakenPerPlayerPerTurn={timesTaken}
+                                timeCurrentObligationStarted={
+                                    lastEventWhenPlayerObligationStarted?.time ||
+                                    lastEvent.time
+                                }
+                                currentTime={
+                                    winningPlayer?.asOf
+                                        ? winningPlayer.asOf
+                                        : currentTime
+                                }
+                            />
                             <TotalTime
                                 events={events}
                                 currentTime={
@@ -581,18 +651,78 @@ const KeyTitle = styled.h1`
 const Times = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-end;
     padding: 5vh;
     text-shadow: black 1vh 1vh 2vh;
 `;
 
-const TimeSpan = styled.span`
+type TimeRemainingProps = {
+    faction: Faction | undefined;
+    timesTakenPerPlayerPerTurn: Record<Faction, number[]>;
+    timeCurrentObligationStarted: number;
+    currentTime: number;
+};
+
+const TimeRemaining: React.FC<TimeRemainingProps> = ({
+    faction,
+    timesTakenPerPlayerPerTurn,
+    timeCurrentObligationStarted,
+    currentTime,
+}) => {
+    if (!faction) {
+        return (
+            <StyledTimeRemaining $mode={'normal'}>
+                {'XX:XX'}
+            </StyledTimeRemaining>
+        );
+    }
+
+    const timeRemainingInMillis = timeRemainingForCurrentObligationInMillis(
+        faction,
+        timesTakenPerPlayerPerTurn,
+        timeCurrentObligationStarted,
+        currentTime
+    );
+
+    return (
+        <StyledTimeRemaining
+            $mode={
+                timeRemainingInMillis > 5 * 60_000
+                    ? 'normal'
+                    : timeRemainingInMillis > 60_000
+                      ? 'warning'
+                      : 'alarm'
+            }
+        >
+            {timeRemainingLabel(timeRemainingInMillis)}
+        </StyledTimeRemaining>
+    );
+};
+
+type StyledTimeRemainingProps = {
+    $mode: 'normal' | 'warning' | 'alarm';
+};
+
+const timeSpanCss = css`
     font-family: 'Alarm Clock', 'sans-serif';
     font-size: 35vh;
     text-align: center;
     line-height: 0.9;
-    color: red;
+`;
+
+const StyledTimeRemaining = styled.span<StyledTimeRemainingProps>`
+    ${timeSpanCss};
+    color: ${(props) => (props.$mode === 'normal' ? 'black' : 'red')};
+
+    animation: ${(props) =>
+        props.$mode === 'alarm' ? 'flash 1s linear infinite' : 'none'};
+
+    @keyframes flash {
+        50% {
+            opacity: 0;
+        }
+    }
 `;
 
 const noTimeElapsedString = '00:00:00';
@@ -613,7 +743,8 @@ const TotalTime: React.FC<TotalTimeProps> = ({ events, currentTime }) => (
     </TotalTimeSpan>
 );
 
-const TotalTimeSpan = styled(TimeSpan)`
+const TotalTimeSpan = styled.span`
+    ${timeSpanCss};
     color: ${accentColor};
 `;
 

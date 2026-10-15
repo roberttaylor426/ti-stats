@@ -51,7 +51,7 @@ import {
     strategyCardImage,
     strategyCards,
 } from './strategyCards';
-import { timeElapsedLabel } from './timeElapsed';
+import { timeElapsedLabel } from './timeLabels';
 import { useEvents } from './useEvents';
 import { range } from './util';
 
