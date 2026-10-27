@@ -932,7 +932,6 @@ const planetsOutsideOfGalaxy = (f: Faction): PlanetName[] => {
         case 'The Emirates of Hacan':
         case 'The Empyrean':
         case 'The Federation of Sol':
-        case 'The Ghosts of Creuss':
         case 'The L1Z1X Mindnet':
         case 'The Mahact Gene-Sorcerers':
         case 'The Mentak Coalition':
@@ -982,6 +981,8 @@ const planetsOutsideOfGalaxy = (f: Faction): PlanetName[] => {
         case 'The Nokar Sellships':
         case 'The Council Keleres':
             return [];
+        case 'The Ghosts of Creuss':
+            return ['Creuss'];
         case 'The Ghoti Wayfarers':
             return ['Ghoti'];
     }
