@@ -32,7 +32,9 @@ import {
     isPlayerScoredVictoryPointEvent,
     isPlayerSelectedStrategyCardEvent,
     isPublicObjectiveRevealedDuringStatusPhaseEvent,
+    isRoundEndedEvent,
     isRoundStartedEvent,
+    isSpeakerAssignedEvent,
     isTurnTimerPausedEvent,
     isTurnTimerUnpausedEvent,
     isUnion,
@@ -306,10 +308,12 @@ const HorizontalStatusPage: React.FC = () => {
                                 {(activePlayerInActionPhase
                                     ? 'ACTION PHASE'
                                     : activePlayerInStrategyPhase ||
-                                        _.last(events)?.type ===
-                                            'PlayerSelectedStrategyCard'
+                                        isPlayerSelectedStrategyCardEvent(
+                                            lastEvent
+                                        )
                                       ? 'STRATEGY PHASE'
-                                      : _.last(events)?.type === 'RoundEnded'
+                                      : isRoundEndedEvent(lastEvent) ||
+                                          isSpeakerAssignedEvent(lastEvent)
                                         ? 'ROUND END'
                                         : isItAgendaPhase(events)
                                           ? 'AGENDA PHASE'
