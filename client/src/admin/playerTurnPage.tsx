@@ -15,6 +15,7 @@ import {
     isMapTileAddedToBoardEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
+    isTurnTimerPausedEvent,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
     MapTileAddedToBoardPosition,
@@ -330,6 +331,24 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         return await publishNewEvents([newEvent]);
     };
 
+    const publishTurnTimerPausedEvent = async (): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'TurnTimerPaused',
+            time: new Date().getTime(),
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
+    const publishTurnTimerUnpausedEvent = async (): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'TurnTimerUnpaused',
+            time: new Date().getTime(),
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
     const systemTilesInPlay = systemTileNumbersInPlay(events);
 
     const planetsOnTheBoard: PlanetName[] = systemTilesInPlay
@@ -450,6 +469,9 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             activePlayerInActionPhase
         );
 
+    const lastEvent = _.last(events);
+    const turnPaused = lastEvent && isTurnTimerPausedEvent(lastEvent);
+
     return (
         <StyledPlayerTurnPage>
             <div ref={pageTitleRef}>
@@ -459,637 +481,708 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                 />
             </div>
             <InputsColumn>
-                <InputTitle>Take control of planet</InputTitle>
-                <InputsRow>
-                    <Select
-                        onChange={(e) =>
-                            setSelectedPlanetToControl(
-                                e.target.value as PlanetName
-                            )
-                        }
-                    >
-                        <option value={''}>--Planet--</option>
-                        {_.sortBy(planetsOnTheBoard, identity).map((p) => (
-                            <option key={p} value={p}>
-                                {planetNameWithControllingFaction(p)}
-                            </option>
-                        ))}
-                    </Select>
-                    <Button
-                        onClick={async () => {
-                            if (
-                                selectedPlanetToControl &&
-                                activePlayerInActionPhase !==
-                                    factionCurrentlyControllingPlanet(
-                                        selectedPlanetToControl
-                                    )
-                            ) {
-                                await publishPlanetControlledEvent(
-                                    selectedPlanetToControl,
-                                    activePlayerInActionPhase
-                                );
-                            }
-                        }}
-                    >
-                        Take control
-                    </Button>
-                </InputsRow>
-            </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Take control of planetless system</InputTitle>
-                <InputsRow>
-                    <Select
-                        onChange={(e) =>
-                            setSelectedPlanetlessSystemToControl(
-                                Number.parseInt(
-                                    e.target.value
-                                ) as PlanetlessSystemTileNumber
-                            )
-                        }
-                    >
-                        <option value={''}>--Planetless system--</option>
-                        <option
-                            value={''}
-                            disabled
-                        >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
-                        {_.sortBy(planetlessSystemTilesOnTheBoard, (stn) =>
-                            tileIndexOnBoard(stn, mapTilesSelectedEvent)
-                        ).map((stn) => (
-                            <option key={stn} value={stn}>
-                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
-                                    stn
-                                )}`}
-                            </option>
-                        ))}
-                    </Select>
-                    <Button
-                        onClick={async () => {
-                            if (
-                                selectedPlanetlessSystemToControl &&
-                                factionCurrentlyControllingPlanetlessSystemTile(
-                                    selectedPlanetlessSystemToControl
-                                ) !== activePlayerInActionPhase
-                            ) {
-                                await publishPlanetlessSystemControlledEvent(
-                                    selectedPlanetlessSystemToControl,
-                                    activePlayerInActionPhase
-                                );
-                            }
-                        }}
-                    >
-                        Take control
-                    </Button>
-                    <Button
-                        disabled={
-                            !selectedPlanetlessSystemToControl ||
-                            factionCurrentlyControllingPlanetlessSystemTile(
-                                selectedPlanetlessSystemToControl
-                            ) !== activePlayerInActionPhase
-                        }
-                        onClick={async () => {
-                            if (selectedPlanetlessSystemToControl) {
-                                await publishPlanetlessSystemControlledEvent(
-                                    selectedPlanetlessSystemToControl,
-                                    undefined
-                                );
-                            }
-                        }}
-                    >
-                        Lose control
-                    </Button>
-                </InputsRow>
-            </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Enhance planet</InputTitle>
-                <Select
-                    onChange={(e) =>
-                        setSelectedPlanetToEnhance(e.target.value as PlanetName)
+                <Button
+                    onClick={
+                        turnPaused
+                            ? publishTurnTimerUnpausedEvent
+                            : publishTurnTimerPausedEvent
                     }
                 >
-                    <option value={''}>--Planet--</option>
-                    {_.sortBy(planetsOnTheBoard, identity).map((p) => (
-                        <option key={p} value={p}>
-                            {planetNameWithResourcesAndInfluence(p)}
-                        </option>
-                    ))}
-                </Select>
-                <InputsRow>
-                    <NumberInput
-                        placeholder={'Resources'}
-                        onChange={(e) =>
-                            setResourcesToEnhance(
-                                Number.parseInt(e.target.value)
-                            )
-                        }
-                    />
-                    <NumberInput
-                        placeholder={'Influence'}
-                        onChange={(e) =>
-                            setInfluenceToEnhance(
-                                Number.parseInt(e.target.value)
-                            )
-                        }
-                    />
-                </InputsRow>
-                <Button
-                    onClick={async () => {
-                        if (selectedPlanetToEnhance) {
-                            await publishPlanetEnhancedEvent(
-                                selectedPlanetToEnhance,
-                                resourcesToEnhance,
-                                influenceToEnhance
-                            );
-                        }
-                    }}
-                >
-                    Enhance
+                    {turnPaused ? 'Unpause turn' : 'Pause turn'}
                 </Button>
             </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Research tech</InputTitle>
-                <InputsRow>
-                    <Select
-                        onChange={(e) =>
-                            setFactionToResearchTech(e.target.value as Faction)
-                        }
-                    >
-                        <option value={''}>--Faction--</option>
-                        {_.sortBy(factionsInGame(events)).map((f) => (
-                            <option key={f} value={f}>
-                                {f}
-                            </option>
-                        ))}
-                    </Select>
-                    <Select
-                        onChange={(e) =>
-                            setTechToResearch(
-                                technologies.find(
-                                    (t) => e.target.value === t.name
-                                )
-                            )
-                        }
-                    >
-                        <option value={''}>--Tech--</option>
-                        {_.sortBy(
-                            techsAvailableToResearch(
-                                factionToResearchTech,
-                                events
-                            )
-                        ).map(({ name }) => (
-                            <option key={name} value={name}>
-                                {name}
-                            </option>
-                        ))}
-                    </Select>
-                    <Button
-                        onClick={async () => {
-                            if (factionToResearchTech && techToResearch) {
-                                await publishPlayerResearchedTechnologyEvent(
-                                    techToResearch,
-                                    factionToResearchTech
-                                );
-
-                                if (
-                                    techToResearch.name ===
-                                    'I.I.H.Q Modernization'
-                                ) {
-                                    await publishPlanetControlledEvent(
-                                        'Custodia Vigilia',
-                                        factionToResearchTech
-                                    );
-                                }
-                            }
-                        }}
-                    >
-                        Research
-                    </Button>
-                </InputsRow>
-            </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Deresearch tech</InputTitle>
-                <InputsRow>
-                    <Select
-                        onChange={(e) =>
-                            setFactionToDeresearchTech(
-                                e.target.value as Faction
-                            )
-                        }
-                    >
-                        <option value={''}>--Faction--</option>
-                        {_.sortBy(factionsInGame(events)).map((f) => (
-                            <option key={f} value={f}>
-                                {f}
-                            </option>
-                        ))}
-                    </Select>
-                    <Select
-                        onChange={(e) =>
-                            setTechToDeresearch(
-                                technologies.find(
-                                    (t) => e.target.value === t.name
-                                )
-                            )
-                        }
-                    >
-                        <option value={''}>--Tech--</option>
-                        {_.sortBy(
-                            factionToDeresearchTech
-                                ? technologiesResearchedByFaction(
-                                      factionToDeresearchTech,
-                                      events
-                                  )
-                                : []
-                        ).map(({ name }) => (
-                            <option key={name} value={name}>
-                                {name}
-                            </option>
-                        ))}
-                    </Select>
-                    <Button
-                        onClick={async () => {
-                            if (factionToDeresearchTech && techToDeresearch) {
-                                await publishPlayerDeresearchedTechnologyEvent(
-                                    techToDeresearch,
-                                    factionToDeresearchTech
-                                );
-                            }
-                        }}
-                    >
-                        Deresearch
-                    </Button>
-                </InputsRow>
-            </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Score VPs</InputTitle>
-                <VpScoringContainer
-                    defaultFaction={activePlayerInActionPhase}
-                    {...props}
-                />
-            </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Attack system</InputTitle>
-                <InputsRow>
-                    <Select
-                        onChange={(e) => {
-                            const systemToAttack = Number.parseInt(
-                                e.target.value
-                            ) as InteractableSystemTileNumber;
-                            setSelectedSystemToAttack(systemToAttack);
-
-                            if (
-                                factionsCurrentlyControllingSystemTile(
-                                    systemToAttack
-                                ).length === 1
-                            ) {
-                                setSelectedFactionDefendingSystem(
-                                    factionsCurrentlyControllingSystemTile(
-                                        systemToAttack
-                                    )[0]
-                                );
-                            }
-                        }}
-                        value={selectedSystemToAttack || ''}
-                    >
-                        <option value={''}>--System to attack--</option>
-                        {_.sortBy(systemTilesAttackableByActivePlayer, (stn) =>
-                            tileIndexOnBoard(stn, mapTilesSelectedEvent)
-                        ).map((stn) => (
-                            <option key={stn} value={stn}>
-                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
-                            </option>
-                        ))}
-                    </Select>
-                    <Select
-                        onChange={(e) =>
-                            setSelectedFactionDefendingSystem(
-                                e.target.value as Faction
-                            )
-                        }
-                        disabled={selectedSystemToAttack === undefined}
-                        value={selectedFactionDefendingSystem || ''}
-                    >
-                        <option value={''}>--Defending faction--</option>
-                        {selectedSystemToAttack &&
-                            _.sortBy(
-                                factionsCurrentlyControllingSystemTile(
-                                    selectedSystemToAttack
-                                )
-                            ).map((f) => (
-                                <option key={f} value={f}>
-                                    {f}
-                                </option>
-                            ))}
-                    </Select>
-                    <Button
-                        onClick={async () => {
-                            if (
-                                selectedSystemToAttack &&
-                                selectedFactionDefendingSystem
-                            ) {
-                                await publishPlayerAttackedSystemEvent(
-                                    activePlayerInActionPhase,
-                                    selectedSystemToAttack,
-                                    selectedFactionDefendingSystem
-                                );
-                                setSelectedSystemToAttack(undefined);
-                                setSelectedFactionDefendingSystem(undefined);
-                            }
-                        }}
-                    >
-                        Attack system
-                    </Button>
-                </InputsRow>
-            </InputsColumn>
-            <InputsColumn>
-                <InputTitle>Destroy planet</InputTitle>
-                <InputsRow>
-                    <Select
-                        onChange={(e) =>
-                            setPlanetToDestroy(e.target.value as PlanetName)
-                        }
-                    >
-                        <option value={''}>--Planet--</option>
-                        {_.sortBy(planetsOnTheBoard, identity).map((p) => (
-                            <option key={p} value={p}>
-                                {planetNameWithControllingFaction(p)}
-                            </option>
-                        ))}
-                    </Select>
-                    <Button
-                        onClick={async () => {
-                            if (planetToDestroy) {
-                                await publishPlanetDestroyedEvent(
-                                    planetToDestroy,
-                                    activePlayerInActionPhase
-                                );
-                            }
-                        }}
-                    >
-                        Destroy planet
-                    </Button>
-                </InputsRow>
-            </InputsColumn>
-            {!hasMiragePlanetBeenFound(events) && (
-                <InputsColumn>
-                    <InputTitle>Find Mirage</InputTitle>
-                    <InputsRow>
-                        <Select
-                            onChange={(e) =>
-                                setSelectedPlanetlessSystemToFindMirageIn(
-                                    Number.parseInt(
-                                        e.target.value
-                                    ) as PlanetlessSystemTileNumber
-                                )
-                            }
-                        >
-                            <option value={''}>--Planetless system--</option>
-                            <option
-                                value={''}
-                                disabled
-                            >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
-                            {_.sortBy(planetlessSystemTilesOnTheBoard, (stn) =>
-                                tileIndexOnBoard(stn, mapTilesSelectedEvent)
-                            ).map((stn) => (
-                                <option key={stn} value={stn}>
-                                    {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
-                                        stn
-                                    )}`}
-                                </option>
-                            ))}
-                        </Select>
-                        <Button
-                            onClick={async () => {
-                                if (selectedPlanetlessSystemToFindMirageIn) {
-                                    await publishMiragePlanetFoundEvents(
-                                        selectedPlanetlessSystemToFindMirageIn,
-                                        activePlayerInActionPhase
-                                    );
-                                }
-                            }}
-                        >
-                            Find Mirage
-                        </Button>
-                    </InputsRow>
-                </InputsColumn>
-            )}
-            {events.filter(isMapTileAddedToBoardEvent).length < 3 && (
-                <InputsColumn>
-                    <InputTitle>Add map tile to board</InputTitle>
-                    <InputsRow>
-                        <Select
-                            onChange={(e) => {
-                                setColumnToAddMapTile(
-                                    Number.parseInt(
-                                        e.target.value
-                                    ) as ColumnForNewMapTile
-                                );
-                            }}
-                        >
-                            <option value={''}>--Column--</option>
-                            {range(11)
-                                .map((n) => n - 2)
-                                .map((n) => (
-                                    <option key={n} value={n}>
-                                        {columnToAddMapTileToDescription(n)}
-                                    </option>
-                                ))}
-                        </Select>
-                        <Select
-                            disabled={columnToAddMapTile === undefined}
-                            onChange={(e) => {
-                                setRowToAddMapTile(
-                                    Number.parseInt(
-                                        e.target.value
-                                    ) as RowForNewMapTile
-                                );
-                            }}
-                        >
-                            <option value={''}>--Row--</option>
-                            {possibleRowsForNewMapTile(columnToAddMapTile).map(
-                                (n) => (
-                                    <option key={n} value={n}>
-                                        {n}
-                                    </option>
-                                )
-                            )}
-                        </Select>
-                    </InputsRow>
-                    <InputsRow>
-                        <Select
-                            onChange={(e) => {
-                                setSystemTileToAddToMap(
-                                    Number.parseInt(
-                                        e.target.value
-                                    ) as SystemWithPlanetsTileNumber
-                                );
-                            }}
-                        >
-                            <option value={''}>--System tile--</option>
-                            {_.sortBy(
-                                systemTiles
-                                    .filter(isSystemWithPlanetsTile)
-                                    .filter(not(isFactionSystemTile))
-                                    .filter(
-                                        (st) =>
-                                            !systemTilesInPlay.includes(
-                                                st.tileNumber
-                                            )
-                                    ),
-                                (st) => st.tileNumber
-                            ).map((st) => (
-                                <option
-                                    key={st.tileNumber}
-                                    value={st.tileNumber}
-                                >
-                                    {systemTileDescription(st.tileNumber)}
-                                </option>
-                            ))}
-                        </Select>
-                        <Button
-                            onClick={async () => {
-                                if (
-                                    columnToAddMapTile !== undefined &&
-                                    rowToAddMapTile !== undefined &&
-                                    systemTileToAddToMap !== undefined
-                                ) {
-                                    await publishMapTileAddedToBoardEvent(
-                                        {
-                                            column: columnToAddMapTile,
-                                            row: rowToAddMapTile,
-                                        } as MapTileAddedToBoardPosition,
-                                        systemTileToAddToMap
-                                    );
-                                }
-                            }}
-                        >
-                            Add map tile to board
-                        </Button>
-                    </InputsRow>
-                </InputsColumn>
-            )}
-            {events.filter(isGammaWormholeFoundEvent).length < 2 && (
-                <InputsColumn>
-                    <InputTitle>Add gamma wormhole to board</InputTitle>
-                    <InputsRow>
-                        <Select
-                            onChange={(e) => {
-                                setSelectedSystemToAddGammaWormholeTo(
-                                    Number.parseInt(
-                                        e.target.value
-                                    ) as InteractableSystemTileNumber
-                                );
-                            }}
-                            value={selectedSystemToAddGammaWormholeTo || ''}
-                        >
-                            <option value={''}>--System--</option>
-                            {_.sortBy(
-                                systemTilesInWhichGammaWormholeCanBeFound,
-                                (stn) =>
-                                    tileIndexOnBoard(stn, mapTilesSelectedEvent)
-                            ).map((stn) => (
-                                <option key={stn} value={stn}>
-                                    {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
-                                </option>
-                            ))}
-                        </Select>
-                    </InputsRow>
-                    <InputsRow>
-                        <Button
-                            onClick={async () => {
-                                if (
-                                    selectedSystemToAddGammaWormholeTo !==
-                                    undefined
-                                ) {
-                                    await publishGammaWormholeFoundEvent(
-                                        activePlayerInActionPhase,
-                                        selectedSystemToAddGammaWormholeTo
-                                    );
-                                    setSelectedSystemToAddGammaWormholeTo(
-                                        undefined
-                                    );
-                                }
-                            }}
-                        >
-                            Add gamma wormhole to board
-                        </Button>
-                    </InputsRow>
-                </InputsColumn>
-            )}
-            {!strategyCardAlreadyPlayedByPlayerThisRound(
-                events,
-                activePlayerInActionPhase
-            ) &&
-                strategyCardSelectedByActivePlayerInActionPhase && (
+            {!turnPaused && (
+                <>
                     <InputsColumn>
-                        <Button
-                            disabled={strategyCardPlayedByPlayerThisTurn(
-                                events,
-                                activePlayerInActionPhase
-                            )}
-                            onClick={() =>
-                                publishPlayerPlayedStrategyCardEvent(
-                                    strategyCardSelectedByActivePlayerInActionPhase,
-                                    activePlayerInActionPhase
-                                )
-                            }
-                        >
-                            Play strategy card
-                        </Button>
-
-                        {playerToPerformStrategyCardAction && (
-                            <Button
-                                onClick={() =>
-                                    activePlayerInActionPhase ===
-                                    playerToPerformStrategyCardAction
-                                        ? publishPlayerCompletedStrategyCardPrimaryActionEvent(
-                                              strategyCardSelectedByActivePlayerInActionPhase,
-                                              activePlayerInActionPhase
-                                          )
-                                        : publishPlayerCompletedStrategyCardSecondaryActionEvent(
-                                              strategyCardSelectedByActivePlayerInActionPhase,
-                                              playerToPerformStrategyCardAction
-                                          )
+                        <InputTitle>Take control of planet</InputTitle>
+                        <InputsRow>
+                            <Select
+                                onChange={(e) =>
+                                    setSelectedPlanetToControl(
+                                        e.target.value as PlanetName
+                                    )
                                 }
                             >
-                                {playerToPerformStrategyCardAction} completed
-                                strategy card action
+                                <option value={''}>--Planet--</option>
+                                {_.sortBy(planetsOnTheBoard, identity).map(
+                                    (p) => (
+                                        <option key={p} value={p}>
+                                            {planetNameWithControllingFaction(
+                                                p
+                                            )}
+                                        </option>
+                                    )
+                                )}
+                            </Select>
+                            <Button
+                                onClick={async () => {
+                                    if (
+                                        selectedPlanetToControl &&
+                                        activePlayerInActionPhase !==
+                                            factionCurrentlyControllingPlanet(
+                                                selectedPlanetToControl
+                                            )
+                                    ) {
+                                        await publishPlanetControlledEvent(
+                                            selectedPlanetToControl,
+                                            activePlayerInActionPhase
+                                        );
+                                    }
+                                }}
+                            >
+                                Take control
                             </Button>
-                        )}
+                        </InputsRow>
                     </InputsColumn>
-                )}
-            <InputsColumn>
-                <Button
-                    disabled={!!playerToPerformStrategyCardAction}
-                    onClick={async () => {
-                        await publishTurnFinishedEvent(
-                            activePlayerInActionPhase,
-                            false
-                        );
+                    <InputsColumn>
+                        <InputTitle>
+                            Take control of planetless system
+                        </InputTitle>
+                        <InputsRow>
+                            <Select
+                                onChange={(e) =>
+                                    setSelectedPlanetlessSystemToControl(
+                                        Number.parseInt(
+                                            e.target.value
+                                        ) as PlanetlessSystemTileNumber
+                                    )
+                                }
+                            >
+                                <option value={''}>
+                                    --Planetless system--
+                                </option>
+                                <option
+                                    value={''}
+                                    disabled
+                                >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                                {_.sortBy(
+                                    planetlessSystemTilesOnTheBoard,
+                                    (stn) =>
+                                        tileIndexOnBoard(
+                                            stn,
+                                            mapTilesSelectedEvent
+                                        )
+                                ).map((stn) => (
+                                    <option key={stn} value={stn}>
+                                        {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                            stn
+                                        )}`}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Button
+                                onClick={async () => {
+                                    if (
+                                        selectedPlanetlessSystemToControl &&
+                                        factionCurrentlyControllingPlanetlessSystemTile(
+                                            selectedPlanetlessSystemToControl
+                                        ) !== activePlayerInActionPhase
+                                    ) {
+                                        await publishPlanetlessSystemControlledEvent(
+                                            selectedPlanetlessSystemToControl,
+                                            activePlayerInActionPhase
+                                        );
+                                    }
+                                }}
+                            >
+                                Take control
+                            </Button>
+                            <Button
+                                disabled={
+                                    !selectedPlanetlessSystemToControl ||
+                                    factionCurrentlyControllingPlanetlessSystemTile(
+                                        selectedPlanetlessSystemToControl
+                                    ) !== activePlayerInActionPhase
+                                }
+                                onClick={async () => {
+                                    if (selectedPlanetlessSystemToControl) {
+                                        await publishPlanetlessSystemControlledEvent(
+                                            selectedPlanetlessSystemToControl,
+                                            undefined
+                                        );
+                                    }
+                                }}
+                            >
+                                Lose control
+                            </Button>
+                        </InputsRow>
+                    </InputsColumn>
+                    <InputsColumn>
+                        <InputTitle>Enhance planet</InputTitle>
+                        <Select
+                            onChange={(e) =>
+                                setSelectedPlanetToEnhance(
+                                    e.target.value as PlanetName
+                                )
+                            }
+                        >
+                            <option value={''}>--Planet--</option>
+                            {_.sortBy(planetsOnTheBoard, identity).map((p) => (
+                                <option key={p} value={p}>
+                                    {planetNameWithResourcesAndInfluence(p)}
+                                </option>
+                            ))}
+                        </Select>
+                        <InputsRow>
+                            <NumberInput
+                                placeholder={'Resources'}
+                                onChange={(e) =>
+                                    setResourcesToEnhance(
+                                        Number.parseInt(e.target.value)
+                                    )
+                                }
+                            />
+                            <NumberInput
+                                placeholder={'Influence'}
+                                onChange={(e) =>
+                                    setInfluenceToEnhance(
+                                        Number.parseInt(e.target.value)
+                                    )
+                                }
+                            />
+                        </InputsRow>
+                        <Button
+                            onClick={async () => {
+                                if (selectedPlanetToEnhance) {
+                                    await publishPlanetEnhancedEvent(
+                                        selectedPlanetToEnhance,
+                                        resourcesToEnhance,
+                                        influenceToEnhance
+                                    );
+                                }
+                            }}
+                        >
+                            Enhance
+                        </Button>
+                    </InputsColumn>
+                    <InputsColumn>
+                        <InputTitle>Research tech</InputTitle>
+                        <InputsRow>
+                            <Select
+                                onChange={(e) =>
+                                    setFactionToResearchTech(
+                                        e.target.value as Faction
+                                    )
+                                }
+                            >
+                                <option value={''}>--Faction--</option>
+                                {_.sortBy(factionsInGame(events)).map((f) => (
+                                    <option key={f} value={f}>
+                                        {f}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Select
+                                onChange={(e) =>
+                                    setTechToResearch(
+                                        technologies.find(
+                                            (t) => e.target.value === t.name
+                                        )
+                                    )
+                                }
+                            >
+                                <option value={''}>--Tech--</option>
+                                {_.sortBy(
+                                    techsAvailableToResearch(
+                                        factionToResearchTech,
+                                        events
+                                    )
+                                ).map(({ name }) => (
+                                    <option key={name} value={name}>
+                                        {name}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Button
+                                onClick={async () => {
+                                    if (
+                                        factionToResearchTech &&
+                                        techToResearch
+                                    ) {
+                                        await publishPlayerResearchedTechnologyEvent(
+                                            techToResearch,
+                                            factionToResearchTech
+                                        );
 
-                        scrollToTop();
-                    }}
-                >
-                    Turn finished
-                </Button>
-            </InputsColumn>
-            {strategyCardAlreadyPlayedByPlayerThisRound(
-                events,
-                activePlayerInActionPhase
-            ) && (
-                <InputsColumn>
-                    <Button
-                        onClick={async () => {
-                            await publishTurnFinishedEvent(
-                                activePlayerInActionPhase,
-                                true
-                            );
+                                        if (
+                                            techToResearch.name ===
+                                            'I.I.H.Q Modernization'
+                                        ) {
+                                            await publishPlanetControlledEvent(
+                                                'Custodia Vigilia',
+                                                factionToResearchTech
+                                            );
+                                        }
+                                    }
+                                }}
+                            >
+                                Research
+                            </Button>
+                        </InputsRow>
+                    </InputsColumn>
+                    <InputsColumn>
+                        <InputTitle>Deresearch tech</InputTitle>
+                        <InputsRow>
+                            <Select
+                                onChange={(e) =>
+                                    setFactionToDeresearchTech(
+                                        e.target.value as Faction
+                                    )
+                                }
+                            >
+                                <option value={''}>--Faction--</option>
+                                {_.sortBy(factionsInGame(events)).map((f) => (
+                                    <option key={f} value={f}>
+                                        {f}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Select
+                                onChange={(e) =>
+                                    setTechToDeresearch(
+                                        technologies.find(
+                                            (t) => e.target.value === t.name
+                                        )
+                                    )
+                                }
+                            >
+                                <option value={''}>--Tech--</option>
+                                {_.sortBy(
+                                    factionToDeresearchTech
+                                        ? technologiesResearchedByFaction(
+                                              factionToDeresearchTech,
+                                              events
+                                          )
+                                        : []
+                                ).map(({ name }) => (
+                                    <option key={name} value={name}>
+                                        {name}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Button
+                                onClick={async () => {
+                                    if (
+                                        factionToDeresearchTech &&
+                                        techToDeresearch
+                                    ) {
+                                        await publishPlayerDeresearchedTechnologyEvent(
+                                            techToDeresearch,
+                                            factionToDeresearchTech
+                                        );
+                                    }
+                                }}
+                            >
+                                Deresearch
+                            </Button>
+                        </InputsRow>
+                    </InputsColumn>
+                    <InputsColumn>
+                        <InputTitle>Score VPs</InputTitle>
+                        <VpScoringContainer
+                            defaultFaction={activePlayerInActionPhase}
+                            {...props}
+                        />
+                    </InputsColumn>
+                    <InputsColumn>
+                        <InputTitle>Attack system</InputTitle>
+                        <InputsRow>
+                            <Select
+                                onChange={(e) => {
+                                    const systemToAttack = Number.parseInt(
+                                        e.target.value
+                                    ) as InteractableSystemTileNumber;
+                                    setSelectedSystemToAttack(systemToAttack);
 
-                            scrollToTop();
-                        }}
-                    >
-                        Pass
-                    </Button>
-                </InputsColumn>
+                                    if (
+                                        factionsCurrentlyControllingSystemTile(
+                                            systemToAttack
+                                        ).length === 1
+                                    ) {
+                                        setSelectedFactionDefendingSystem(
+                                            factionsCurrentlyControllingSystemTile(
+                                                systemToAttack
+                                            )[0]
+                                        );
+                                    }
+                                }}
+                                value={selectedSystemToAttack || ''}
+                            >
+                                <option value={''}>--System to attack--</option>
+                                {_.sortBy(
+                                    systemTilesAttackableByActivePlayer,
+                                    (stn) =>
+                                        tileIndexOnBoard(
+                                            stn,
+                                            mapTilesSelectedEvent
+                                        )
+                                ).map((stn) => (
+                                    <option key={stn} value={stn}>
+                                        {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Select
+                                onChange={(e) =>
+                                    setSelectedFactionDefendingSystem(
+                                        e.target.value as Faction
+                                    )
+                                }
+                                disabled={selectedSystemToAttack === undefined}
+                                value={selectedFactionDefendingSystem || ''}
+                            >
+                                <option value={''}>
+                                    --Defending faction--
+                                </option>
+                                {selectedSystemToAttack &&
+                                    _.sortBy(
+                                        factionsCurrentlyControllingSystemTile(
+                                            selectedSystemToAttack
+                                        )
+                                    ).map((f) => (
+                                        <option key={f} value={f}>
+                                            {f}
+                                        </option>
+                                    ))}
+                            </Select>
+                            <Button
+                                onClick={async () => {
+                                    if (
+                                        selectedSystemToAttack &&
+                                        selectedFactionDefendingSystem
+                                    ) {
+                                        await publishPlayerAttackedSystemEvent(
+                                            activePlayerInActionPhase,
+                                            selectedSystemToAttack,
+                                            selectedFactionDefendingSystem
+                                        );
+                                        setSelectedSystemToAttack(undefined);
+                                        setSelectedFactionDefendingSystem(
+                                            undefined
+                                        );
+                                    }
+                                }}
+                            >
+                                Attack system
+                            </Button>
+                        </InputsRow>
+                    </InputsColumn>
+                    <InputsColumn>
+                        <InputTitle>Destroy planet</InputTitle>
+                        <InputsRow>
+                            <Select
+                                onChange={(e) =>
+                                    setPlanetToDestroy(
+                                        e.target.value as PlanetName
+                                    )
+                                }
+                            >
+                                <option value={''}>--Planet--</option>
+                                {_.sortBy(planetsOnTheBoard, identity).map(
+                                    (p) => (
+                                        <option key={p} value={p}>
+                                            {planetNameWithControllingFaction(
+                                                p
+                                            )}
+                                        </option>
+                                    )
+                                )}
+                            </Select>
+                            <Button
+                                onClick={async () => {
+                                    if (planetToDestroy) {
+                                        await publishPlanetDestroyedEvent(
+                                            planetToDestroy,
+                                            activePlayerInActionPhase
+                                        );
+                                    }
+                                }}
+                            >
+                                Destroy planet
+                            </Button>
+                        </InputsRow>
+                    </InputsColumn>
+                    {!hasMiragePlanetBeenFound(events) && (
+                        <InputsColumn>
+                            <InputTitle>Find Mirage</InputTitle>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) =>
+                                        setSelectedPlanetlessSystemToFindMirageIn(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as PlanetlessSystemTileNumber
+                                        )
+                                    }
+                                >
+                                    <option value={''}>
+                                        --Planetless system--
+                                    </option>
+                                    <option
+                                        value={''}
+                                        disabled
+                                    >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                                    {_.sortBy(
+                                        planetlessSystemTilesOnTheBoard,
+                                        (stn) =>
+                                            tileIndexOnBoard(
+                                                stn,
+                                                mapTilesSelectedEvent
+                                            )
+                                    ).map((stn) => (
+                                        <option key={stn} value={stn}>
+                                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                                stn
+                                            )}`}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <Button
+                                    onClick={async () => {
+                                        if (
+                                            selectedPlanetlessSystemToFindMirageIn
+                                        ) {
+                                            await publishMiragePlanetFoundEvents(
+                                                selectedPlanetlessSystemToFindMirageIn,
+                                                activePlayerInActionPhase
+                                            );
+                                        }
+                                    }}
+                                >
+                                    Find Mirage
+                                </Button>
+                            </InputsRow>
+                        </InputsColumn>
+                    )}
+                    {events.filter(isMapTileAddedToBoardEvent).length < 3 && (
+                        <InputsColumn>
+                            <InputTitle>Add map tile to board</InputTitle>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) => {
+                                        setColumnToAddMapTile(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as ColumnForNewMapTile
+                                        );
+                                    }}
+                                >
+                                    <option value={''}>--Column--</option>
+                                    {range(11)
+                                        .map((n) => n - 2)
+                                        .map((n) => (
+                                            <option key={n} value={n}>
+                                                {columnToAddMapTileToDescription(
+                                                    n
+                                                )}
+                                            </option>
+                                        ))}
+                                </Select>
+                                <Select
+                                    disabled={columnToAddMapTile === undefined}
+                                    onChange={(e) => {
+                                        setRowToAddMapTile(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as RowForNewMapTile
+                                        );
+                                    }}
+                                >
+                                    <option value={''}>--Row--</option>
+                                    {possibleRowsForNewMapTile(
+                                        columnToAddMapTile
+                                    ).map((n) => (
+                                        <option key={n} value={n}>
+                                            {n}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </InputsRow>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) => {
+                                        setSystemTileToAddToMap(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as SystemWithPlanetsTileNumber
+                                        );
+                                    }}
+                                >
+                                    <option value={''}>--System tile--</option>
+                                    {_.sortBy(
+                                        systemTiles
+                                            .filter(isSystemWithPlanetsTile)
+                                            .filter(not(isFactionSystemTile))
+                                            .filter(
+                                                (st) =>
+                                                    !systemTilesInPlay.includes(
+                                                        st.tileNumber
+                                                    )
+                                            ),
+                                        (st) => st.tileNumber
+                                    ).map((st) => (
+                                        <option
+                                            key={st.tileNumber}
+                                            value={st.tileNumber}
+                                        >
+                                            {systemTileDescription(
+                                                st.tileNumber
+                                            )}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <Button
+                                    onClick={async () => {
+                                        if (
+                                            columnToAddMapTile !== undefined &&
+                                            rowToAddMapTile !== undefined &&
+                                            systemTileToAddToMap !== undefined
+                                        ) {
+                                            await publishMapTileAddedToBoardEvent(
+                                                {
+                                                    column: columnToAddMapTile,
+                                                    row: rowToAddMapTile,
+                                                } as MapTileAddedToBoardPosition,
+                                                systemTileToAddToMap
+                                            );
+                                        }
+                                    }}
+                                >
+                                    Add map tile to board
+                                </Button>
+                            </InputsRow>
+                        </InputsColumn>
+                    )}
+                    {events.filter(isGammaWormholeFoundEvent).length < 2 && (
+                        <InputsColumn>
+                            <InputTitle>Add gamma wormhole to board</InputTitle>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) => {
+                                        setSelectedSystemToAddGammaWormholeTo(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as InteractableSystemTileNumber
+                                        );
+                                    }}
+                                    value={
+                                        selectedSystemToAddGammaWormholeTo || ''
+                                    }
+                                >
+                                    <option value={''}>--System--</option>
+                                    {_.sortBy(
+                                        systemTilesInWhichGammaWormholeCanBeFound,
+                                        (stn) =>
+                                            tileIndexOnBoard(
+                                                stn,
+                                                mapTilesSelectedEvent
+                                            )
+                                    ).map((stn) => (
+                                        <option key={stn} value={stn}>
+                                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </InputsRow>
+                            <InputsRow>
+                                <Button
+                                    onClick={async () => {
+                                        if (
+                                            selectedSystemToAddGammaWormholeTo !==
+                                            undefined
+                                        ) {
+                                            await publishGammaWormholeFoundEvent(
+                                                activePlayerInActionPhase,
+                                                selectedSystemToAddGammaWormholeTo
+                                            );
+                                            setSelectedSystemToAddGammaWormholeTo(
+                                                undefined
+                                            );
+                                        }
+                                    }}
+                                >
+                                    Add gamma wormhole to board
+                                </Button>
+                            </InputsRow>
+                        </InputsColumn>
+                    )}
+                    {!strategyCardAlreadyPlayedByPlayerThisRound(
+                        events,
+                        activePlayerInActionPhase
+                    ) &&
+                        strategyCardSelectedByActivePlayerInActionPhase && (
+                            <InputsColumn>
+                                <Button
+                                    disabled={strategyCardPlayedByPlayerThisTurn(
+                                        events,
+                                        activePlayerInActionPhase
+                                    )}
+                                    onClick={() =>
+                                        publishPlayerPlayedStrategyCardEvent(
+                                            strategyCardSelectedByActivePlayerInActionPhase,
+                                            activePlayerInActionPhase
+                                        )
+                                    }
+                                >
+                                    Play strategy card
+                                </Button>
+
+                                {playerToPerformStrategyCardAction && (
+                                    <Button
+                                        onClick={() =>
+                                            activePlayerInActionPhase ===
+                                            playerToPerformStrategyCardAction
+                                                ? publishPlayerCompletedStrategyCardPrimaryActionEvent(
+                                                      strategyCardSelectedByActivePlayerInActionPhase,
+                                                      activePlayerInActionPhase
+                                                  )
+                                                : publishPlayerCompletedStrategyCardSecondaryActionEvent(
+                                                      strategyCardSelectedByActivePlayerInActionPhase,
+                                                      playerToPerformStrategyCardAction
+                                                  )
+                                        }
+                                    >
+                                        {playerToPerformStrategyCardAction}{' '}
+                                        completed strategy card action
+                                    </Button>
+                                )}
+                            </InputsColumn>
+                        )}
+                    <InputsColumn>
+                        <Button
+                            disabled={!!playerToPerformStrategyCardAction}
+                            onClick={async () => {
+                                await publishTurnFinishedEvent(
+                                    activePlayerInActionPhase,
+                                    false
+                                );
+
+                                scrollToTop();
+                            }}
+                        >
+                            Turn finished
+                        </Button>
+                    </InputsColumn>
+                    {strategyCardAlreadyPlayedByPlayerThisRound(
+                        events,
+                        activePlayerInActionPhase
+                    ) && (
+                        <InputsColumn>
+                            <Button
+                                onClick={async () => {
+                                    await publishTurnFinishedEvent(
+                                        activePlayerInActionPhase,
+                                        true
+                                    );
+
+                                    scrollToTop();
+                                }}
+                            >
+                                Pass
+                            </Button>
+                        </InputsColumn>
+                    )}
+                </>
             )}
         </StyledPlayerTurnPage>
     );

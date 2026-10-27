@@ -287,6 +287,16 @@ type RoundEndedEvent = {
     time: number;
 };
 
+type TurnTimerPausedEvent = {
+    type: 'TurnTimerPaused';
+    time: number;
+};
+
+type TurnTimerUnpausedEvent = {
+    type: 'TurnTimerUnpaused';
+    time: number;
+};
+
 type EventGuard<T extends Event> = (x: Event) => x is T;
 
 const isUnion =
@@ -445,6 +455,12 @@ const isPublicObjectiveRevealedDuringStatusPhaseEvent = (
 ): e is PublicObjectiveRevealedDuringStatusPhaseEvent =>
     e.type === 'PublicObjectiveRevealedDuringStatusPhase';
 
+const isTurnTimerPausedEvent = (e: Event): e is TurnTimerPausedEvent =>
+    e.type === 'TurnTimerPaused';
+
+const isTurnTimerUnpausedEvent = (e: Event): e is TurnTimerUnpausedEvent =>
+    e.type === 'TurnTimerUnpaused';
+
 const isUnitsRepairedDuringStatusPhaseEvent = (
     e: Event
 ): e is UnitsRepairedDuringStatusPhaseEvent =>
@@ -483,6 +499,8 @@ type Event =
     | RoundEndedEvent
     | RoundStartedEvent
     | SpeakerAssignedEvent
+    | TurnTimerPausedEvent
+    | TurnTimerUnpausedEvent
     | UnitsRepairedDuringStatusPhaseEvent;
 
 const playerFactionsAndColors = (
@@ -928,6 +946,32 @@ const timesTakenPerPlayerPerTurn = (
                     playerTurnStartedTime: n.time,
                 };
             }
+
+            if (n.type === 'TurnTimerPaused') {
+                return {
+                    ...acc,
+                    turnTimerPausedTime:
+                        acc.turnTimerPausedTime > 0
+                            ? acc.turnTimerPausedTime
+                            : n.time,
+                };
+            }
+
+            if (n.type === 'TurnTimerUnpaused') {
+                return {
+                    ...acc,
+                    turnTimerPausedTime: 0,
+                    turnPausedDuration:
+                        acc.turnTimerPausedTime > 0
+                            ? acc.turnPausedDuration +
+                              n.time -
+                              acc.turnTimerPausedTime
+                            : acc.turnPausedDuration,
+                };
+            }
+
+            const timeTakenOnTurn =
+                n.time - acc.playerTurnStartedTime - acc.turnPausedDuration;
             if (
                 n.type === 'PlayerSelectedStrategyCard' ||
                 n.type === 'PlayerCompletedStrategyCardPrimaryAction' ||
@@ -938,12 +982,14 @@ const timesTakenPerPlayerPerTurn = (
                         ...acc.playerTurnTimes,
                         [n.faction]: [
                             ...acc.playerTurnTimes[n.faction],
-                            n.time - acc.playerTurnStartedTime,
+                            timeTakenOnTurn,
                         ],
                     },
                     playerTurnStartedTime: n.time,
                     strategyCardActionsInProgress:
                         n.type === 'PlayerCompletedStrategyCardSecondaryAction',
+                    turnTimerPausedTime: 0,
+                    turnPausedDuration: 0,
                 };
             }
             if (n.type === 'PlayerFinishedTurn') {
@@ -956,17 +1002,17 @@ const timesTakenPerPlayerPerTurn = (
                                       -1
                                   ),
                                   (_.last(acc.playerTurnTimes[n.faction]) ||
-                                      0) +
-                                      n.time -
-                                      acc.playerTurnStartedTime,
+                                      0) + timeTakenOnTurn,
                               ]
                             : [
                                   ...acc.playerTurnTimes[n.faction],
-                                  n.time - acc.playerTurnStartedTime,
+                                  timeTakenOnTurn,
                               ],
                     },
                     playerTurnStartedTime: n.time,
                     strategyCardActionsInProgress: false,
+                    turnTimerPausedTime: 0,
+                    turnPausedDuration: 0,
                 };
             }
 
@@ -979,6 +1025,8 @@ const timesTakenPerPlayerPerTurn = (
                 (acc, n) => ({ ...acc, [n]: [] }),
                 {} as Record<Faction, number[]>
             ),
+            turnTimerPausedTime: 0,
+            turnPausedDuration: 0,
         }
     ).playerTurnTimes;
 
@@ -1070,6 +1118,8 @@ export {
     isRoundEndedEvent,
     isRoundStartedEvent,
     isSpeakerAssignedEvent,
+    isTurnTimerPausedEvent,
+    isTurnTimerUnpausedEvent,
     isUnion,
     isUnion5,
     isUnitsRepairedDuringStatusPhaseEvent,

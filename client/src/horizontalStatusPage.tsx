@@ -33,6 +33,8 @@ import {
     isPlayerSelectedStrategyCardEvent,
     isPublicObjectiveRevealedDuringStatusPhaseEvent,
     isRoundStartedEvent,
+    isTurnTimerPausedEvent,
+    isTurnTimerUnpausedEvent,
     isUnion,
     isUnion5,
     isUnitsRepairedDuringStatusPhaseEvent,
@@ -74,6 +76,35 @@ const HorizontalStatusPage: React.FC = () => {
             )
         )
     );
+
+    const turnPausedDuringCurrentObligation = events
+        .filter(isUnion(isTurnTimerPausedEvent, isTurnTimerUnpausedEvent))
+        .filter(
+            (e) => e.time > (lastEventWhenPlayerObligationStarted?.time || 0)
+        )
+        .reduce(
+            (acc, n) => {
+                if (isTurnTimerPausedEvent(n)) {
+                    return {
+                        ...acc,
+                        turnTimerPausedTime:
+                            acc.turnTimerPausedTime == 0
+                                ? n.time
+                                : acc.turnTimerPausedTime,
+                    };
+                }
+
+                return {
+                    totalPausedDuration:
+                        acc.totalPausedDuration +
+                        (acc.turnTimerPausedTime > 0
+                            ? n.time - acc.turnTimerPausedTime
+                            : 0),
+                    turnTimerPausedTime: 0,
+                };
+            },
+            { totalPausedDuration: 0, turnTimerPausedTime: 0 }
+        ).totalPausedDuration;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -319,7 +350,12 @@ const HorizontalStatusPage: React.FC = () => {
                                 currentTime={
                                     winningPlayer?.asOf
                                         ? winningPlayer.asOf
-                                        : currentTime
+                                        : isTurnTimerPausedEvent(lastEvent)
+                                          ? lastEvent.time
+                                          : currentTime
+                                }
+                                turnPausedDuringCurrentObligation={
+                                    turnPausedDuringCurrentObligation
                                 }
                             />
                             <TotalTime
@@ -422,6 +458,8 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'PublicObjectiveRevealedDuringStatusPhase':
                 case 'RoundEnded':
                 case 'RoundStarted':
+                case 'TurnTimerPaused':
+                case 'TurnTimerUnpaused':
                 case 'UnitsRepairedDuringStatusPhase':
                     return '';
                 case 'GammaWormholeFound':
@@ -662,6 +700,7 @@ type TimeRemainingProps = {
     timesTakenPerPlayerPerTurn: Record<Faction, number[]>;
     timeCurrentObligationStarted: number;
     currentTime: number;
+    turnPausedDuringCurrentObligation: number;
 };
 
 const TimeRemaining: React.FC<TimeRemainingProps> = ({
@@ -669,6 +708,7 @@ const TimeRemaining: React.FC<TimeRemainingProps> = ({
     timesTakenPerPlayerPerTurn,
     timeCurrentObligationStarted,
     currentTime,
+    turnPausedDuringCurrentObligation,
 }) => {
     if (!faction) {
         return (
@@ -682,7 +722,8 @@ const TimeRemaining: React.FC<TimeRemainingProps> = ({
         faction,
         timesTakenPerPlayerPerTurn,
         timeCurrentObligationStarted,
-        currentTime
+        currentTime,
+        turnPausedDuringCurrentObligation
     );
 
     return (

@@ -96,6 +96,10 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Round started';
         case 'SpeakerAssigned':
             return 'Speaker assigned';
+        case 'TurnTimerPaused':
+            return 'Turn timer paused';
+        case 'TurnTimerUnpaused':
+            return 'Turn timer unpaused';
         case 'UnitsRepairedDuringStatusPhase':
             return 'Units repaired during status phase';
     }

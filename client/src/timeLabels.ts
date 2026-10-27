@@ -22,7 +22,8 @@ const timeRemainingForCurrentObligationInMillis = (
     faction: Faction,
     timesTakenPerPlayerPerTurn: Record<Faction, number[]>,
     timeCurrentObligationStarted: number,
-    currentTime: number
+    currentTime: number,
+    turnPausedDuringCurrentObligation: number
 ): number => {
     const allowableTimeInMillis =
         (timesTakenPerPlayerPerTurn[faction].length + 1) *
@@ -34,7 +35,8 @@ const timeRemainingForCurrentObligationInMillis = (
     return (
         allowableTimeInMillis -
         timeTakenInMillis -
-        (currentTime - timeCurrentObligationStarted)
+        (currentTime - timeCurrentObligationStarted) +
+        turnPausedDuringCurrentObligation
     );
 };
 
