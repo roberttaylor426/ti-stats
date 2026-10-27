@@ -156,6 +156,9 @@ type FactionUnitTechnology = {
 
 type Technology = NonUnitTechnology | UnitTechnology | FactionUnitTechnology;
 
+const isFactionTechnology = (t: Technology): boolean =>
+    isFactionUnitTechnology(t) || (t.type !== 'Unit' && !!t.faction);
+
 const isFactionUnitTechnology = (t: Technology): t is FactionUnitTechnology =>
     !!(t as FactionUnitTechnology).faction && t.type === 'Unit';
 
@@ -854,6 +857,7 @@ export {
     gravitonLaserSystem,
     gravityDrive,
     hexColorForTechnologyType,
+    isFactionTechnology,
     isFactionUnitTechnology,
     magenDefenseGrid,
     neuralMotivator,

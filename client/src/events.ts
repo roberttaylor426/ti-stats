@@ -21,6 +21,7 @@ import {
     SystemWithPlanetsTileNumber,
 } from './systemTiles';
 import {
+    isFactionTechnology,
     isFactionUnitTechnology,
     technologies,
     Technology,
@@ -870,9 +871,28 @@ const techsAvailableToResearch = (
     const nonSupersededTechs = nonFactionTechs.filter(
         (t) => !supersededFactionTechs.includes(t.name)
     );
+    const otherTechs =
+        f === 'The Nekro Virus'
+            ? events
+                  .filter(
+                      isUnion(
+                          isPlayerResearchedTechnologyEvent,
+                          isPlayerDeresearchedTechnologyEvent
+                      )
+                  )
+                  .reduce((acc, n) => {
+                      if (!isFactionTechnology(n.technology)) {
+                          return acc;
+                      }
+                      if (isPlayerResearchedTechnologyEvent(n)) {
+                          return [...acc, n.technology];
+                      }
+                      return acc.filter((t) => t.name !== n.technology.name);
+                  }, [] as Technology[])
+            : [];
     return f
         ? _.sortBy(
-              [...factionTechs, ...nonSupersededTechs].filter(
+              [...factionTechs, ...nonSupersededTechs, ...otherTechs].filter(
                   (t) =>
                       !technologiesResearchedByFaction(f, events).some(
                           (trbf) => t.name === trbf.name
