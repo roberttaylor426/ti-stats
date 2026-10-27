@@ -609,7 +609,12 @@ const GammaWormholeTokenContainer = styled.div`
     }
 `;
 
-const SystemTileToken = styled.img`
+type SystemTileTokenProps = {
+    $zIndex: number;
+};
+
+const SystemTileToken = styled.img<SystemTileTokenProps>`
+    z-index: ${(props) => props.$zIndex};
     min-width: 0;
     min-height: 0;
 `;
@@ -772,7 +777,11 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
         />
         {showMirageToken && (
             <MirageTokenContainer>
-                <SystemTileToken src={mirageToken} alt={`Mirage token`} />
+                <SystemTileToken
+                    src={mirageToken}
+                    alt={`Mirage token`}
+                    $zIndex={1}
+                />
             </MirageTokenContainer>
         )}
         {showGammaWormholeToken && (
@@ -780,6 +789,7 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
                 <SystemTileToken
                     src={gammaWormholeToken}
                     alt={`Gamma wormhole token`}
+                    $zIndex={2}
                 />
             </GammaWormholeTokenContainer>
         )}
