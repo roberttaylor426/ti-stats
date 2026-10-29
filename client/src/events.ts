@@ -165,7 +165,7 @@ type GammaWormholeFoundEvent = {
     type: 'GammaWormholeFound';
     time: number;
     tileNumber: InteractableSystemTileNumber;
-    faction: Faction;
+    faction?: Faction;
 };
 
 type PlanetDestroyedEvent = {

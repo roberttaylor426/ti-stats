@@ -4,6 +4,7 @@ import _, { identity } from 'underscore';
 
 import { AgendaCard, agendaCards } from '../agendaCards';
 import { Event } from '../events';
+import { mecatolRexTileNumber } from '../systemTiles';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
 import { InputsRow } from './components/inputsRow';
@@ -16,8 +17,10 @@ type Props = {
 };
 
 const AgendaPhasePage: React.FC<Props & AdminPageProps> = (props) => {
-    const { currentRoundNumber, publishNewEvents } = props;
+    const { currentRoundNumber, publishNewEvents, events } = props;
     const [selectedAgendaCard, setSelectedAgendaCard] = useState<AgendaCard>();
+
+    const lastEvent = _.last(events);
 
     const publishAgendaCardRevealEvent = async (
         ac: AgendaCard
@@ -30,6 +33,17 @@ const AgendaPhasePage: React.FC<Props & AdminPageProps> = (props) => {
 
         return await publishNewEvents([newEvent]);
     };
+
+    const publishGammaWormholeFoundOnMecatolRexEvent =
+        async (): Promise<boolean> => {
+            const newEvent: Event = {
+                type: 'GammaWormholeFound',
+                time: new Date().getTime(),
+                tileNumber: mecatolRexTileNumber,
+            };
+
+            return await publishNewEvents([newEvent]);
+        };
 
     const publishRoundEndedEvent = async () => {
         const newEvent: Event = {
@@ -68,6 +82,17 @@ const AgendaPhasePage: React.FC<Props & AdminPageProps> = (props) => {
                     Reveal card
                 </Button>
             </InputsRow>
+            {lastEvent &&
+                lastEvent.type === 'AgendaCardRevealed' &&
+                lastEvent.card === 'Nexus Sovereignty' && (
+                    <InputsRow>
+                        <Button
+                            onClick={publishGammaWormholeFoundOnMecatolRexEvent}
+                        >
+                            Place gamma wormhole on Mecatol
+                        </Button>
+                    </InputsRow>
+                )}
             <VpScoringContainer {...props} />
             <Button onClick={publishRoundEndedEvent}>
                 {`End Round ${currentRoundNumber}`}

@@ -467,7 +467,9 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'UnitsRepairedDuringStatusPhase':
                     return '';
                 case 'GammaWormholeFound':
-                    return `Gamma wormhole ${randomSystemComponentFoundVerb(e.time)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`;
+                    return e.faction
+                        ? `Gamma wormhole ${randomSystemComponentFoundVerb(e.time)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`
+                        : '';
                 case 'MapTileAddedToBoard':
                     return `Star charts reveal new planets: ${systemWithPlanetsTileDescription(e.tileNumber)}`;
                 case 'MiragePlanetFound':
