@@ -41,6 +41,7 @@ import {
     isHyperlaneSystemTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
+    mecatolRexTileNumber,
     PlanetlessSystemTileNumber,
     systemTileDescription,
     SystemTileNumber,
@@ -425,12 +426,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         )
     );
 
-    const systemTilesInWhichGammaWormholeCanBeFound = systemTilesInPlay.filter(
-        (st) =>
+    const systemTilesInWhichGammaWormholeCanBeFound = systemTilesInPlay
+        .filter((st) =>
             factionsCurrentlyControllingSystemTile(st).some(
                 (f) => f === activePlayerInActionPhase
             )
-    );
+        )
+        .filter((stn) => stn !== mecatolRexTileNumber);
 
     const planetResourcesAndInfluence = (p: PlanetName) => ({
         resources:
@@ -1053,7 +1055,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             </InputsRow>
                         </InputsColumn>
                     )}
-                    {events.filter(isGammaWormholeFoundEvent).length < 2 && (
+                    {events
+                        .filter(isGammaWormholeFoundEvent)
+                        .filter((e) => e.tileNumber !== mecatolRexTileNumber)
+                        .length < 2 && (
                         <InputsColumn>
                             <InputTitle>Add gamma wormhole to board</InputTitle>
                             <InputsRow>
