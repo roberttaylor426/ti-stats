@@ -3,11 +3,16 @@ import styled from 'styled-components';
 import _, { identity } from 'underscore';
 
 import gammaWormholeToken from './assets/systemTiles/GammaToken.webp';
+import creussAlphaWormholeToken from './assets/systemTiles/GhostsAlphaToken.webp';
+import creussBetaWormholeToken from './assets/systemTiles/GhostsBetaToken.webp';
+import creussGammaWormholeToken from './assets/systemTiles/GhostsGammaToken.webp';
 import mirageToken from './assets/systemTiles/MirageToken.webp';
 import tile51 from './assets/systemTiles/ST_51.webp';
 import tile82 from './assets/systemTiles/ST_82.webp';
 import tile82Back from './assets/systemTiles/ST_82_Back.webp';
 import {
+    CreussWormhole,
+    creussWormholesPlacedOnSystemTileWithNumber,
     Event,
     factionsInGame,
     hasGammaWormholeBeenFoundOnSystemTileWithNumber,
@@ -164,6 +169,14 @@ const GalaxyPage: React.FC = () => {
                                                         events,
                                                         systemTileNumber
                                                     )
+                                                }
+                                                creussWormholeTokens={
+                                                    !!systemTileNumber
+                                                        ? creussWormholesPlacedOnSystemTileWithNumber(
+                                                              events,
+                                                              systemTileNumber
+                                                          )
+                                                        : []
                                                 }
                                             />
                                         );
@@ -380,7 +393,14 @@ const columnOutsideOfInitialGalaxy = (
                         )}
                         systemUnderAttack={isSystemUnderAttack(t, events)}
                         showMirageToken={false}
-                        showGammaWormholeToken={false}
+                        showGammaWormholeToken={hasGammaWormholeBeenFoundOnSystemTileWithNumber(
+                            events,
+                            t
+                        )}
+                        creussWormholeTokens={creussWormholesPlacedOnSystemTileWithNumber(
+                            events,
+                            t
+                        )}
                     />
                 )
             )}
@@ -459,6 +479,10 @@ const tilesAtBeginningOfColumn = (c: number, events: Event[]) => [
                 events,
                 e.tileNumber
             )}
+            creussWormholeTokens={creussWormholesPlacedOnSystemTileWithNumber(
+                events,
+                e.tileNumber
+            )}
         />
     )),
 ];
@@ -514,6 +538,10 @@ const tilesAtEndOfColumn = (c: number, events: Event[]) => [
                 systemUnderAttack={isSystemUnderAttack(e.tileNumber, events)}
                 showMirageToken={false}
                 showGammaWormholeToken={hasGammaWormholeBeenFoundOnSystemTileWithNumber(
+                    events,
+                    e.tileNumber
+                )}
+                creussWormholeTokens={creussWormholesPlacedOnSystemTileWithNumber(
                     events,
                     e.tileNumber
                 )}
@@ -597,23 +625,44 @@ const MirageTokenContainer = styled.div`
     }
 `;
 
-const GammaWormholeTokenContainer = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-left: 20%;
-    padding-bottom: 20%;
+type SystemTileTokenProps = {
+    index: number;
+    total: number;
+    systemTileImage: string;
+};
 
-    > * {
-        width: 40%;
-    }
+const SystemTileToken: React.FC<SystemTileTokenProps> = ({
+    index,
+    total,
+    systemTileImage,
+}) => (
+    <SystemTileTokenContainer
+        $paddingLeftPercent={35 + (total === 1 ? 15 : (30 / total - 1) * index)}
+        $paddingTopPercent={10 + (total === 1 ? 5 : (25 / total - 1) * index)}
+    >
+        <StyledSystemTileToken src={systemTileImage} $zIndex={2 + index} />
+    </SystemTileTokenContainer>
+);
+
+type SystemTileTokenContainerProps = {
+    $paddingLeftPercent: number;
+    $paddingTopPercent: number;
+};
+
+const SystemTileTokenContainer = styled.div<SystemTileTokenContainerProps>`
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: ${(props) => props.$paddingLeftPercent}%;
+    padding-top: ${(props) => props.$paddingTopPercent}%;
+    width: 20%;
 `;
 
-type SystemTileTokenProps = {
+type StyledSystemTileTokenProps = {
     $zIndex: number;
 };
 
-const SystemTileToken = styled.img<SystemTileTokenProps>`
+const StyledSystemTileToken = styled.img<StyledSystemTileTokenProps>`
     z-index: ${(props) => props.$zIndex};
     min-width: 0;
     min-height: 0;
@@ -758,6 +807,7 @@ type HighlightableTileProps = {
     systemUnderAttack: boolean;
     showMirageToken: boolean;
     showGammaWormholeToken: boolean;
+    creussWormholeTokens: CreussWormhole[];
     rotateAngle?: number;
 };
 
@@ -767,6 +817,7 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
     systemUnderAttack,
     showMirageToken,
     showGammaWormholeToken,
+    creussWormholeTokens,
     rotateAngle,
 }) => (
     <StyledHighlightableTile>
@@ -777,22 +828,26 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
         />
         {showMirageToken && (
             <MirageTokenContainer>
-                <SystemTileToken
+                <StyledSystemTileToken
                     src={mirageToken}
                     alt={`Mirage token`}
                     $zIndex={1}
                 />
             </MirageTokenContainer>
         )}
-        {showGammaWormholeToken && (
-            <GammaWormholeTokenContainer>
+        {[
+            showGammaWormholeToken ? gammaWormholeToken : undefined,
+            ...creussWormholeTokens.map(creussWormholeToken),
+        ]
+            .filter(notUndefined)
+            .map((t, index, arr) => (
                 <SystemTileToken
-                    src={gammaWormholeToken}
-                    alt={`Gamma wormhole token`}
-                    $zIndex={2}
+                    key={index}
+                    index={index}
+                    total={arr.length}
+                    systemTileImage={t}
                 />
-            </GammaWormholeTokenContainer>
-        )}
+            ))}
         {systemTileNumber && (
             <HexHighlight
                 controllingPlayerColors={controllingPlayerColors}
@@ -923,5 +978,16 @@ const GhostsOfCreussHomeTile: React.FC<GhostsOfCresussHomeTileProps> = ({
         $highlightColor={hexPlayerColor(controllingPlayerColor)}
     />
 );
+
+const creussWormholeToken = (cw: CreussWormhole): string => {
+    switch (cw) {
+        case 'alpha':
+            return creussAlphaWormholeToken;
+        case 'beta':
+            return creussBetaWormholeToken;
+        case 'gamma':
+            return creussGammaWormholeToken;
+    }
+};
 
 export { GalaxyPage };

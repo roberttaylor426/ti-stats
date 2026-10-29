@@ -466,6 +466,8 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'TurnTimerUnpaused':
                 case 'UnitsRepairedDuringStatusPhase':
                     return '';
+                case 'CreussWormholePlaced':
+                    return `Creuss ${e.wormhole} appears`;
                 case 'GammaWormholeFound':
                     return e.faction
                         ? `Gamma wormhole ${randomSystemComponentFoundVerb(e.time)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`

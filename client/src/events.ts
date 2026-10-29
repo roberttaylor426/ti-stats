@@ -168,6 +168,18 @@ type GammaWormholeFoundEvent = {
     faction?: Faction;
 };
 
+const creussWormholes = ['alpha', 'beta', 'gamma'] as const;
+
+type CreussWormhole = (typeof creussWormholes)[number];
+
+type CreussWormholePlacedEvent = {
+    type: 'CreussWormholePlaced';
+    time: number;
+    wormhole: CreussWormhole;
+    tileNumber: InteractableSystemTileNumber;
+    faction: Faction;
+};
+
 type PlanetDestroyedEvent = {
     type: 'PlanetDestroyed';
     time: number;
@@ -399,6 +411,10 @@ const isMapTileAddedToBoardEvent = (e: Event): e is MapTileAddedToBoardEvent =>
 const isGammaWormholeFoundEvent = (e: Event): e is GammaWormholeFoundEvent =>
     e.type === 'GammaWormholeFound';
 
+const isCreussWormholePlacedEvent = (
+    e: Event
+): e is CreussWormholePlacedEvent => e.type === 'CreussWormholePlaced';
+
 const isPlayerAttackedSystemEvent = (
     e: Event
 ): e is PlayerAttackedSystemEvent => e.type === 'PlayerAttackedSystem';
@@ -475,6 +491,7 @@ type Event =
     | CardsReadiedDuringStatusPhaseEvent
     | CommandTokensGainedAndRedistributedDuringStatusPhaseEvent
     | CommandTokensRemovedDuringStatusPhaseEvent
+    | CreussWormholePlacedEvent
     | GameSetupCompletedEvent
     | GammaWormholeFoundEvent
     | GetReadyMusicTriggeredEvent
@@ -557,7 +574,24 @@ const hasMiragePlanetBeenFoundOnSystemTileWithNumber = (
 const hasGammaWormholeBeenFoundOnSystemTileWithNumber = (
     events: Event[],
     stn: SystemTileNumber
-): boolean => events.find(isGammaWormholeFoundEvent)?.tileNumber === stn;
+): boolean =>
+    events.filter(isGammaWormholeFoundEvent).some((e) => e.tileNumber === stn);
+
+const creussWormholesPlacedOnSystemTileWithNumber = (
+    events: Event[],
+    stn: SystemTileNumber
+): CreussWormhole[] =>
+    Object.entries(
+        events.filter(isCreussWormholePlacedEvent).reduce(
+            (acc, n) => ({
+                ...acc,
+                [n.wormhole]: n.tileNumber,
+            }),
+            {} as Record<CreussWormhole, SystemTileNumber>
+        )
+    )
+        .filter(([_, v]) => v === stn)
+        .map(([k, _]) => k as CreussWormhole);
 
 const systemTilePlanets = (stn: SystemWithPlanetsTileNumber): PlanetName[] => {
     const st = systemWithPlanetsTile(stn);
@@ -1091,6 +1125,9 @@ const isItAgendaPhase = (events: Event[]) => {
 export {
     ActionPhaseStartedEvent,
     ColumnForNewMapTile,
+    CreussWormhole,
+    creussWormholes,
+    creussWormholesPlacedOnSystemTileWithNumber,
     currentPlayerToPerformStrategyCardActionInActionPhase,
     currentPlayerTurnInActionPhase,
     currentPlayerTurnInStrategyPhase,

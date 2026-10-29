@@ -46,6 +46,8 @@ const humanReadableEventLabel = (e: Event): string => {
             return 'Command tokens gained and redistributed during status phase';
         case 'CommandTokensRemovedDuringStatusPhase':
             return 'Command tokens removed during status phase';
+        case 'CreussWormholePlaced':
+            return `Creuss ${e.wormhole} wormhole placed by ${e.faction}`;
         case 'GameSetupCompleted':
             return 'Game setup completed';
         case 'GammaWormholeFound':

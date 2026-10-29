@@ -4,6 +4,8 @@ import _, { identity } from 'underscore';
 
 import {
     ColumnForNewMapTile,
+    CreussWormhole,
+    creussWormholes,
     currentPlayerToPerformStrategyCardActionInActionPhase,
     currentPlayerTurnInActionPhase,
     Event,
@@ -50,7 +52,7 @@ import {
     SystemWithPlanetsTileNumber,
 } from '../systemTiles';
 import { technologies, Technology } from '../technologies';
-import { not, notUndefined, range } from '../util';
+import { capitalise, not, notUndefined, range } from '../util';
 import { AdminPageProps } from './adminPageProps';
 import { Button } from './components/button';
 import { NumberInput } from './components/input';
@@ -124,6 +126,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     const [
         selectedSystemToAddGammaWormholeTo,
         setSelectedSystemToAddGammaWormholeTo,
+    ] = useState<InteractableSystemTileNumber>();
+
+    const [selectedCreussWormholeToPlace, setSelectedCreussWormholeToPlace] =
+        useState<CreussWormhole>();
+    const [
+        selectedSystemToPlaceCreussWormholeIn,
+        setSelectedSystemToPlaceCreussWormholeIn,
     ] = useState<InteractableSystemTileNumber>();
 
     const planetControlledEvent = (
@@ -327,6 +336,22 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             time: new Date().getTime(),
             faction: f,
             tileNumber: tn,
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
+    const publishCreussWormholePlacedEvent = async (
+        f: Faction,
+        tn: InteractableSystemTileNumber,
+        cw: CreussWormhole
+    ): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'CreussWormholePlaced',
+            time: new Date().getTime(),
+            faction: f,
+            tileNumber: tn,
+            wormhole: cw,
         };
 
         return await publishNewEvents([newEvent]);
@@ -1111,6 +1136,86 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             </InputsRow>
                         </InputsColumn>
                     )}
+                    {factionsInGame(events).some(
+                        (f) => f === 'The Ghosts of Creuss'
+                    ) && (
+                        <InputsColumn>
+                            <InputTitle>Place Creuss wormhole</InputTitle>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) => {
+                                        setSelectedCreussWormholeToPlace(
+                                            e.target.value as CreussWormhole
+                                        );
+                                    }}
+                                    value={selectedCreussWormholeToPlace || ''}
+                                >
+                                    <option value={''}>--Wormhole--</option>
+                                    {creussWormholes.map((w) => (
+                                        <option key={w} value={w}>
+                                            {capitalise(w)}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <Select
+                                    onChange={(e) => {
+                                        setSelectedSystemToPlaceCreussWormholeIn(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as InteractableSystemTileNumber
+                                        );
+                                    }}
+                                    value={
+                                        selectedSystemToPlaceCreussWormholeIn ||
+                                        ''
+                                    }
+                                >
+                                    <option value={''}>--System--</option>
+                                    {_.sortBy(
+                                        systemTilesInPlay.filter(
+                                            not(isHyperlaneSystemTileNumber)
+                                        ),
+                                        (stn) =>
+                                            tileIndexOnBoard(
+                                                stn,
+                                                mapTilesSelectedEvent
+                                            )
+                                    ).map((stn) => (
+                                        <option key={stn} value={stn}>
+                                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </InputsRow>
+                            <InputsRow>
+                                <Button
+                                    onClick={async () => {
+                                        if (
+                                            selectedCreussWormholeToPlace !==
+                                                undefined &&
+                                            selectedSystemToPlaceCreussWormholeIn !==
+                                                undefined
+                                        ) {
+                                            await publishCreussWormholePlacedEvent(
+                                                activePlayerInActionPhase,
+                                                selectedSystemToPlaceCreussWormholeIn,
+                                                selectedCreussWormholeToPlace
+                                            );
+                                            setSelectedCreussWormholeToPlace(
+                                                undefined
+                                            );
+                                            setSelectedSystemToPlaceCreussWormholeIn(
+                                                undefined
+                                            );
+                                        }
+                                    }}
+                                >
+                                    Place Creuss wormhole
+                                </Button>
+                            </InputsRow>
+                        </InputsColumn>
+                    )}
+
                     {!strategyCardAlreadyPlayedByPlayerThisRound(
                         events,
                         activePlayerInActionPhase

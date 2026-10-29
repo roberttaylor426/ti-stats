@@ -7,4 +7,6 @@ const not =
     (x: T) =>
         !p(x);
 
-export { not, notUndefined, range };
+const capitalise = (s: string): string => `${s[0].toUpperCase()}${s.slice(1)}`;
+
+export { capitalise,not, notUndefined, range };
