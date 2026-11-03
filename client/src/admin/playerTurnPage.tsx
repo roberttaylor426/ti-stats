@@ -13,6 +13,7 @@ import {
     hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    isCreussHeroPlayedEvent,
     isGammaWormholeFoundEvent,
     isMapTileAddedToBoardEvent,
     isPlanetDestroyedEvent,
@@ -133,6 +134,15 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     const [
         selectedSystemToPlaceCreussWormholeIn,
         setSelectedSystemToPlaceCreussWormholeIn,
+    ] = useState<InteractableSystemTileNumber>();
+
+    const [
+        selectedSystemOneToSwapWithCreussHero,
+        setSelectedSystemOneToSwapWithCreussHero,
+    ] = useState<InteractableSystemTileNumber>();
+    const [
+        selectedSystemTwoToSwapWithCreussHero,
+        setSelectedSystemTwoToSwapWithCreussHero,
     ] = useState<InteractableSystemTileNumber>();
 
     const planetControlledEvent = (
@@ -352,6 +362,20 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             faction: f,
             tileNumber: tn,
             wormhole: cw,
+        };
+
+        return await publishNewEvents([newEvent]);
+    };
+
+    const publishCreussHeroPlayedEvent = async (
+        tn1: InteractableSystemTileNumber,
+        tn2: InteractableSystemTileNumber
+    ): Promise<boolean> => {
+        const newEvent: Event = {
+            type: 'CreussHeroPlayed',
+            time: new Date().getTime(),
+            tileNumberOne: tn1,
+            tileNumberTwo: tn2,
         };
 
         return await publishNewEvents([newEvent]);
@@ -1215,6 +1239,100 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             </InputsRow>
                         </InputsColumn>
                     )}
+
+                    {activePlayerInActionPhase === 'The Ghosts of Creuss' &&
+                        !events.some(isCreussHeroPlayedEvent) && (
+                            <InputsColumn>
+                                <InputTitle>Play Creuss hero</InputTitle>
+                                <InputsRow>
+                                    <Select
+                                        onChange={(e) => {
+                                            setSelectedSystemOneToSwapWithCreussHero(
+                                                Number.parseInt(
+                                                    e.target.value
+                                                ) as InteractableSystemTileNumber
+                                            );
+                                        }}
+                                        value={
+                                            selectedSystemOneToSwapWithCreussHero ||
+                                            ''
+                                        }
+                                    >
+                                        <option value={''}>--System--</option>
+                                        {_.sortBy(
+                                            systemTilesInPlay.filter(
+                                                not(isHyperlaneSystemTileNumber)
+                                            ),
+                                            (stn) =>
+                                                tileIndexOnBoard(
+                                                    stn,
+                                                    mapTilesSelectedEvent
+                                                )
+                                        ).map((stn) => (
+                                            <option key={stn} value={stn}>
+                                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                    <Select
+                                        onChange={(e) => {
+                                            setSelectedSystemTwoToSwapWithCreussHero(
+                                                Number.parseInt(
+                                                    e.target.value
+                                                ) as InteractableSystemTileNumber
+                                            );
+                                        }}
+                                        value={
+                                            selectedSystemTwoToSwapWithCreussHero ||
+                                            ''
+                                        }
+                                    >
+                                        <option value={''}>--System--</option>
+                                        {_.sortBy(
+                                            systemTilesInPlay.filter(
+                                                not(isHyperlaneSystemTileNumber)
+                                            ),
+                                            (stn) =>
+                                                tileIndexOnBoard(
+                                                    stn,
+                                                    mapTilesSelectedEvent
+                                                )
+                                        ).map((stn) => (
+                                            <option key={stn} value={stn}>
+                                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </InputsRow>
+                                <InputsRow>
+                                    <Button
+                                        onClick={async () => {
+                                            if (
+                                                selectedSystemOneToSwapWithCreussHero !==
+                                                    undefined &&
+                                                selectedSystemTwoToSwapWithCreussHero !==
+                                                    undefined &&
+                                                selectedSystemOneToSwapWithCreussHero !==
+                                                    selectedSystemTwoToSwapWithCreussHero
+                                            ) {
+                                                await publishCreussHeroPlayedEvent(
+                                                    selectedSystemOneToSwapWithCreussHero,
+                                                    selectedSystemTwoToSwapWithCreussHero
+                                                );
+                                                setSelectedSystemOneToSwapWithCreussHero(
+                                                    undefined
+                                                );
+                                                setSelectedSystemTwoToSwapWithCreussHero(
+                                                    undefined
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Swap
+                                    </Button>
+                                </InputsRow>
+                            </InputsColumn>
+                        )}
 
                     {!strategyCardAlreadyPlayedByPlayerThisRound(
                         events,

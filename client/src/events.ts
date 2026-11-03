@@ -180,6 +180,13 @@ type CreussWormholePlacedEvent = {
     faction: Faction;
 };
 
+type CreussHeroPlayedEvent = {
+    type: 'CreussHeroPlayed';
+    time: number;
+    tileNumberOne: InteractableSystemTileNumber;
+    tileNumberTwo: InteractableSystemTileNumber;
+};
+
 type PlanetDestroyedEvent = {
     type: 'PlanetDestroyed';
     time: number;
@@ -415,6 +422,9 @@ const isCreussWormholePlacedEvent = (
     e: Event
 ): e is CreussWormholePlacedEvent => e.type === 'CreussWormholePlaced';
 
+const isCreussHeroPlayedEvent = (e: Event): e is CreussHeroPlayedEvent =>
+    e.type === 'CreussHeroPlayed';
+
 const isPlayerAttackedSystemEvent = (
     e: Event
 ): e is PlayerAttackedSystemEvent => e.type === 'PlayerAttackedSystem';
@@ -491,6 +501,7 @@ type Event =
     | CardsReadiedDuringStatusPhaseEvent
     | CommandTokensGainedAndRedistributedDuringStatusPhaseEvent
     | CommandTokensRemovedDuringStatusPhaseEvent
+    | CreussHeroPlayedEvent
     | CreussWormholePlacedEvent
     | GameSetupCompletedEvent
     | GammaWormholeFoundEvent
@@ -1150,6 +1161,7 @@ export {
     isCardsReadiedDuringStatusPhaseEvent,
     isCommandTokensGainedAndRedistributedDuringStatusPhaseEvent,
     isCommandTokensRemovedDuringStatusPhaseEvent,
+    isCreussHeroPlayedEvent,
     isGameSetupCompletedEvent,
     isGammaWormholeFoundEvent,
     isGetReadyMusicTriggeredEvent,

@@ -466,6 +466,8 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'TurnTimerUnpaused':
                 case 'UnitsRepairedDuringStatusPhase':
                     return '';
+                case 'CreussHeroPlayed':
+                    return 'Ghosts deploy the SINGULARITY REACTOR';
                 case 'CreussWormholePlaced':
                     return `Creuss ${e.wormhole} appears`;
                 case 'GammaWormholeFound':
