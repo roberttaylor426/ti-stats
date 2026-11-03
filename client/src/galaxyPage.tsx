@@ -17,17 +17,21 @@ import {
     factionsInGame,
     hasGammaWormholeBeenFoundOnSystemTileWithNumber,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
-    isMapTileAddedToBoardEvent,
-    isMapTilesSelectedEvent,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
-    MapTileAddedToBoardEvent,
     playerFactionsAndColors,
     resourcesAndInfluenceForFaction,
     systemTileNumbersInPlay,
 } from './events';
 import { Faction } from './factions';
-import { galaxyColumnCount, tileIndex, tilesPerColumn } from './galaxy';
+import {
+    buildGalaxy,
+    Galaxy,
+    galaxyColumnCount,
+    SystemTileAdded,
+    tileIndex,
+    tilesPerColumn,
+} from './galaxy';
 import { PlanetMeta } from './planets';
 import { hexPlayerColor, PlayerColor } from './playerColors';
 import { Scoreboard, ScoreboardRow } from './scoreboard';
@@ -73,10 +77,6 @@ const GalaxyPage: React.FC = () => {
 
     useAttackAlarms(events);
 
-    const mapTilesSelectedEvent = _.last(
-        events.filter(isMapTilesSelectedEvent)
-    );
-
     const factionResourcesAndInfluence: FactionResourcesAndInfluence[] =
         factionsInGame(events).map((f) => ({
             faction: f,
@@ -84,9 +84,7 @@ const GalaxyPage: React.FC = () => {
             resourcesAndInfluence: resourcesAndInfluenceForFaction(events, f),
         }));
 
-    const mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[] = events.filter(
-        isMapTileAddedToBoardEvent
-    );
+    const galaxy = buildGalaxy(events);
 
     return (
         <StyledGalaxy>
@@ -95,26 +93,28 @@ const GalaxyPage: React.FC = () => {
                 $tilesToOffsetBy={calculateTileOffset(
                     tilesAddedToBeginningOfColumn,
                     numberOfDummyTilesAtBeginningOfColumn,
-                    events
+                    galaxy
                 )}
             >
                 <StandardGalaxy>
                     <TileColumnRow>
-                        {columnOutsideOfInitialGalaxy(-2, events)}
-                        {columnOutsideOfInitialGalaxy(-1, events)}
+                        {columnOutsideOfInitialGalaxy(-2, galaxy, events)}
+                        {columnOutsideOfInitialGalaxy(-1, galaxy, events)}
                         {range(galaxyColumnCount).map((columnIndex) => (
                             <TileColumn
                                 $firstColumn={
-                                    !mapTileAddedToBoardEvents.find(
+                                    !galaxy.systemTilesAdded.find(
                                         (e) => e.position.column < 0
                                     ) && columnIndex === 0
                                 }
-                                $numberOfColumns={numberOfColumns(
-                                    mapTileAddedToBoardEvents
-                                )}
+                                $numberOfColumns={numberOfColumns(galaxy)}
                                 key={columnIndex}
                             >
-                                {tilesAtBeginningOfColumn(columnIndex, events)}
+                                {tilesAtBeginningOfColumn(
+                                    columnIndex,
+                                    galaxy,
+                                    events
+                                )}
                                 {range(tilesPerColumn(columnIndex)).map(
                                     (rowIndex) => {
                                         const index = tileIndex(
@@ -122,9 +122,7 @@ const GalaxyPage: React.FC = () => {
                                             rowIndex
                                         );
                                         const systemTileNumber =
-                                            mapTilesSelectedEvent?.selections[
-                                                index
-                                            ];
+                                            galaxy.initialSystemTiles[index];
                                         return (
                                             <HighlightableSystemTile
                                                 key={`tile ${index}`}
@@ -182,11 +180,15 @@ const GalaxyPage: React.FC = () => {
                                         );
                                     }
                                 )}
-                                {tilesAtEndOfColumn(columnIndex, events)}
+                                {tilesAtEndOfColumn(
+                                    columnIndex,
+                                    galaxy,
+                                    events
+                                )}
                             </TileColumn>
                         ))}
-                        {columnOutsideOfInitialGalaxy(7, events)}
-                        {columnOutsideOfInitialGalaxy(8, events)}
+                        {columnOutsideOfInitialGalaxy(7, galaxy, events)}
+                        {columnOutsideOfInitialGalaxy(8, galaxy, events)}
                     </TileColumnRow>
                 </StandardGalaxy>
             </GalaxyContainer>
@@ -194,7 +196,7 @@ const GalaxyPage: React.FC = () => {
                 $tilesToOffsetBy={calculateTileOffset(
                     tilesAddedToEndOfColumn,
                     numberOfDummyTilesAtEndOfColumn,
-                    events
+                    galaxy
                 )}
             >
                 <MalliceTile
@@ -278,15 +280,15 @@ const isSystemUnderAttack = (
 };
 
 const calculateTileOffset = (
-    tilesAdded: (n: number, events: Event[]) => MapTileAddedToBoardEvent[],
-    numberOfDummyTiles: (n: number, events: Event[]) => number,
-    events: Event[]
+    tilesAdded: (n: number, galaxy: Galaxy) => SystemTileAdded[],
+    numberOfDummyTiles: (n: number, galaxy: Galaxy) => number,
+    galaxy: Galaxy
 ): number =>
-    tilesAdded(3, events).length >=
-    Math.max(...[2, 4].map((n) => numberOfDummyTiles(n, events)))
+    tilesAdded(3, galaxy).length >=
+    Math.max(...[2, 4].map((n) => numberOfDummyTiles(n, galaxy)))
         ? 0
-        : Math.max(...[1, 5].map((n) => tilesAdded(n, events).length)) >
-            Math.max(...[2, 4].map((n) => tilesAdded(n, events).length))
+        : Math.max(...[1, 5].map((n) => tilesAdded(n, galaxy).length)) >
+            Math.max(...[2, 4].map((n) => tilesAdded(n, galaxy).length))
           ? 1
           : 0.5;
 
@@ -296,46 +298,42 @@ type FactionResourcesAndInfluence = {
     resourcesAndInfluence: PlanetMeta;
 };
 
-const maxTilesAddedToBeginningOfCenterThreeColumns = (
-    events: MapTileAddedToBoardEvent[]
-) =>
+const maxTilesAddedToBeginningOfCenterThreeColumns = (galaxy: Galaxy) =>
     Math.max(
         ...[2, 3, 4].map(
             (n) =>
-                events.filter(
+                galaxy.systemTilesAdded.filter(
                     (e) => e.position.column === n && e.position.row < 0
                 ).length
         )
     );
 
-const maxTilesAddedToEndOfCenterThreeColumns = (
-    events: MapTileAddedToBoardEvent[]
-) =>
+const maxTilesAddedToEndOfCenterThreeColumns = (galaxy: Galaxy) =>
     Math.max(
         ...[2, 3, 4].map(
             (n) =>
-                events.filter(
+                galaxy.systemTilesAdded.filter(
                     (e) => e.position.column === n && e.position.row > 0
                 ).length
         )
     );
 
-const numberOfColumns = (events: MapTileAddedToBoardEvent[]): number =>
+const numberOfColumns = (galaxy: Galaxy): number =>
     7 +
-    _.uniq(events.map((e) => e.position.column)).filter((c) =>
+    _.uniq(galaxy.systemTilesAdded.map((e) => e.position.column)).filter((c) =>
         [-2, -1, 7, 8].includes(c)
     ).length;
 
 const tileNumbersInColumnOutsideOfInitialGalaxy = (
     c: -2 | -1 | 7 | 8,
-    mapTileAddedToBoardEvents: MapTileAddedToBoardEvent[]
+    galaxy: Galaxy
 ): readonly (SystemWithPlanetsTileNumber | -1)[] => {
     const tiles =
         c === -2 || c === 8
             ? ([-1, -1, -1, -1, -1, -1] as const)
             : ([-1, -1, -1, -1, -1, -1, -1] as const);
 
-    const tilesAddedToColumn = mapTileAddedToBoardEvents.filter(
+    const tilesAddedToColumn = galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c
     );
 
@@ -348,39 +346,29 @@ const tileNumbersInColumnOutsideOfInitialGalaxy = (
 
 const columnOutsideOfInitialGalaxy = (
     c: -2 | -1 | 7 | 8,
+    galaxy: Galaxy,
     events: Event[]
 ): ReactNode => {
-    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
-
-    const tileNumbers = tileNumbersInColumnOutsideOfInitialGalaxy(
-        c,
-        mapTileAddedToBoardEvents
-    );
+    const tileNumbers = tileNumbersInColumnOutsideOfInitialGalaxy(c, galaxy);
 
     return tileNumbers.some((tn) => tn !== -1) ? (
         <TileColumn
             $firstColumn={
                 c == -2 ||
                 (c == -1 &&
-                    tileNumbersInColumnOutsideOfInitialGalaxy(
-                        -2,
-                        mapTileAddedToBoardEvents
-                    ).every((tn) => tn === -1))
+                    tileNumbersInColumnOutsideOfInitialGalaxy(-2, galaxy).every(
+                        (tn) => tn === -1
+                    ))
             }
-            $numberOfColumns={numberOfColumns(mapTileAddedToBoardEvents)}
+            $numberOfColumns={numberOfColumns(galaxy)}
             key={c}
         >
-            {range(
-                maxTilesAddedToBeginningOfCenterThreeColumns(
-                    mapTileAddedToBoardEvents
+            {range(maxTilesAddedToBeginningOfCenterThreeColumns(galaxy)).map(
+                (i) => (
+                    <DummyTile key={`beginning of column dummy tile ${i}`} />
                 )
-            ).map((i) => (
-                <DummyTile key={`beginning of column dummy tile ${i}`} />
-            ))}
-            {tileNumbersInColumnOutsideOfInitialGalaxy(
-                c,
-                mapTileAddedToBoardEvents
-            ).map((t, i) =>
+            )}
+            {tileNumbersInColumnOutsideOfInitialGalaxy(c, galaxy).map((t, i) =>
                 t === -1 ? (
                     <DummyTile key={`dummy tile ${i}`} />
                 ) : (
@@ -404,11 +392,7 @@ const columnOutsideOfInitialGalaxy = (
                     />
                 )
             )}
-            {range(
-                maxTilesAddedToEndOfCenterThreeColumns(
-                    mapTileAddedToBoardEvents
-                )
-            ).map((i) => (
+            {range(maxTilesAddedToEndOfCenterThreeColumns(galaxy)).map((i) => (
                 <DummyTile key={`end of column dummy tile ${i}`} />
             ))}
         </TileColumn>
@@ -419,27 +403,22 @@ const columnOutsideOfInitialGalaxy = (
 
 const numberOfDummyTilesAtBeginningOfColumn = (
     c: number,
-    events: Event[]
+    galaxy: Galaxy
 ): number => {
-    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
-
-    const tilesAddedToBeginningOfColumn = mapTileAddedToBoardEvents.filter(
+    const tilesAddedToBeginningOfColumn = galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c && e.position.row < 0
     );
 
-    const tilesAddedToEndOfColumn = mapTileAddedToBoardEvents.filter(
+    const tilesAddedToEndOfColumn = galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c && e.position.row > 0
     );
 
     const oneOfCenterThreeColumns = [2, 3, 4].includes(c);
 
     return oneOfCenterThreeColumns
-        ? maxTilesAddedToBeginningOfCenterThreeColumns(
-              mapTileAddedToBoardEvents
-          ) - tilesAddedToBeginningOfColumn.length
-        : maxTilesAddedToBeginningOfCenterThreeColumns(
-              mapTileAddedToBoardEvents
-          ) +
+        ? maxTilesAddedToBeginningOfCenterThreeColumns(galaxy) -
+              tilesAddedToBeginningOfColumn.length
+        : maxTilesAddedToBeginningOfCenterThreeColumns(galaxy) +
               Math.max(
                   tilesAddedToEndOfColumn.length -
                       tilesAddedToBeginningOfColumn.length,
@@ -449,21 +428,22 @@ const numberOfDummyTilesAtBeginningOfColumn = (
 
 const tilesAddedToBeginningOfColumn = (
     c: number,
-    events: Event[]
-): MapTileAddedToBoardEvent[] => {
-    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
-
-    return mapTileAddedToBoardEvents.filter(
+    galaxy: Galaxy
+): SystemTileAdded[] =>
+    galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c && e.position.row < 0
     );
-};
 
-const tilesAtBeginningOfColumn = (c: number, events: Event[]) => [
-    ...range(numberOfDummyTilesAtBeginningOfColumn(c, events)).map((_, i) => (
+const tilesAtBeginningOfColumn = (
+    c: number,
+    galaxy: Galaxy,
+    events: Event[]
+) => [
+    ...range(numberOfDummyTilesAtBeginningOfColumn(c, galaxy)).map((_, i) => (
         <DummyTile key={`beginning of column dummy tile ${i}`} />
     )),
     ..._.sortBy(
-        tilesAddedToBeginningOfColumn(c, events),
+        tilesAddedToBeginningOfColumn(c, galaxy),
         (e) => e.position.row
     ).map((e) => (
         <HighlightableSystemTile
@@ -489,35 +469,27 @@ const tilesAtBeginningOfColumn = (c: number, events: Event[]) => [
 
 const tilesAddedToEndOfColumn = (
     c: number,
-    events: Event[]
-): MapTileAddedToBoardEvent[] => {
-    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
-
-    return mapTileAddedToBoardEvents.filter(
+    galaxy: Galaxy
+): SystemTileAdded[] =>
+    galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c && e.position.row > 0
     );
-};
 
-const numberOfDummyTilesAtEndOfColumn = (
-    c: number,
-    events: Event[]
-): number => {
-    const mapTileAddedToBoardEvents = events.filter(isMapTileAddedToBoardEvent);
-
-    const tilesAddedToBeginningOfColumn = mapTileAddedToBoardEvents.filter(
+const numberOfDummyTilesAtEndOfColumn = (c: number, galaxy: Galaxy): number => {
+    const tilesAddedToBeginningOfColumn = galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c && e.position.row < 0
     );
 
-    const tilesAddedToEndOfColumn = mapTileAddedToBoardEvents.filter(
+    const tilesAddedToEndOfColumn = galaxy.systemTilesAdded.filter(
         (e) => e.position.column === c && e.position.row > 0
     );
 
     const oneOfCenterThreeColumns = [2, 3, 4].includes(c);
 
     return oneOfCenterThreeColumns
-        ? maxTilesAddedToEndOfCenterThreeColumns(mapTileAddedToBoardEvents) -
+        ? maxTilesAddedToEndOfCenterThreeColumns(galaxy) -
               tilesAddedToEndOfColumn.length
-        : maxTilesAddedToEndOfCenterThreeColumns(mapTileAddedToBoardEvents) +
+        : maxTilesAddedToEndOfCenterThreeColumns(galaxy) +
               Math.max(
                   tilesAddedToBeginningOfColumn.length -
                       tilesAddedToEndOfColumn.length,
@@ -525,8 +497,8 @@ const numberOfDummyTilesAtEndOfColumn = (
               );
 };
 
-const tilesAtEndOfColumn = (c: number, events: Event[]) => [
-    ..._.sortBy(tilesAddedToEndOfColumn(c, events), (e) => e.position.row).map(
+const tilesAtEndOfColumn = (c: number, galaxy: Galaxy, events: Event[]) => [
+    ..._.sortBy(tilesAddedToEndOfColumn(c, galaxy), (e) => e.position.row).map(
         (e) => (
             <HighlightableSystemTile
                 key={`tile ${e.tileNumber}`}
@@ -548,7 +520,7 @@ const tilesAtEndOfColumn = (c: number, events: Event[]) => [
             />
         )
     ),
-    ...range(numberOfDummyTilesAtEndOfColumn(c, events)).map((_, i) => (
+    ...range(numberOfDummyTilesAtEndOfColumn(c, galaxy)).map((_, i) => (
         <DummyTile key={`end of column dummy tile ${i}`} />
     )),
 ];
