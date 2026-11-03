@@ -3,7 +3,7 @@ import { intervalToDuration } from 'date-fns';
 import { Event } from './events';
 import { Faction } from './factions';
 
-const targetTurnTimeInMillis = 110_000;
+const targetTurnTimeInMillis = 125_000;
 
 const timeRemainingLabel = (timeRemainingInMillis: number): string =>
     `${timeRemainingInMillis < 0 ? '-' : ''}${timeComponent(
