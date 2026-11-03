@@ -22,7 +22,6 @@ import {
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
     MapTileAddedToBoardPosition,
-    MapTilesSelectedEvent,
     PlanetControlledEvent,
     playerSelectedStrategyCardEventsFromStrategyPhaseThisRound,
     possibleRowsForNewMapTile,
@@ -35,7 +34,7 @@ import {
     techsAvailableToResearch,
 } from '../events';
 import { Faction, shortName } from '../factions';
-import { tileIndex } from '../galaxy';
+import { buildGalaxy, Galaxy, tileIndex } from '../galaxy';
 import { PlanetName, planets } from '../planets';
 import { StrategyCard } from '../strategyCards';
 import {
@@ -69,16 +68,10 @@ import {
 
 type Props = {
     activePlayerInActionPhase: Faction;
-    mapTilesSelectedEvent: MapTilesSelectedEvent;
 };
 
 const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
-    const {
-        activePlayerInActionPhase,
-        events,
-        mapTilesSelectedEvent,
-        publishNewEvents,
-    } = props;
+    const { activePlayerInActionPhase, events, publishNewEvents } = props;
 
     const pageTitleRef = useRef<HTMLDivElement>(null);
     const scrollToTop = () => {
@@ -506,7 +499,7 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
             return `${c}`;
         }
 
-        return `${c} = ${systemTileDescription(mapTilesSelectedEvent.selections[tileIndex(c, 0)])}`;
+        return `${c} = ${systemTileDescription(galaxy.initialSystemTiles[tileIndex(c, 0)])}`;
     };
 
     const strategyCardSelectedByActivePlayerInActionPhase =
@@ -522,6 +515,8 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const lastEvent = _.last(events);
     const turnPaused = lastEvent && isTurnTimerPausedEvent(lastEvent);
+
+    const galaxy = buildGalaxy(events);
 
     return (
         <StyledPlayerTurnPage>
@@ -605,17 +600,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                 <option
                                     value={''}
                                     disabled
-                                >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                                >{`Index 1: ${systemTileDescription(galaxy.initialSystemTiles[0])}`}</option>
                                 {_.sortBy(
                                     planetlessSystemTilesOnTheBoard,
-                                    (stn) =>
-                                        tileIndexOnBoard(
-                                            stn,
-                                            mapTilesSelectedEvent
-                                        )
+                                    (stn) => tileIndexOnBoard(stn, galaxy)
                                 ).map((stn) => (
                                     <option key={stn} value={stn}>
-                                        {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                        {`#${tileIndexOnBoard(stn, galaxy)}: ${planetlessSystemTileWithControllingFaction(
                                             stn
                                         )}`}
                                     </option>
@@ -862,14 +853,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                 <option value={''}>--System to attack--</option>
                                 {_.sortBy(
                                     systemTilesAttackableByActivePlayer,
-                                    (stn) =>
-                                        tileIndexOnBoard(
-                                            stn,
-                                            mapTilesSelectedEvent
-                                        )
+                                    (stn) => tileIndexOnBoard(stn, galaxy)
                                 ).map((stn) => (
                                     <option key={stn} value={stn}>
-                                        {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                        {`#${tileIndexOnBoard(stn, galaxy)}: ${systemTileDescription(stn)}`}
                                     </option>
                                 ))}
                             </Select>
@@ -972,17 +959,13 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                     <option
                                         value={''}
                                         disabled
-                                    >{`Index 1: ${systemTileDescription(mapTilesSelectedEvent.selections[0])}`}</option>
+                                    >{`Index 1: ${systemTileDescription(galaxy.initialSystemTiles[0])}`}</option>
                                     {_.sortBy(
                                         planetlessSystemTilesOnTheBoard,
-                                        (stn) =>
-                                            tileIndexOnBoard(
-                                                stn,
-                                                mapTilesSelectedEvent
-                                            )
+                                        (stn) => tileIndexOnBoard(stn, galaxy)
                                     ).map((stn) => (
                                         <option key={stn} value={stn}>
-                                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${planetlessSystemTileWithControllingFaction(
+                                            {`#${tileIndexOnBoard(stn, galaxy)}: ${planetlessSystemTileWithControllingFaction(
                                                 stn
                                             )}`}
                                         </option>
@@ -1126,14 +1109,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                     <option value={''}>--System--</option>
                                     {_.sortBy(
                                         systemTilesInWhichGammaWormholeCanBeFound,
-                                        (stn) =>
-                                            tileIndexOnBoard(
-                                                stn,
-                                                mapTilesSelectedEvent
-                                            )
+                                        (stn) => tileIndexOnBoard(stn, galaxy)
                                     ).map((stn) => (
                                         <option key={stn} value={stn}>
-                                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                            {`#${tileIndexOnBoard(stn, galaxy)}: ${systemTileDescription(stn)}`}
                                         </option>
                                     ))}
                                 </Select>
@@ -1199,14 +1178,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                         systemTilesInPlay.filter(
                                             not(isHyperlaneSystemTileNumber)
                                         ),
-                                        (stn) =>
-                                            tileIndexOnBoard(
-                                                stn,
-                                                mapTilesSelectedEvent
-                                            )
+                                        (stn) => tileIndexOnBoard(stn, galaxy)
                                     ).map((stn) => (
                                         <option key={stn} value={stn}>
-                                            {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                            {`#${tileIndexOnBoard(stn, galaxy)}: ${systemTileDescription(stn)}`}
                                         </option>
                                     ))}
                                 </Select>
@@ -1264,13 +1239,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                                 not(isHyperlaneSystemTileNumber)
                                             ),
                                             (stn) =>
-                                                tileIndexOnBoard(
-                                                    stn,
-                                                    mapTilesSelectedEvent
-                                                )
+                                                tileIndexOnBoard(stn, galaxy)
                                         ).map((stn) => (
                                             <option key={stn} value={stn}>
-                                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                                {`#${tileIndexOnBoard(stn, galaxy)}: ${systemTileDescription(stn)}`}
                                             </option>
                                         ))}
                                     </Select>
@@ -1293,13 +1265,10 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                                 not(isHyperlaneSystemTileNumber)
                                             ),
                                             (stn) =>
-                                                tileIndexOnBoard(
-                                                    stn,
-                                                    mapTilesSelectedEvent
-                                                )
+                                                tileIndexOnBoard(stn, galaxy)
                                         ).map((stn) => (
                                             <option key={stn} value={stn}>
-                                                {`#${tileIndexOnBoard(stn, mapTilesSelectedEvent)}: ${systemTileDescription(stn)}`}
+                                                {`#${tileIndexOnBoard(stn, galaxy)}: ${systemTileDescription(stn)}`}
                                             </option>
                                         ))}
                                     </Select>
@@ -1416,12 +1385,9 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
     );
 };
 
-const tileIndexOnBoard = (
-    stn: SystemTileNumber,
-    mapTilesSelectedEvent: MapTilesSelectedEvent
-): number =>
+const tileIndexOnBoard = (stn: SystemTileNumber, galaxy: Galaxy): number =>
     Number.parseInt(
-        (Object.entries(mapTilesSelectedEvent.selections).find(
+        (Object.entries(galaxy.initialSystemTiles).find(
             ([_, v]) => v === stn
         ) || ['-1'])[0]
     ) + 1;

@@ -123,7 +123,6 @@ const AdminPages: React.FC = () => {
                 <PlayerTurnPage
                     {...adminPageProps}
                     activePlayerInActionPhase={activePlayerInActionPhase}
-                    mapTilesSelectedEvent={mapTilesSelectedEvent}
                 />
             ) : (
                 <StatusPhasePage {...adminPageProps} />
