@@ -38,11 +38,13 @@ import { buildGalaxy, Galaxy, tileIndex } from '../galaxy';
 import { PlanetName, planets } from '../planets';
 import { StrategyCard } from '../strategyCards';
 import {
+    ghostsOfCreussHomeTileNumber,
     InteractableSystemTileNumber,
     isFactionSystemTile,
     isHyperlaneSystemTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
+    malliceTileNumber,
     mecatolRexTileNumber,
     PlanetlessSystemTileNumber,
     systemTileDescription,
@@ -1235,9 +1237,19 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                     >
                                         <option value={''}>--System--</option>
                                         {_.sortBy(
-                                            systemTilesInPlay.filter(
-                                                not(isHyperlaneSystemTileNumber)
-                                            ),
+                                            systemTilesInPlay
+                                                .filter(
+                                                    not(
+                                                        isHyperlaneSystemTileNumber
+                                                    )
+                                                )
+                                                .filter(
+                                                    (st) =>
+                                                        st !==
+                                                            malliceTileNumber &&
+                                                        st !==
+                                                            ghostsOfCreussHomeTileNumber
+                                                ),
                                             (stn) =>
                                                 tileIndexOnBoard(stn, galaxy)
                                         ).map((stn) => (
@@ -1261,9 +1273,19 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                                     >
                                         <option value={''}>--System--</option>
                                         {_.sortBy(
-                                            systemTilesInPlay.filter(
-                                                not(isHyperlaneSystemTileNumber)
-                                            ),
+                                            systemTilesInPlay
+                                                .filter(
+                                                    not(
+                                                        isHyperlaneSystemTileNumber
+                                                    )
+                                                )
+                                                .filter(
+                                                    (st) =>
+                                                        st !==
+                                                            malliceTileNumber &&
+                                                        st !==
+                                                            ghostsOfCreussHomeTileNumber
+                                                ),
                                             (stn) =>
                                                 tileIndexOnBoard(stn, galaxy)
                                         ).map((stn) => (
