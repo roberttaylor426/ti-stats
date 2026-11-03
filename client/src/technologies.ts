@@ -125,7 +125,11 @@ type TechnologyName =
     | 'Applied Biothermics'
     | 'Wraith Engine'
     | 'Omniscience Field'
-    | 'Heavy Bomber II';
+    | 'Heavy Bomber II'
+    | 'Unholy Abomination II'
+    | 'Recursive Worm'
+    | 'Lancer Dreadnought II'
+    | 'SEIDR Project';
 
 type NonUnitTechnologyType = 'Biotic' | 'Propulsion' | 'Cybernetic' | 'Warfare';
 
@@ -829,6 +833,32 @@ const technologies: Technology[] = [
         name: 'Midas Turbine',
         type: 'Propulsion',
         faction: 'The Vaden Banking Clans',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Unholy Abomination II',
+        type: 'Unit',
+        faction: 'The Savages of Cymiae',
+        supersedes: 'Infantry II',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Recursive Worm',
+        type: 'Cybernetic',
+        faction: 'The Savages of Cymiae',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'SEIDR Project',
+        type: 'Warfare',
+        faction: 'The Veldyr Sovereignty',
+        image: plasmaScoringImage,
+    },
+    {
+        name: 'Lancer Dreadnought II',
+        type: 'Unit',
+        faction: 'The Veldyr Sovereignty',
+        supersedes: 'Dreadnought II',
         image: plasmaScoringImage,
     },
 ];

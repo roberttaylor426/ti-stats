@@ -5,6 +5,7 @@ import berserkers from './assets/factionSheets/berserkers.webp';
 import cabal from './assets/factionSheets/cabal.webp';
 import freeSystems from './assets/factionSheets/compact.webp';
 import dihmon from './assets/factionSheets/dih.webp';
+import ghosts from './assets/factionSheets/ghosts.webp';
 import ghoti from './assets/factionSheets/ghoti.webp';
 import glimmer from './assets/factionSheets/glimmer.webp';
 import l1z1x from './assets/factionSheets/l1z1x.webp';
@@ -12,12 +13,16 @@ import liZho from './assets/factionSheets/li-zho.webp';
 import mahact from './assets/factionSheets/mahact.webp';
 import mirveda from './assets/factionSheets/mirveda.webp';
 import monks from './assets/factionSheets/monks.webp';
+import nekro from './assets/factionSheets/nekro.webp';
 import nivyn from './assets/factionSheets/nivyn.webp';
 import nokar from './assets/factionSheets/nokar.webp';
 import nomad from './assets/factionSheets/nomad.webp';
 import rohdna from './assets/factionSheets/rohdna.webp';
+import savages from './assets/factionSheets/savages.webp';
 import tnelis from './assets/factionSheets/tnelis.webp';
 import vaden from './assets/factionSheets/vaden.webp';
+import veldyr from './assets/factionSheets/veldyr.webp';
+import yin from './assets/factionSheets/yin.webp';
 import yssaril from './assets/factionSheets/yssaril.webp';
 import { PlanetName } from './planets';
 import {
@@ -461,7 +466,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Federation of Sol':
             return '';
         case 'The Ghosts of Creuss':
-            return '';
+            return ghosts;
         case 'The L1Z1X Mindnet':
             return l1z1x;
         case 'The Mahact Gene-Sorcerers':
@@ -473,7 +478,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Naaz-Rokha Alliance':
             return '';
         case 'The Nekro Virus':
-            return '';
+            return nekro;
         case 'The Nomad':
             return nomad;
         case 'The Titans of Ul':
@@ -487,7 +492,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Xxcha Kingdom':
             return '';
         case 'The Yin Brotherhood':
-            return '';
+            return yin;
         case 'The Yssaril Tribes':
             return yssaril;
         case 'The Shipwrights of Ark':
@@ -495,7 +500,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Celdauri Trade Confederation':
             return '';
         case 'The Savages of Cymiae':
-            return '';
+            return savages;
         case 'The Dih-Mohn Flotilla':
             return dihmon;
         case 'The Florzen Profiteers':
@@ -535,7 +540,7 @@ const factionSheetImage = (f: Faction): string => {
         case 'The Vaylerian Scourge':
             return '';
         case 'The Veldyr Sovereignty':
-            return '';
+            return veldyr;
         case 'The Zelian Purifier':
             return '';
         case 'The Bentor Conglomerate':
