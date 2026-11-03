@@ -43,6 +43,7 @@ import {
     isHyperlaneSystemTileNumber,
     isPlanetlessSystemTileNumber,
     isSystemWithPlanetsTile,
+    malliceTileNumber,
     systemTile,
     systemTileImage,
     SystemTileNumber,
@@ -208,6 +209,7 @@ const GalaxyPage: React.FC = () => {
                                     playerFactionsAndColors(events)[e.faction]
                             )[0]
                     }
+                    events={events}
                 />
                 {systemTileNumbersInPlay(events).includes(
                     ghostsOfCreussHomeTileNumber
@@ -219,6 +221,7 @@ const GalaxyPage: React.FC = () => {
                                 events
                             )?.playerColors[0] as PlayerColor
                         }
+                        events={events}
                     />
                 ) : (
                     <div />
@@ -923,32 +926,82 @@ const HexHighlightSegment = styled.div<HexHighlightSegmentProps>`
 
 type MalliceTileProps = {
     controllingPlayerColor: PlayerColor | undefined;
+    events: Event[];
 };
 
 const MalliceTile: React.FC<MalliceTileProps> = ({
     controllingPlayerColor,
+    events,
 }) => (
-    <ExtraTile
-        src={controllingPlayerColor ? tile82Back : tile82}
-        alt={`Wormhole nexus tile`}
-        $highlightColor={
-            controllingPlayerColor && hexPlayerColor(controllingPlayerColor)
-        }
-    />
+    <StyledHighlightableTile>
+        {[
+            hasGammaWormholeBeenFoundOnSystemTileWithNumber(
+                events,
+                malliceTileNumber
+            )
+                ? gammaWormholeToken
+                : undefined,
+            ...creussWormholesPlacedOnSystemTileWithNumber(
+                events,
+                malliceTileNumber
+            ).map(creussWormholeToken),
+        ]
+            .filter(notUndefined)
+            .map((t, index, arr) => (
+                <SystemTileToken
+                    key={index}
+                    index={index}
+                    total={arr.length}
+                    systemTileImage={t}
+                />
+            ))}
+        <ExtraTile
+            src={controllingPlayerColor ? tile82Back : tile82}
+            alt={`Wormhole nexus tile`}
+            $highlightColor={
+                controllingPlayerColor && hexPlayerColor(controllingPlayerColor)
+            }
+        />
+    </StyledHighlightableTile>
 );
 
 type GhostsOfCresussHomeTileProps = {
     controllingPlayerColor: PlayerColor;
+    events: Event[];
 };
 
 const GhostsOfCreussHomeTile: React.FC<GhostsOfCresussHomeTileProps> = ({
     controllingPlayerColor,
+    events,
 }) => (
-    <ExtraTile
-        src={tile51}
-        alt={`Ghosts of Creuss homeworld tile`}
-        $highlightColor={hexPlayerColor(controllingPlayerColor)}
-    />
+    <StyledHighlightableTile>
+        {[
+            hasGammaWormholeBeenFoundOnSystemTileWithNumber(
+                events,
+                ghostsOfCreussHomeTileNumber
+            )
+                ? gammaWormholeToken
+                : undefined,
+            ...creussWormholesPlacedOnSystemTileWithNumber(
+                events,
+                ghostsOfCreussHomeTileNumber
+            ).map(creussWormholeToken),
+        ]
+            .filter(notUndefined)
+            .map((t, index, arr) => (
+                <SystemTileToken
+                    key={index}
+                    index={index}
+                    total={arr.length}
+                    systemTileImage={t}
+                />
+            ))}
+        <ExtraTile
+            src={tile51}
+            alt={`Ghosts of Creuss homeworld tile`}
+            $highlightColor={hexPlayerColor(controllingPlayerColor)}
+        />
+    </StyledHighlightableTile>
 );
 
 const creussWormholeToken = (cw: CreussWormhole): string => {
