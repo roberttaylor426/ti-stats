@@ -627,6 +627,25 @@ const creussWormholesPlacedOnSystemTileWithNumber = (
         .filter(([_, v]) => v === stn)
         .map(([k, _]) => k as CreussWormhole);
 
+const ionStormWormholePlacedOnSystemTileWithNumber = (
+    events: Event[],
+    stn: SystemTileNumber
+): 'alpha' | 'beta' | undefined => {
+    const ionStormFoundEvent = _.last(events.filter(isIonStormFoundEvent));
+
+    if (!ionStormFoundEvent || ionStormFoundEvent.tileNumber !== stn) {
+        return undefined;
+    }
+
+    const mostRecentIonStormFlippedEvent = _.last(
+        events.filter(isIonStormFlippedEvent)
+    );
+
+    return mostRecentIonStormFlippedEvent
+        ? mostRecentIonStormFlippedEvent.toWormhole
+        : ionStormFoundEvent.asWormhole;
+};
+
 const systemTilePlanets = (stn: SystemWithPlanetsTileNumber): PlanetName[] => {
     const st = systemWithPlanetsTile(stn);
 
@@ -1178,6 +1197,7 @@ export {
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     initiativeOrderWhenMostRecentActionPhaseStarted,
     IonStormFoundEvent,
+    ionStormWormholePlacedOnSystemTileWithNumber,
     isActionCardsDrawnDuringStatusPhaseEvent,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,

@@ -6,6 +6,8 @@ import gammaWormholeToken from './assets/systemTiles/GammaToken.webp';
 import creussAlphaWormholeToken from './assets/systemTiles/GhostsAlphaToken.webp';
 import creussBetaWormholeToken from './assets/systemTiles/GhostsBetaToken.webp';
 import creussGammaWormholeToken from './assets/systemTiles/GhostsGammaToken.webp';
+import ionStormAlphaToken from './assets/systemTiles/IonTokenAlpha.webp';
+import ionStormBetaToken from './assets/systemTiles/IonTokenBeta.webp';
 import mirageToken from './assets/systemTiles/MirageToken.webp';
 import tile51 from './assets/systemTiles/ST_51.webp';
 import tile82 from './assets/systemTiles/ST_82.webp';
@@ -17,6 +19,7 @@ import {
     factionsInGame,
     hasGammaWormholeBeenFoundOnSystemTileWithNumber,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    ionStormWormholePlacedOnSystemTileWithNumber,
     latestPlanetControlledEventsByPlanet,
     latestPlanetlessSystemControlledEventsBySystem,
     playerFactionsAndColors,
@@ -176,6 +179,14 @@ const GalaxyPage: React.FC = () => {
                                                               systemTileNumber
                                                           )
                                                         : []
+                                                }
+                                                ionStormToken={
+                                                    !!systemTileNumber
+                                                        ? ionStormWormholePlacedOnSystemTileWithNumber(
+                                                              events,
+                                                              systemTileNumber
+                                                          )
+                                                        : undefined
                                                 }
                                             />
                                         );
@@ -392,6 +403,10 @@ const columnOutsideOfInitialGalaxy = (
                             events,
                             t
                         )}
+                        ionStormToken={ionStormWormholePlacedOnSystemTileWithNumber(
+                            events,
+                            t
+                        )}
                     />
                 )
             )}
@@ -466,6 +481,10 @@ const tilesAtBeginningOfColumn = (
                 events,
                 e.tileNumber
             )}
+            ionStormToken={ionStormWormholePlacedOnSystemTileWithNumber(
+                events,
+                e.tileNumber
+            )}
         />
     )),
 ];
@@ -517,6 +536,10 @@ const tilesAtEndOfColumn = (c: number, galaxy: Galaxy, events: Event[]) => [
                     e.tileNumber
                 )}
                 creussWormholeTokens={creussWormholesPlacedOnSystemTileWithNumber(
+                    events,
+                    e.tileNumber
+                )}
+                ionStormToken={ionStormWormholePlacedOnSystemTileWithNumber(
                     events,
                     e.tileNumber
                 )}
@@ -783,6 +806,7 @@ type HighlightableTileProps = {
     showMirageToken: boolean;
     showGammaWormholeToken: boolean;
     creussWormholeTokens: CreussWormhole[];
+    ionStormToken?: 'alpha' | 'beta';
     rotateAngle?: number;
 };
 
@@ -793,6 +817,7 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
     showMirageToken,
     showGammaWormholeToken,
     creussWormholeTokens,
+    ionStormToken,
     rotateAngle,
 }) => (
     <StyledHighlightableTile>
@@ -813,6 +838,11 @@ const HighlightableSystemTile: React.FC<HighlightableTileProps> = ({
         {[
             showGammaWormholeToken ? gammaWormholeToken : undefined,
             ...creussWormholeTokens.map(creussWormholeToken),
+            ionStormToken === 'alpha'
+                ? ionStormAlphaToken
+                : ionStormToken === 'beta'
+                  ? ionStormBetaToken
+                  : undefined,
         ]
             .filter(notUndefined)
             .map((t, index, arr) => (
