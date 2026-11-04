@@ -56,6 +56,10 @@ const humanReadableEventLabel = (e: Event): string => {
             return `Gamma wormhole found - ${systemTileDescription(e.tileNumber)}`;
         case 'GetReadyMusicTriggered':
             return 'Get ready music triggered';
+        case 'IonStormFlipped':
+            return `Ion Storm flipped to ${e.toWormhole}`;
+        case 'IonStormFound':
+            return 'Ion Storm found';
         case 'MapTileAddedToBoard':
             return 'Map tile added to board';
         case 'MapTilesSelected':

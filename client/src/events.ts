@@ -168,6 +168,21 @@ type GammaWormholeFoundEvent = {
     faction?: Faction;
 };
 
+type IonStormFoundEvent = {
+    type: 'IonStormFound';
+    time: number;
+    tileNumber: PlanetlessSystemTileNumber;
+    asWormhole: 'alpha' | 'beta';
+    faction: Faction;
+};
+
+type IonStormFlippedEvent = {
+    type: 'IonStormFlipped';
+    time: number;
+    toWormhole: 'alpha' | 'beta';
+    faction: Faction;
+};
+
 const creussWormholes = ['alpha', 'beta', 'gamma'] as const;
 
 type CreussWormhole = (typeof creussWormholes)[number];
@@ -418,6 +433,12 @@ const isMapTileAddedToBoardEvent = (e: Event): e is MapTileAddedToBoardEvent =>
 const isGammaWormholeFoundEvent = (e: Event): e is GammaWormholeFoundEvent =>
     e.type === 'GammaWormholeFound';
 
+const isIonStormFlippedEvent = (e: Event): e is IonStormFlippedEvent =>
+    e.type === 'IonStormFlipped';
+
+const isIonStormFoundEvent = (e: Event): e is IonStormFoundEvent =>
+    e.type === 'IonStormFound';
+
 const isCreussWormholePlacedEvent = (
     e: Event
 ): e is CreussWormholePlacedEvent => e.type === 'CreussWormholePlaced';
@@ -506,6 +527,8 @@ type Event =
     | GameSetupCompletedEvent
     | GammaWormholeFoundEvent
     | GetReadyMusicTriggeredEvent
+    | IonStormFlippedEvent
+    | IonStormFoundEvent
     | MapTileAddedToBoardEvent
     | MapTilesSelectedEvent
     | MiragePlanetFoundEvent
@@ -1154,6 +1177,7 @@ export {
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
     initiativeOrderWhenMostRecentActionPhaseStarted,
+    IonStormFoundEvent,
     isActionCardsDrawnDuringStatusPhaseEvent,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
@@ -1165,6 +1189,8 @@ export {
     isGameSetupCompletedEvent,
     isGammaWormholeFoundEvent,
     isGetReadyMusicTriggeredEvent,
+    isIonStormFlippedEvent,
+    isIonStormFoundEvent,
     isItAgendaPhase,
     isMapTileAddedToBoardEvent,
     isMapTilesSelectedEvent,

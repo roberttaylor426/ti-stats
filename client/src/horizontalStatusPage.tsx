@@ -15,6 +15,7 @@ import {
     factionsInGame,
     GammaWormholeFoundEvent,
     hasGameStarted,
+    IonStormFoundEvent,
     isActionCardsDrawnDuringStatusPhaseEvent,
     isActionPhaseStartedEvent,
     isAgendaCardRevealedEvent,
@@ -450,6 +451,7 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'CommandTokensRemovedDuringStatusPhase':
                 case 'GameSetupCompleted':
                 case 'GetReadyMusicTriggered':
+                case 'IonStormFlipped':
                 case 'MapTilesSelected':
                 case 'ObjectivesScoredDuringStatusPhase':
                 case 'PlanetEnhanced':
@@ -473,6 +475,10 @@ const generateMarqueeText = (events: Event[]) => {
                 case 'GammaWormholeFound':
                     return e.faction
                         ? `Gamma wormhole ${randomSystemComponentFoundVerb(e.time)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`
+                        : '';
+                case 'IonStormFound':
+                    return e.faction
+                        ? `Ion Storm ${randomSystemComponentFoundVerb(e.time)} ${generateMarqueeSuffixForEventOccurringOnSystemTile(e)} by ${shortName(e.faction)}`
                         : '';
                 case 'MapTileAddedToBoard':
                     return `Star charts reveal new planets: ${systemWithPlanetsTileDescription(e.tileNumber)}`;
@@ -503,7 +509,7 @@ const generateMarqueeText = (events: Event[]) => {
 };
 
 const generateMarqueeSuffixForEventOccurringOnSystemTile = (
-    e: PlayerAttackedSystemEvent | GammaWormholeFoundEvent
+    e: PlayerAttackedSystemEvent | GammaWormholeFoundEvent | IonStormFoundEvent
 ): string => {
     if (isPlanetlessSystemTileNumber(e.tileNumber)) {
         switch (e.tileNumber) {
