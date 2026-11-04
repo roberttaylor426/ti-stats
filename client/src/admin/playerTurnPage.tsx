@@ -13,8 +13,11 @@ import {
     hasMecatolRexBeenCaptured,
     hasMiragePlanetBeenFound,
     hasMiragePlanetBeenFoundOnSystemTileWithNumber,
+    IonStormFoundEvent,
     isCreussHeroPlayedEvent,
     isGammaWormholeFoundEvent,
+    isIonStormFlippedEvent,
+    isIonStormFoundEvent,
     isMapTileAddedToBoardEvent,
     isPlanetDestroyedEvent,
     isPlanetEnhancedEvent,
@@ -92,6 +95,15 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         selectedPlanetlessSystemToFindMirageIn,
         setSelectedPlanetlessSystemToFindMirageIn,
     ] = useState<PlanetlessSystemTileNumber>();
+
+    const [
+        selectedPlanetlessSystemToFindIonStormIn,
+        setSelectedPlanetlessSystemToFindIonStormIn,
+    ] = useState<PlanetlessSystemTileNumber>();
+
+    const [selectedIonStormWormhole, setSelectedIonStormWormhole] = useState<
+        'alpha' | 'beta'
+    >();
 
     const [selectedPlanetToEnhance, setSelectedPlanetToEnhance] =
         useState<PlanetName>();
@@ -189,6 +201,36 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
         const newEvent2 = planetControlledEvent('Mirage', f);
 
         await publishNewEvents([newEvent1, newEvent2]);
+    };
+
+    const publishIonStormFoundEvent = async (
+        stn: PlanetlessSystemTileNumber,
+        w: 'alpha' | 'beta',
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'IonStormFound',
+            time: new Date().getTime(),
+            tileNumber: stn,
+            asWormhole: w,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
+    };
+
+    const publishIonStormFlippedEvent = async (
+        w: 'alpha' | 'beta',
+        f: Faction
+    ) => {
+        const newEvent: Event = {
+            type: 'IonStormFlipped',
+            time: new Date().getTime(),
+            toWormhole: w,
+            faction: f,
+        };
+
+        await publishNewEvents([newEvent]);
     };
 
     const publishPlanetEnhancedEvent = async (
@@ -517,6 +559,8 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
 
     const lastEvent = _.last(events);
     const turnPaused = lastEvent && isTurnTimerPausedEvent(lastEvent);
+
+    const ionStormFoundEvent = _.last(events.filter(isIonStormFoundEvent));
 
     const galaxy = buildGalaxy(events);
 
@@ -1141,6 +1185,99 @@ const PlayerTurnPage: React.FC<Props & AdminPageProps> = (props) => {
                             </InputsRow>
                         </InputsColumn>
                     )}
+                    {!ionStormFoundEvent ? (
+                        <InputsColumn>
+                            <InputTitle>Find Ion Storm</InputTitle>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) =>
+                                        setSelectedPlanetlessSystemToFindIonStormIn(
+                                            Number.parseInt(
+                                                e.target.value
+                                            ) as PlanetlessSystemTileNumber
+                                        )
+                                    }
+                                >
+                                    <option value={''}>
+                                        --Planetless system--
+                                    </option>
+                                    <option
+                                        value={''}
+                                        disabled
+                                    >{`Index 1: ${systemTileDescription(galaxy.initialSystemTiles[0])}`}</option>
+                                    {_.sortBy(
+                                        planetlessSystemTilesOnTheBoard,
+                                        (stn) => tileIndexOnBoard(stn, galaxy)
+                                    ).map((stn) => (
+                                        <option key={stn} value={stn}>
+                                            {`#${tileIndexOnBoard(stn, galaxy)}: ${planetlessSystemTileWithControllingFaction(
+                                                stn
+                                            )}`}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </InputsRow>
+                            <InputsRow>
+                                <Select
+                                    onChange={(e) =>
+                                        setSelectedIonStormWormhole(
+                                            e.target.value as 'alpha' | 'beta'
+                                        )
+                                    }
+                                >
+                                    <option value={''}>--Wormhole--</option>
+                                    <option key={'alpha'} value={'alpha'}>
+                                        Alpha
+                                    </option>
+                                    <option key={'beta'} value={'beta'}>
+                                        Beta
+                                    </option>
+                                </Select>
+                            </InputsRow>
+                            <InputsRow>
+                                <Button
+                                    onClick={async () => {
+                                        if (
+                                            selectedPlanetlessSystemToFindIonStormIn &&
+                                            selectedIonStormWormhole
+                                        ) {
+                                            await publishIonStormFoundEvent(
+                                                selectedPlanetlessSystemToFindIonStormIn,
+                                                selectedIonStormWormhole,
+                                                activePlayerInActionPhase
+                                            );
+                                        }
+                                    }}
+                                >
+                                    Find Ion Storm
+                                </Button>
+                            </InputsRow>
+                        </InputsColumn>
+                    ) : (
+                        <InputsColumn>
+                            <InputTitle>Flip Ion Storm</InputTitle>
+                            <Button
+                                onClick={async () => {
+                                    await publishIonStormFlippedEvent(
+                                        nextIonStormWormhole(
+                                            events,
+                                            ionStormFoundEvent
+                                        ),
+                                        activePlayerInActionPhase
+                                    );
+                                }}
+                            >
+                                Flip Ion Storm to{' '}
+                                {capitalise(
+                                    nextIonStormWormhole(
+                                        events,
+                                        ionStormFoundEvent
+                                    )
+                                )}
+                            </Button>
+                        </InputsColumn>
+                    )}
+
                     {factionsInGame(events).some(
                         (f) => f === 'The Ghosts of Creuss'
                     ) && (
@@ -1413,6 +1550,20 @@ const tileIndexOnBoard = (stn: SystemTileNumber, galaxy: Galaxy): number =>
             ([_, v]) => v === stn
         ) || ['-1'])[0]
     ) + 1;
+
+const nextIonStormWormhole = (
+    events: Event[],
+    ionStormFoundEvent: IonStormFoundEvent
+): 'alpha' | 'beta' => {
+    const mostRecentIonStormFlippedEvent = _.last(
+        events.filter(isIonStormFlippedEvent)
+    );
+    const currentIonStormWormhole = mostRecentIonStormFlippedEvent
+        ? mostRecentIonStormFlippedEvent.toWormhole
+        : ionStormFoundEvent.asWormhole;
+
+    return currentIonStormWormhole === 'alpha' ? 'beta' : 'alpha';
+};
 
 const StyledPlayerTurnPage = styled.div`
     display: flex;
