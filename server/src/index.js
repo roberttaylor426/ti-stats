@@ -13,6 +13,11 @@ app.use(bodyParser.json());
 
 let events = [];
 
+// fs.readFile('out/event-log.json', 'utf8', (err, data) => {
+//     if (err) throw err;
+//     events = JSON.parse(data);
+// })
+
 app.get('/api', (req, res) => {
     res.send(JSON.stringify(events));
 });
